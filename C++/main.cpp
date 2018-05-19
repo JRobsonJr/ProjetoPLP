@@ -21,25 +21,28 @@ vector<Word> words;
 // Utilizar Pair<int, Player> para o ranking. Vai poder aproveitar o comparador natural para ordenar.
 
 void setupWords() {
+
     Word data;
-
-    ifstream wordsFile;
-    wordsFile.open("palavras.csv");
-
     string currentLine;
-    const char delimiter = ',';
-    while(getline(wordsFile, currentLine)){
+    const char DELIMITER = ',';
 
-        stringstream ss(currentLine);
+    ifstream wordsFile("palavras.csv");
+    if(wordsFile.is_open()){
+        while(getline(wordsFile, currentLine)){
 
-        getline(ss, data.text, delimiter);
-        getline(ss, data.theme, delimiter);
-        ss >> data.level;
+            stringstream ss(currentLine);
 
-        words.push_back(data);
+            getline(ss, data.text, DELIMITER);
+            getline(ss, data.theme, DELIMITER);
+            ss >> data.level;
 
+            words.push_back(data);
+
+        }
+        wordsFile.close();
+    }else{
+        cerr << "Não foi possivel ler o arquivo." << endl;
     }
-    wordsFile.close();
 }
 
 void showOpening();
