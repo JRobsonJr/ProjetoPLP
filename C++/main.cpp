@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <string>
 
@@ -19,8 +20,26 @@ struct Player {
 vector<Word> words;
 // Utilizar Pair<int, Player> para o ranking. Vai poder aproveitar o comparador natural para ordenar.
 
-void setUpWords() {
-    words.push_back({"-", "-", 1});
+void setupWords() {
+    Word data;
+
+    ifstream wordsFile;
+    wordsFile.open("palavras.csv");
+
+    string currentLine;
+    const char delimiter = ',';
+    while(getline(wordsFile, currentLine)){
+
+        stringstream ss(currentLine);
+
+        getline(ss, data.text, delimiter);
+        getline(ss, data.theme, delimiter);
+        ss >> data.level;
+
+        words.push_back(data);
+
+    }
+    wordsFile.close();
 }
 
 void showOpening();
@@ -40,14 +59,14 @@ void quit();
 
 
 int main() {
-    FILE *file = fopen("words.txt", "w");
-    setUpWords();
+
+    setupWords();
 
     for (int i = 0; i < words.size(); i++) {
         cout << words[i].text << " " << words[i].theme << " " << words[i].level << endl;
     }
     cout << "\n";
 
-    fclose(file);
+
     return 0;
 }
