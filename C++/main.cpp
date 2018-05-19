@@ -23,7 +23,7 @@ vector<Word> words;
 // Utilizar Pair<int, Player> para o ranking. Vai poder aproveitar o comparador natural para ordenar.
 
 
-bool validateFile(ios &file){
+bool isFileValid(ios &file){
     if(!file.good()){
         cerr << "Não foi possivel ler o arquivo." << endl;
         exit(1);
@@ -37,7 +37,7 @@ void setupWords() {
     string currentLine;
     ifstream wordsFile(FILENAME_WORDS);
 
-    if(validateFile(wordsFile)){
+    if(isFileValid(wordsFile)){
         while(getline(wordsFile, currentLine)){
 
             stringstream ss(currentLine);
@@ -55,7 +55,7 @@ void setupWords() {
 
 void writeWords(){
     ofstream newWordsFile (FILENAME_WORDS);
-    if(validateFile(newWordsFile)){
+    if(isFileValid(newWordsFile)){
         for (int i = 0; i < words.size(); i++) {
 
             newWordsFile << words[i].text << DELIMITER
