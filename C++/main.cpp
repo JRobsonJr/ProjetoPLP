@@ -17,11 +17,26 @@ struct Player {
 };
 
 vector<Word> words;
+// Utilizar Pair<int, Player> para o ranking. Vai poder aproveitar o comparador natural para ordenar.
 
 void setUpWords() {
     words.push_back({"-", "-", 1});
 }
 
+void showOpening();
+void showMenu();
+void showRules();
+void showRanking();
+
+void selectMode();
+void normalGameOptions();
+void selectTheme();
+void selectLevel();
+
+void competitiveGame();
+void getPlayerData();
+
+void quit();
 
 
 int main() {
@@ -36,4 +51,3 @@ int main() {
     fclose(file);
     return 0;
 }
-
