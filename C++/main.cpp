@@ -17,17 +17,27 @@ struct Player {
     int score;
 };
 
+const char DELIMITER = ',';
+const string FILENAME_WORDS = "words.csv";
 vector<Word> words;
 // Utilizar Pair<int, Player> para o ranking. Vai poder aproveitar o comparador natural para ordenar.
+
+
+bool validateFile(ios &file){
+    if(!file.good()){
+        cerr << "Não foi possivel ler o arquivo." << endl;
+        exit(1);
+    }
+    return true;
+}
 
 void setupWords() {
 
     Word data;
     string currentLine;
-    const char DELIMITER = ',';
+    ifstream wordsFile(FILENAME_WORDS);
 
-    ifstream wordsFile("palavras.csv");
-    if(wordsFile.is_open()){
+    if(validateFile(wordsFile)){
         while(getline(wordsFile, currentLine)){
 
             stringstream ss(currentLine);
@@ -40,8 +50,20 @@ void setupWords() {
 
         }
         wordsFile.close();
-    }else{
-        cerr << "Não foi possivel ler o arquivo." << endl;
+    }
+}
+
+void writeWords(){
+    ofstream newWordsFile (FILENAME_WORDS);
+    if(validateFile(newWordsFile)){
+        for (int i = 0; i < words.size(); i++) {
+
+            newWordsFile << words[i].text << DELIMITER
+                         << words[i].theme << DELIMITER
+                         << words[i].level << endl;
+
+        }
+        newWordsFile.close();
     }
 }
 
@@ -69,6 +91,9 @@ int main() {
         cout << words[i].text << " " << words[i].theme << " " << words[i].level << endl;
     }
     cout << "\n";
+
+    words.push_back({"Teste", "musica", 2});
+    writeWords();
 
 
     return 0;
