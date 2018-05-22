@@ -303,6 +303,78 @@ void showMenu() {
     selectMenuOption(getOption());
 }
 
+void showGame(int lifes) {
+
+    cout << "###############" << endl;
+    cout << "#### FORCA ####" << endl;
+    cout << "###############" << endl;
+    cout << "#      |      #" << endl;
+
+    switch (lifes) {
+
+        case 7:
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 6:
+            cout << "#    ('-')    #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 5:
+            cout << "#    ('-')__  #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 4:
+            cout << "#  __('-')__  #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 3:
+            cout << "#  __('-')__  #" << endl;
+            cout << "#      |      #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 2:
+            cout << "#  __('-')__  #" << endl;
+            cout << "#      |      #" << endl;
+            cout << "#     /       #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 1:
+            cout << "#  __('-')__  #" << endl;
+            cout << "#      |      #" << endl;
+            cout << "#     / \\     #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        default:
+            cout << "#      |      #" << endl;
+            cout << "#    (-.-)    #" << endl;
+            cout << "#     /|\\     #" << endl;
+            cout << "#     / \\     #" << endl;
+            break;
+
+    }
+
+    cout << "###############" << endl;
+    cout << " /\\         /\\" << endl;
+    cout << "/  \\       /  \\" << endl;
+}
+
 // Esperando a veia artística
 void showOpening() {
     system("clear");
