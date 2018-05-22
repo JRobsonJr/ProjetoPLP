@@ -421,6 +421,58 @@ void showOpening() {
     system("clear");
 }
 
+string toUpper(string word) {
+    for (int i = 0; i < word.length(); i++) {
+        word[i] = toupper(word[i]);
+    }
+
+    return word;
+}
+
+string getHiddenWord(string word) {
+    string hiddenWord;
+
+    for (int i = 0; i < word.length(); i++) {
+        char c = word[i];
+
+        if (isspace(c)) {
+            hiddenWord += " ";
+        } else {
+            hiddenWord += "_";
+        }
+    }
+
+    return hiddenWord;
+}
+
+string revealLetter(char letter, string originalWord, string hiddenWord) {
+    for (int i = 0; i < originalWord.length(); i++) {
+        char c = originalWord[i];
+
+        if (c == letter) {
+            hiddenWord[i] = letter;
+        }
+    }
+
+    return hiddenWord;
+}
+
+string guessLetter(string originalWord, string hiddenWord) {
+    char letter;
+    cin >> letter;
+    letter = toupper(letter);
+
+    // Talvez seja interessante fazer algumas verificações nessa letra (verificar se realmente é uma letra).
+
+    // Adicionar letra a alguma coleção (sugestão de nome: guesses), para mostrar as tentativas do jogador
+    // na tela.
+
+    return revealLetter(letter, originalWord, hiddenWord);
+
+    // Condição de continuidade (enquanto houver letras não adivinhadas e ainda houver tentativas, continua
+    // recursivamente; quando acabarem as vidas, game over; quando todas as letras forem adivinhadas,
+    // parabéns!!!).
+}
 
 int main() {
 
