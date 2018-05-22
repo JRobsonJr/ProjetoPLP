@@ -394,7 +394,6 @@ int main() {
     }
     cout << endl;
 
-    words.push_back({"Teste", "musica", 2});
     writeWords();
 
     quit();
