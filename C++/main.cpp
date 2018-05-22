@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -73,6 +74,30 @@ void writeWords(){
     }
 }
 
+vector<string> getThemes() {
+    vector<string> themes;
+
+    for (int i = 0; i < words.size(); i++) {
+        if (std::find(themes.begin(), themes.end(), words[i].theme) == themes.end()) {
+            themes.push_back(words[i].theme);
+        }
+    }
+
+    return themes;
+}
+
+vector<Word> filterByTheme(string theme) {
+    vector<Word> filteredWords;
+
+    for (int i = 0; i < words.size(); i++) {
+        if (words[i].theme == theme) {
+            filteredWords.push_back(words[i]);
+        }
+    }
+
+    return filteredWords;
+}
+
 void pause() {
     system("sleep 5s");
 }
@@ -97,6 +122,10 @@ void showThemes() {
     cout << endl << endl;
 
     // LISTAR TEMAS
+    vector<string> themes = getThemes();
+    for (int i = 0; i < themes.size(); i++) {
+        cout << "                              " << i + 1 << "  -  " <<  themes[i] << endl;
+    }
 
     // INICIAR PARTIDA
 
