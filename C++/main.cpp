@@ -98,6 +98,18 @@ vector<Word> filterByTheme(string theme) {
     return filteredWords;
 }
 
+vector<Word> filterByLevel(int level) {
+    vector<Word> filteredWords;
+
+    for (int i = 0; i < words.size(); i++) {
+        if (words[i].level == level) {
+            filteredWords.push_back(words[i]);
+        }
+    }
+
+    return filteredWords;
+}
+
 void pause() {
     system("sleep 5s");
 }
