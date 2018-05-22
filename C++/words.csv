@@ -1,53 +1,52 @@
-Foca,Animal,1
-Pato,Animal,1
-Urso,Animal,1
-Ovelha,Animal,2
-Cavalo,Animal,2
-Iguana,Animal,2
-Rouxinol,Animal,2
-Salamandra,Animal,3
-Rinoceronte,Animal,3
-Ornitorrinco,Animal,3
-Sia,Artista,1
-Adele,Artista,1
-Lorde,Artista,1
-Anitta,Artista,2
-Calypso,Artista,2
-Paramore,Artista,2
-Lady Gaga,Artista,2
-Alex Turner,Artista,3
-Taylor Swift,Artista,3
-Pabllo Vittar,Artista,3
-Elmo,Objeto,1
-Cesta,Objeto,1
-Manta,Objeto,1
-Teclado,Objeto,2
-Pingente,Objeto,2
-Chaveiro,Objeto,2
-Lapiseira,Objeto,2
-Transferidor,Objeto,3
-Multiprocessador,Objeto,3
-Caixa registradora,Objeto,3
-Carne,Comida,1
-Pizza,Comida,1
-Pudim,Comida,1
-Cuscuz,Comida,2
-Tapioca,Comida,2
-Tempero,Comida,2
-Lasanha,Comida,2
-Batata Frita,Comida,3
-Molho de tomate,Comida,3
-Chocolate Quente,Comida,3
-Vim,Especial CC,1
-Java,Especial CC,1
-Grafo,Especial CC,1
-Melina,Especial CC,2
-Python,Especial CC,2
-Escopo,Especial CC,2
-Eclipse,Especial CC,2
-Compilador,Especial CC,3
-Polimorfismo,Especial CC,3
-Teste de unidade,Especial CC,3
-Teste,musica,2
-Teste,musica,2
-Teste,musica,2
+FOCA,ANIMAL,1
+PATO,ANIMAL,1
+URSO,ANIMAL,1
+OVELHA,ANIMAL,2
+CAVALO,ANIMAL,2
+IGUANA,ANIMAL,2
+ROUXINOL,ANIMAL,2
+SALAMANDRA,ANIMAL,3
+RINOCERONTE,ANIMAL,3
+ORNITORRINCO,ANIMAL,3
+SIA,ARTISTA,1
+ADELE,ARTISTA,1
+LORDE,ARTISTA,1
+ANITTA,ARTISTA,2
+CALYPSO,ARTISTA,2
+PARAMORE,ARTISTA,2
+LADY GAGA,ARTISTA,2
+ALEX TURNER,ARTISTA,3
+TAYLOR SWIFT,ARTISTA,3
+PABLLO VITTAR,ARTISTA,3
+ELMO,OBJETO,1
+CESTA,OBJETO,1
+MANTA,OBJETO,1
+TECLADO,OBJETO,2
+PINGENTE,OBJETO,2
+CHAVEIRO,OBJETO,2
+LAPISEIRA,OBJETO,2
+TRANSFERIDOR,OBJETO,3
+MULTIPROCESSADOR,OBJETO,3
+CAIXA REGISTRADORA,OBJETO,3
+CARNE,COMIDA,1
+PIZZA,COMIDA,1
+PUDIM,COMIDA,1
+CUSCUZ,COMIDA,2
+TAPIOCA,COMIDA,2
+TEMPERO,COMIDA,2
+LASANHA,COMIDA,2
+BATATA FRITA,COMIDA,3
+MOLHO DE TOMATE,COMIDA,3
+CHOCOLATE QUENTE,COMIDA,3
+VIM,ESPECIAL CC,1
+JAVA,ESPECIAL CC,1
+GRAFO,ESPECIAL CC,1
+MELINA,ESPECIAL CC,2
+PYTHON,ESPECIAL CC,2
+ESCOPO,ESPECIAL CC,2
+ECLIPSE,ESPECIAL CC,2
+COMPILADOR,ESPECIAL CC,3
+POLIMORFISMO,ESPECIAL CC,3
+
+
+
