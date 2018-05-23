@@ -74,6 +74,92 @@ void writeWords(){
     }
 }
 
+void showVictoryHangman() {
+    cout << "###############" << endl;
+    cout << "#### FORCA ####" << endl;
+    cout << "###############" << endl;
+    cout << "#      |      #" << endl;
+    cout << "#             #" << endl;
+    cout << "#             #" << endl;
+    cout << "#             #" << endl;
+    cout << "#             #" << endl;
+    cout << "###############     \\('◡')/" << endl;
+    cout << " /\\         /\\         |" << endl;
+    cout << "/  \\       /  \\       / \\ " << endl;
+}
+
+void showHangman(int lives) {
+
+    cout << "###############" << endl;
+    cout << "#### FORCA ####" << endl;
+    cout << "###############" << endl;
+    cout << "#      |      #" << endl;
+
+    switch (lives) {
+
+        case 7:
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 6:
+            cout << "#    ('-')    #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 5:
+            cout << "#    ('-')__  #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 4:
+            cout << "#  __('-')__  #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 3:
+            cout << "#  __('-')__  #" << endl;
+            cout << "#      |      #" << endl;
+            cout << "#             #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 2:
+            cout << "#  __('-')__  #" << endl;
+            cout << "#      |      #" << endl;
+            cout << "#     /       #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        case 1:
+            cout << "#  __('-')__  #" << endl;
+            cout << "#      |      #" << endl;
+            cout << "#     / \\     #" << endl;
+            cout << "#             #" << endl;
+            break;
+
+        default:
+            cout << "#      |      #" << endl;
+            cout << "#    (-.-)    #" << endl;
+            cout << "#     /|\\     #" << endl;
+            cout << "#     / \\     #" << endl;
+            break;
+
+    }
+
+    cout << "###############" << endl;
+    cout << " /\\         /\\" << endl;
+    cout << "/  \\       /  \\" << endl;
+}
+
 vector<string> getThemes() {
     vector<string> themes;
 
@@ -114,8 +200,6 @@ void pause() {
     system("sleep 5s");
 }
 
-
-
 int getOption() {
     int option;
 
@@ -126,6 +210,11 @@ int getOption() {
     return option;
 }
 
+Word getRandomWord(vector<Word> aWords) {
+    int randomIndex = rand() % aWords.size();
+    return aWords[randomIndex];
+}
+
 void showThemes() {
     system("clear");
 
@@ -133,15 +222,11 @@ void showThemes() {
     cout << "----------------------------     SELECIONAR TEMA     ---------------------------";
     cout << endl << endl;
 
-    // LISTAR TEMAS
     vector<string> themes = getThemes();
+
     for (int i = 0; i < themes.size(); i++) {
         cout << "                              " << i + 1 << "  -  " <<  themes[i] << endl;
     }
-
-    // INICIAR PARTIDA
-
-    pause();
 }
 
 void showLevels() {
@@ -151,23 +236,145 @@ void showLevels() {
     cout << "------------------------     SELECIONAR DIFICULDADE     ------------------------";
     cout << endl << endl;
 
-    // LISTAR DIFICULDADES
+    cout << "                              1  -  Fácil" << endl;
+    cout << "                              2  -  Médio" << endl;
+    cout << "                              3  -  Difícil" << endl;
+}
 
-    // INICIAR PARTIDA
+void showGuesses(vector<char> guesses) {
+    if (guesses.size() > 0) {
+        cout << "Letras já usadas: ";
 
-    pause();
+        for (int i = 0; i < guesses.size(); i++) {
+            cout << guesses[i] << " ";
+        }
+
+        cout << endl;
+    }
+}
+
+string toUpper(string word) {
+    for (int i = 0; i < word.length(); i++) {
+        word[i] = toupper(word[i]);
+    }
+
+    return word;
+}
+
+string getHiddenWord(string word) {
+    string hiddenWord;
+
+    for (int i = 0; i < word.length(); i++) {
+        char c = word[i];
+
+        if (isspace(c)) {
+            hiddenWord += " ";
+        } else {
+            hiddenWord += "_";
+        }
+    }
+
+    return hiddenWord;
+}
+
+string revealLetter(char letter, string originalWord, string hiddenWord) {
+    for (int i = 0; i < originalWord.length(); i++) {
+        char c = originalWord[i];
+
+        if (c == letter) {
+            hiddenWord[i] = letter;
+        }
+    }
+
+    return hiddenWord;
+}
+
+char guessLetter(string originalWord, string hiddenWord) {
+    char letter;
+    cout << "Digite uma letra: ";
+    cin >> letter;
+    letter = toupper(letter);
+
+    // Talvez seja interessante fazer algumas verificações nessa letra (verificar se realmente é uma letra).
+
+    return letter;
+}
+
+void runGame(string originalWord, string hiddenWord, vector<char> guesses, int lives) {
+    system("clear");
+
+    showHangman(lives);
+    cout << endl << "Palavra: " << hiddenWord << endl;
+    showGuesses(guesses);
+
+    char letter = guessLetter(originalWord, hiddenWord);
+    // Verificar se a letra não já foi usada. Se já foi, desconsiderar a entrada.
+    guesses.push_back(letter);
+
+    string newHiddenWord = revealLetter(letter, originalWord, hiddenWord);
+
+    // Essa comparação é para verificar se o jogador adivinhou alguma letra mesmo.
+    if (hiddenWord.compare(newHiddenWord) == 0) {
+        lives--;
+    }
+
+    if (newHiddenWord.compare(originalWord) == 0) {
+        system("clear");
+        cout << "Parabéns, você acaba de salvar uma vida!" << endl;
+        showVictoryHangman();
+        cout << "A palavra era: " << originalWord << endl;
+        pause();
+    } else if (lives > 0) {
+        runGame(originalWord, newHiddenWord, guesses, lives);
+    } else {
+        cout << "Game over!";
+        pause();
+    }
+}
+
+void startGame(Word word) {
+    vector<char> guesses;
+    int lives = 7;
+    string originalWord = word.text;
+    string hiddenWord = getHiddenWord(originalWord);
+    runGame(originalWord, hiddenWord, guesses, lives);
+}
+
+void themedFastMatch() {
+    showThemes();
+
+    int option = getOption();
+    vector<string> themes = getThemes();
+    string theme = themes[option - 1];
+    vector<Word> words = filterByTheme(theme);
+    Word randomWord = getRandomWord(words);
+    startGame(randomWord);
+}
+
+void leveledFastMatch() {
+    showLevels();
+
+    int option = getOption();
+    vector<Word> words = filterByLevel(option);
+    Word randomWord = getRandomWord(words);
+    startGame(randomWord);
+}
+
+void randomFastMatch() {
+    Word randomWord = getRandomWord(words);
+    startGame(randomWord);
 }
 
 void selectFastMatchType(int option) {
     switch (option) {
         case 1:
-            showThemes();
+            themedFastMatch();
             break;
         case 2:
-            showLevels();
+            leveledFastMatch();
             break;
         case 3:
-            // INICIAR PARTIDA
+            randomFastMatch();
             break;
         case 4:
             break;
@@ -177,7 +384,7 @@ void selectFastMatchType(int option) {
     }
 }
 
-void fastMatchType()  {
+void fastMatchMode()  {
     system("clear");
 
     cout << endl;
@@ -219,7 +426,7 @@ void getPlayerData() {
 void selectGameMode(int option) {
     switch (option) {
         case 1:
-            fastMatchType();
+            fastMatchMode();
             break;
         case 2:
             getPlayerData();
@@ -344,134 +551,9 @@ void showMenu() {
     selectMenuOption(getOption());
 }
 
-void showGame(int lifes) {
-
-    cout << "###############" << endl;
-    cout << "#### FORCA ####" << endl;
-    cout << "###############" << endl;
-    cout << "#      |      #" << endl;
-
-    switch (lifes) {
-
-        case 7:
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            break;
-
-        case 6:
-            cout << "#    ('-')    #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            break;
-
-        case 5:
-            cout << "#    ('-')__  #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            break;
-
-        case 4:
-            cout << "#  __('-')__  #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            break;
-
-        case 3:
-            cout << "#  __('-')__  #" << endl;
-            cout << "#      |      #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            break;
-
-        case 2:
-            cout << "#  __('-')__  #" << endl;
-            cout << "#      |      #" << endl;
-            cout << "#     /       #" << endl;
-            cout << "#             #" << endl;
-            break;
-
-        case 1:
-            cout << "#  __('-')__  #" << endl;
-            cout << "#      |      #" << endl;
-            cout << "#     / \\     #" << endl;
-            cout << "#             #" << endl;
-            break;
-
-        default:
-            cout << "#      |      #" << endl;
-            cout << "#    (-.-)    #" << endl;
-            cout << "#     /|\\     #" << endl;
-            cout << "#     / \\     #" << endl;
-            break;
-
-    }
-
-    cout << "###############" << endl;
-    cout << " /\\         /\\" << endl;
-    cout << "/  \\       /  \\" << endl;
-}
-
 // Esperando a veia artística
 void showOpening() {
     system("clear");
-}
-
-string toUpper(string word) {
-    for (int i = 0; i < word.length(); i++) {
-        word[i] = toupper(word[i]);
-    }
-
-    return word;
-}
-
-string getHiddenWord(string word) {
-    string hiddenWord;
-
-    for (int i = 0; i < word.length(); i++) {
-        char c = word[i];
-
-        if (isspace(c)) {
-            hiddenWord += " ";
-        } else {
-            hiddenWord += "_";
-        }
-    }
-
-    return hiddenWord;
-}
-
-string revealLetter(char letter, string originalWord, string hiddenWord) {
-    for (int i = 0; i < originalWord.length(); i++) {
-        char c = originalWord[i];
-
-        if (c == letter) {
-            hiddenWord[i] = letter;
-        }
-    }
-
-    return hiddenWord;
-}
-
-string guessLetter(string originalWord, string hiddenWord) {
-    char letter;
-    cin >> letter;
-    letter = toupper(letter);
-
-    // Talvez seja interessante fazer algumas verificações nessa letra (verificar se realmente é uma letra).
-
-    // Adicionar letra a alguma coleção (sugestão de nome: guesses), para mostrar as tentativas do jogador
-    // na tela.
-
-    return revealLetter(letter, originalWord, hiddenWord);
-
-    // Condição de continuidade (enquanto houver letras não adivinhadas e ainda houver tentativas, continua
-    // recursivamente; quando acabarem as vidas, game over; quando todas as letras forem adivinhadas,
-    // parabéns!!!).
 }
 
 int main() {
