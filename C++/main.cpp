@@ -211,6 +211,7 @@ int getOption() {
 }
 
 Word getRandomWord(vector<Word> aWords) {
+    srand(time(NULL));
     int randomIndex = rand() % aWords.size();
     return aWords[randomIndex];
 }
