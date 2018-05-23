@@ -74,18 +74,12 @@ void writeWords(){
     }
 }
 
-void showVictoryHangman() {
-    cout << "###############" << endl;
-    cout << "#### FORCA ####" << endl;
-    cout << "###############" << endl;
-    cout << "#      |      #" << endl;
-    cout << "#             #" << endl;
-    cout << "#             #" << endl;
-    cout << "#             #" << endl;
-    cout << "#             #" << endl;
-    cout << "###############     \\('◡')/" << endl;
-    cout << " /\\         /\\         |" << endl;
-    cout << "/  \\       /  \\       / \\ " << endl;
+void pause() {
+    system("sleep 5s");
+}
+
+void clearScreen() {
+    system("clear");
 }
 
 void showHangman(int lives) {
@@ -160,11 +154,25 @@ void showHangman(int lives) {
     cout << "/  \\       /  \\" << endl;
 }
 
+void showVictoryHangman() {
+    cout << "###############" << endl;
+    cout << "#### FORCA ####" << endl;
+    cout << "###############" << endl;
+    cout << "#      |      #" << endl;
+    cout << "#             #" << endl;
+    cout << "#             #" << endl;
+    cout << "#             #" << endl;
+    cout << "#             #" << endl;
+    cout << "###############     \\('◡')/" << endl;
+    cout << " /\\         /\\         |" << endl;
+    cout << "/  \\       /  \\       / \\ " << endl;
+}
+
 vector<string> getThemes() {
     vector<string> themes;
 
     for (int i = 0; i < words.size(); i++) {
-        if (std::find(themes.begin(), themes.end(), words[i].theme) == themes.end()) {
+        if (find(themes.begin(), themes.end(), words[i].theme) == themes.end()) {
             themes.push_back(words[i].theme);
         }
     }
@@ -196,8 +204,12 @@ vector<Word> filterByLevel(int level) {
     return filteredWords;
 }
 
-void pause() {
-    system("sleep 5s");
+string toUpper(string word) {
+    for (int i = 0; i < word.length(); i++) {
+        word[i] = toupper(word[i]);
+    }
+
+    return word;
 }
 
 int getOption() {
@@ -216,31 +228,6 @@ Word getRandomWord(vector<Word> aWords) {
     return aWords[randomIndex];
 }
 
-void showThemes() {
-    system("clear");
-
-    cout << endl;
-    cout << "----------------------------     SELECIONAR TEMA     ---------------------------";
-    cout << endl << endl;
-
-    vector<string> themes = getThemes();
-
-    for (int i = 0; i < themes.size(); i++) {
-        cout << "                              " << i + 1 << "  -  " <<  themes[i] << endl;
-    }
-}
-
-void showLevels() {
-    system("clear");
-
-    cout << endl;
-    cout << "------------------------     SELECIONAR DIFICULDADE     ------------------------";
-    cout << endl << endl;
-
-    cout << "                              1  -  Fácil" << endl;
-    cout << "                              2  -  Médio" << endl;
-    cout << "                              3  -  Difícil" << endl;
-}
 
 void showGuesses(vector<char> guesses) {
     if (guesses.size() > 0) {
@@ -252,14 +239,6 @@ void showGuesses(vector<char> guesses) {
 
         cout << endl;
     }
-}
-
-string toUpper(string word) {
-    for (int i = 0; i < word.length(); i++) {
-        word[i] = toupper(word[i]);
-    }
-
-    return word;
 }
 
 string getHiddenWord(string word) {
@@ -302,7 +281,7 @@ char guessLetter(string originalWord, string hiddenWord) {
 }
 
 void runGame(string originalWord, string hiddenWord, vector<char> guesses, int lives) {
-    system("clear");
+    clearScreen();
 
     showHangman(lives);
     cout << endl << "Palavra: " << hiddenWord << endl;
@@ -320,7 +299,7 @@ void runGame(string originalWord, string hiddenWord, vector<char> guesses, int l
     }
 
     if (newHiddenWord.compare(originalWord) == 0) {
-        system("clear");
+        clearScreen();
         cout << "Parabéns, você acaba de salvar uma vida!" << endl;
         showVictoryHangman();
         cout << "A palavra era: " << originalWord << endl;
@@ -339,6 +318,32 @@ void startGame(Word word) {
     string originalWord = word.text;
     string hiddenWord = getHiddenWord(originalWord);
     runGame(originalWord, hiddenWord, guesses, lives);
+}
+
+void showThemes() {
+    clearScreen();
+
+    cout << endl;
+    cout << "----------------------------     SELECIONAR TEMA     ---------------------------";
+    cout << endl << endl;
+
+    vector<string> themes = getThemes();
+
+    for (int i = 0; i < themes.size(); i++) {
+        cout << "                              " << i + 1 << "  -  " <<  themes[i] << endl;
+    }
+}
+
+void showLevels() {
+    clearScreen();
+
+    cout << endl;
+    cout << "------------------------     SELECIONAR DIFICULDADE     ------------------------";
+    cout << endl << endl;
+
+    cout << "                              1  -  Fácil" << endl;
+    cout << "                              2  -  Médio" << endl;
+    cout << "                              3  -  Difícil" << endl;
 }
 
 void themedFastMatch() {
@@ -386,7 +391,7 @@ void selectFastMatchType(int option) {
 }
 
 void fastMatchMode()  {
-    system("clear");
+    clearScreen();
 
     cout << endl;
     cout << "-----------------------------     JOGO RÁPIDO     ------------------------------";
@@ -403,7 +408,7 @@ void fastMatchMode()  {
 }
 
 void getPlayerData() {
-    system("clear");
+    clearScreen();
 
     string nickname;
 
@@ -441,7 +446,7 @@ void selectGameMode(int option) {
 }
 
 void showGameModes()  {
-    system("clear");
+    clearScreen();
 
     cout << endl;
     cout << "-----------------------------     MODO DE JOGO     -----------------------------";
@@ -455,7 +460,7 @@ void showGameModes()  {
 }
 
 void showRules() {
-    system("clear");
+    clearScreen();
 
     cout << endl;
     cout << "--------------------------------     REGRAS     --------------------------------";
@@ -481,7 +486,7 @@ void showRules() {
 
 // Precisa implementação do Ranking
 void showRanking() {
-    system("clear");
+    clearScreen();
 
     cout << endl;
     cout << "--------------------------------     RANKING     -------------------------------";
@@ -491,7 +496,7 @@ void showRanking() {
 }
 
 void quit() {
-    system("clear");
+    clearScreen();
 
     cout << endl << endl;
 
@@ -512,10 +517,9 @@ void quit() {
     cout << endl << endl;
 
 
-    system("sleep 3s");
+    pause();
     exit(1);
 }
-
 
 void selectMenuOption(int option) {
     switch (option) {
@@ -538,7 +542,7 @@ void selectMenuOption(int option) {
 }
 
 void showMenu() {
-    system("clear");
+    clearScreen();
 
     cout << endl;
     cout << "---------------------------------     MENU     ---------------------------------";
@@ -554,7 +558,7 @@ void showMenu() {
 
 // Esperando a veia artística
 void showOpening() {
-    system("clear");
+    clearScreen();
 }
 
 int main() {
