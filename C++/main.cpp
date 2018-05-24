@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <cstdlib>
+#include <utility>
 
 using namespace std;
 
@@ -22,9 +23,11 @@ struct Player {
 
 const char DELIMITER = ',';
 const string FILENAME_WORDS = "words.csv";
+const string FILENAME_PLAYERS = "players.csv";
 const char HELP_KEY = '#';
 
 vector<Word> words;
+vector<Player> players;
 int tipsUsed;
 // Utilizar Pair<int, Player> para o ranking. Vai poder aproveitar o comparador natural para ordenar.
 
@@ -125,6 +128,38 @@ void writeWords() {
         }
 
         newWordsFile.close();
+    }
+}
+
+void setUpPlayers() {
+    Player player;
+    string currentLine;
+    ifstream playersFile(FILENAME_PLAYERS.c_str());
+
+    if (isFileValid(playersFile)) {
+        while (getline(playersFile, currentLine)) {
+            stringstream ss(currentLine);
+
+            getline(ss, player.name, DELIMITER);
+            ss >> player.score;
+
+            players.push_back(player);
+        }
+
+        playersFile.close();
+    }
+}
+
+void writePlayers() {
+    ofstream newPlayersFile(FILENAME_PLAYERS.c_str());
+
+    if (isFileValid(newPlayersFile)) {
+        for (int i = 0; i < players.size(); i++) {
+            newPlayersFile << players[i].name << DELIMITER
+                           << players[i].score << endl;
+        }
+
+        newPlayersFile.close();
     }
 }
 
@@ -619,7 +654,7 @@ void showVictoryMessage() {
 
 void showGameOverMessage() {
     clearScreen();
-    cout << endl << "            É realmente uma pena, fim de jogo..." << endl << endl;
+    cout << endl << "                       É realmente uma pena, fim de jogo..." << endl << endl;
     showHangman(0);
 }
 
@@ -718,6 +753,17 @@ void getWordData() {
     cout << "                                   Aguarde..." << endl << endl;
 
     system("sleep 1s");
+}
+
+void registerNewPlayer(string nickname) {
+    Player newPlayer;
+
+    newPlayer.name = nickname;
+    newPlayer.score = 0;
+
+    players.push_back(newPlayer);
+
+    writePlayers();
 }
 
 void registerNewWord(string text, string theme) {

@@ -1,8 +1,20 @@
 # depslib dependency file v1.0
+<<<<<<< HEAD
 1526765677 source:/home/fanny/Developing/ProjetoPLP/C++/main.cpp
 	<iostream>
+=======
+1527170786 source:/home/misael/ProjetoPLP/C++/main.cpp
+	<iostream>
+	<stdlib.h>
+>>>>>>> 14028d37dd56a61f7fa3e7578fb75a17e2a9713d
 	<fstream>
 	<sstream>
 	<vector>
 	<string>
+<<<<<<< HEAD
+=======
+	<algorithm>
+	<cstdlib>
+	<utility>
+>>>>>>> 14028d37dd56a61f7fa3e7578fb75a17e2a9713d
 
