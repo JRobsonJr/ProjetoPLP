@@ -229,7 +229,6 @@ Word getRandomWord(vector<Word> words) {
     return words[randomIndex];
 }
 
-
 void showGuesses(vector<char> guesses) {
     if (guesses.size() > 0) {
         cout << "Letras já usadas: ";
@@ -457,6 +456,24 @@ void selectGameMode(int option) {
     }
 }
 
+void registerNewWord(string text, string theme) {
+    Word newWord;
+
+    newWord.text = toUpper(text);
+    newWord.theme = toUpper(theme);
+
+    if (text.length() < 6) {
+        newWord.level = 1;
+    } else if (text.length() < 10) {
+        newWord.level = 2;
+    } else {
+        newWord.level = 3;
+    }
+
+    words.push_back(newWord);
+    writeWords();
+}
+
 void showGameModes()  {
     clearScreen();
 
@@ -511,6 +528,32 @@ void showRanking() {
     pause();
 }
 
+void getWordData() {
+    clearScreen();
+
+    string text, theme;
+
+    cout << endl;
+    cout << "---------------------------     CADASTRAR PALAVRA     --------------------------";
+
+    cout << endl << endl;
+    cout << "          Informe a nova palavra: ";
+    cin.ignore();
+    getline(cin, text);
+
+    cout << endl;
+    cout << "          Informe o tema da palavra: ";
+    getline(cin, theme);
+
+    registerNewWord(text, theme);
+
+    cout << endl << endl;
+    cout << "                         Palavra cadastrada com sucesso!" << endl << endl;
+    cout << "                                   Aguarde..." << endl << endl;
+
+    system("sleep 1s");
+}
+
 void quit() {
     clearScreen();
 
@@ -549,6 +592,9 @@ void selectMenuOption(int option) {
             showRanking();
             break;
         case 4:
+            getWordData();
+            break;
+        case 5:
             quit();
             break;
         default:
@@ -567,7 +613,8 @@ void showMenu() {
     cout << "                                1  -  Jogar" << endl;
     cout << "                                2  -  Regras" << endl;
     cout << "                                3  -  Ranking" << endl;
-    cout << "                                4  -  Sair" << endl;
+    cout << "                                4  -  Nova Palavra" << endl;
+    cout << "                                5  -  Sair" << endl;
 
     selectMenuOption(getOption());
 }
