@@ -81,8 +81,9 @@ void showGameOverMessage();
 void showLimitTipExcedeed(int level);
 void revealWord(string word);
 
-
 void showRules();
+
+string getSpaces(int length);
 void showRanking();
 
 void getWordData();
@@ -762,14 +763,45 @@ void showRules() {
 
 }
 
-// Precisa implementação do Ranking
+string getSpaces(int length) {
+    string spaces = "";
+
+    for (int j = 0; j < length; j++) {
+        spaces += " ";
+    }
+
+    return spaces;
+}
+
 void showRanking() {
     clearScreen();
 
     cout << endl;
     cout << "--------------------------------     RANKING     -------------------------------";
     cout << endl << endl << endl;
+    cout << "                            Jogador          Pontuação" << endl << endl;
 
+
+    for (int i = 0; i < 9; i++) {
+        string spaces = getSpaces(22 - players[i].name.size());
+
+        if (i < players.size()) {
+            cout << "                        " << i + 1 << "º " << players[i].name << spaces << players[i].score << endl;
+        } else {
+            cout << "                        " << i + 1 << "º ------------       --------" << endl;
+        }
+
+    }
+
+    if (9 < players.size()) {
+        string spaces = getSpaces(22 - players[9].name.size());
+
+        cout << "                        10º " << players[9].name << spaces << players[9].score << endl;
+    } else {
+        cout << "                        10º ------------       --------" << endl;
+    }
+
+    cout << endl;
     cout << "                         [ Pressione ENTER para voltar ]" << endl << endl;
 
     pause();
