@@ -423,21 +423,30 @@ void setScoreChampionShipMode(string nickname, int score) {
             break;
         }
     }
+
+    writePlayers();
 }
 
 void championshipMode() {
     string nickname = getPlayerData();
     vector<Word> words = getRandomOrderWords();
 
-    int index = 1;
-    int score = startGame(words[0]);
+    int index = 0;
+    int highscore = 0;
 
-    while (index < words.size() && score > 0) {
-        score += startGame(words[index]);
+    while (index < words.size()) {
+        int score = startGame(words[index]);
+
+        if (score > 0) {
+            highscore += score;
+        } else {
+            break;
+        }
+
         index++;
     }
 
-    setScoreChampionShipMode(nickname, score);
+    setScoreChampionShipMode(nickname, highscore);
 
     cout << endl << nickname << ", você jogou por " << index + 1 << " partida(s)." << endl;
 }
@@ -500,7 +509,7 @@ int getScore(Word word, int lives){
     int lengthWord = word.text.size();
     int score = (lengthWord * level * lives) + (50 * level);
 
-    return score;
+    return (lives == 0)? 0:score;
 }
 
 string getHiddenWord(string word) {
@@ -792,15 +801,29 @@ void getWordData() {
     system("sleep 1s");
 }
 
+bool validNickName(string nickname) {
+    for (Player& player : players) {
+        if (player.name == nickname) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void registerNewPlayer(string nickname) {
-    Player newPlayer;
+   if (validNickName(nickname)) {
+        Player newPlayer;
 
-    newPlayer.name = nickname;
-    newPlayer.score = 0;
+        newPlayer.name = nickname;
+        newPlayer.score = 0;
 
-    players.push_back(newPlayer);
+        players.push_back(newPlayer);
 
-    writePlayers();
+        writePlayers();
+    } else {
+        getPlayerData();
+    }
 }
 
 void registerNewWord(string text, string theme) {
