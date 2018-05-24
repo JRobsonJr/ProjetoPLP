@@ -67,12 +67,13 @@ string getPlayerData();
 
 int startGame(Word word);
 string getHiddenWord(string word);
+int getScore(Word word, int lives);
 
 int runGame(Word originalWord, string hiddenWord, vector<char> guesses, int lives);
 void showHangman(int lives);
 void showVictoryHangman();
 void showGuesses(vector<char> guesses);
-char getTip(Word word, vector<char> guesses, string hiddenWord);
+char getTip(Word word, vector<char> guesses);
 char guessLetter(Word originalWord, string hiddenWord, vector<char> guesses);
 string revealLetter(char letter, string originalWord, string hiddenWord);
 void showVictoryMessage();
@@ -327,9 +328,9 @@ void themedFastMatch() {
     Word randomWord = getRandomWord(words);
 
     startGame(randomWord);
-    //(size palavra * word.level * lifes) += 50 * word.level
 
 }
+
 
 void showThemes() {
     clearScreen();
@@ -466,8 +467,17 @@ int startGame(Word word) {
     tipsUsed = 0;
 
     string hiddenWord = getHiddenWord(word.text);
+    lives = runGame(word, hiddenWord, guesses, lives);
 
-    return runGame(word, hiddenWord, guesses, lives);
+    return getScore(word, lives);
+}
+
+int getScore(Word word, int lives){
+    int level = word.level;
+    int lengthWord = word.text.size();
+    int score = (lengthWord * level * lives) + (50 * level);
+
+    return score;
 }
 
 string getHiddenWord(string word) {
@@ -615,7 +625,7 @@ void showGuesses(vector<char> guesses) {
 }
 
 
-char getTip(Word word, vector<char> guesses, string hiddenWord){
+char getTip(Word word, vector<char> guesses){
 
     int random_index = rand() % word.text.size();
 
@@ -624,7 +634,7 @@ char getTip(Word word, vector<char> guesses, string hiddenWord){
 
     if(tipsUsed < word.level){
         if(find(guesses.begin(), guesses.end(), letter) != guesses.end()){
-            letter = getTip(word, guesses, hiddenWord);
+            letter = getTip(word, guesses);
         }
     }else{
         showLimitTipExcedeed(word.level);
@@ -648,7 +658,7 @@ char guessLetter(Word originalWord, string hiddenWord, vector<char> guesses) {
             return guessLetter(originalWord, hiddenWord, guesses);
         }
     }else{
-        letter = getTip(originalWord, guesses, hiddenWord);
+        letter = getTip(originalWord, guesses);
         tipsUsed += 1;
     }
 
@@ -680,7 +690,7 @@ void showGameOverMessage() {
 }
 
 void showLimitTipExcedeed(int level) {
-    cout << endl << "O limite de dicas para esse palavra e: " << level << "." << endl << endl << endl;
+    cout << endl << "O limite de dicas para essa palavra e: " << level << "." << endl << endl << endl;
     cout << "                         [ Pressione ENTER para voltar ]" ;
     pause();
 }
