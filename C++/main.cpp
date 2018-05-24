@@ -25,6 +25,56 @@ const string FILENAME_WORDS = "words.csv";
 vector<Word> words;
 // Utilizar Pair<int, Player> para o ranking. Vai poder aproveitar o comparador natural para ordenar.
 
+bool isFileValid(ios &file);
+void setUpWords();
+void writeWords();
+
+void pause();
+void clearScreen();
+
+void showOpening();
+void showMenu();
+int getOption();
+void selectMenuOption(int option);
+
+void showGameModes();
+void selectGameMode(int option);
+
+void fastMatchMode();
+void selectFastMatchType(int option);
+
+void themedFastMatch();
+void showThemes();
+vector<string> getThemes();
+vector<Word> filterByTheme(string theme);
+
+void leveledFastMatch();
+void showLevels();
+vector<Word> filterByLevel(int level);
+
+void randomFastMatch();
+Word getRandomWord(vector<Word> words);
+
+void getPlayerData();
+
+void startGame(Word word);
+string getHiddenWord(string word);
+
+void runGame(string originalWord, string hiddenWord, vector<char> guesses, int lives);
+void showHangman(int lives);
+void showVictoryHangman();
+void showGuesses(vector<char> guesses);
+char guessLetter(string originalWord, string hiddenWord, vector<char> guesses);
+string revealLetter(char letter, string originalWord, string hiddenWord);
+
+void showRules();
+void showRanking();
+
+void getWordData();
+void registerNewWord(string text, string theme);
+string toUpper(string word);
+
+void quit();
 
 bool isFileValid (ios &file) {
     if (!file.good()) {
@@ -36,14 +86,12 @@ bool isFileValid (ios &file) {
 }
 
 void setUpWords() {
-
     Word data;
     string currentLine;
     ifstream wordsFile(FILENAME_WORDS.c_str());
 
     if (isFileValid(wordsFile)) {
         while (getline(wordsFile, currentLine)) {
-
             stringstream ss(currentLine);
 
             getline(ss, data.text, DELIMITER);
@@ -51,23 +99,20 @@ void setUpWords() {
             ss >> data.level;
 
             words.push_back(data);
-
         }
 
         wordsFile.close();
     }
 }
 
-void writeWords(){
-
+void writeWords() {
     ofstream newWordsFile(FILENAME_WORDS.c_str());
+
     if (isFileValid(newWordsFile)) {
         for (int i = 0; i < words.size(); i++) {
-
             newWordsFile << words[i].text << DELIMITER
                          << words[i].theme << DELIMITER
                          << words[i].level << endl;
-
         }
 
         newWordsFile.close();
@@ -81,6 +126,325 @@ void pause() {
 
 void clearScreen() {
     system("clear");
+}
+
+void showOpening() {
+    clearScreen();
+
+    cout << "      ____________..___________                                                 " << endl;
+    cout << "     | .___________))__________|                                                " << endl;
+    cout << "     | | / /       ||                                                           " << endl;
+    cout << "     | |/ /        ||                          _                                " << endl;
+    cout << "     | | /         ||.-''.                    | |                               " << endl;
+    cout << "     | |/          |/  _  \\                   | | ___   __ _  ___              " << endl;
+    cout << "     | |           ||  `/,|               _   | |/ _ \\ / _` |/ _ \\            " << endl;
+    cout << "     | |           (\\\\`_.'               | |__| | (_) | (_| | (_) |           " << endl;
+    cout << "     | |          .-`--'.                 \\____/ \\___/ \\___ |\\___/          " << endl;
+    cout << "     | |         /Y . . Y\\                              __/ |                  " << endl;
+    cout << "     | |        // |   | \\\\                            |___/                  " << endl;
+    cout << "     | |       //  | . |  \\\\                                                  " << endl;
+    cout << "     | |      ')   | _ |   (`         _           ______                        " << endl;
+    cout << "     | |           || ||             | |         |  ____|                       " << endl;
+    cout << "     | |           || ||           __| | __ _    | |__ ___  _ __ ___ __ _       " << endl;
+    cout << "     | |           || ||          / _` |/ _` |   |  __/ _ \\| '__/ __/ _` |     " << endl;
+    cout << "     | |           || ||         | (_| | (_| |   | | | (_) | | | (_| (_| |      " << endl;
+    cout << "     | |          / | | \\         \\____|\\____|   |_|  \\___/|_|  \\___\\____|" << endl;
+    cout << "     | |          `-' `-'                                                       " << endl;
+    cout << "     |_|                                                                        " << endl;
+    cout << "                                   Aguarde...                                   " << endl;
+
+   system("sleep 2s");
+}
+
+void showMenu() {
+    clearScreen();
+
+    cout << endl;
+    cout << "---------------------------------     MENU     ---------------------------------";
+    cout << endl << endl;
+
+    cout << "                                1  -  Jogar" << endl;
+    cout << "                                2  -  Regras" << endl;
+    cout << "                                3  -  Ranking" << endl;
+    cout << "                                4  -  Nova Palavra" << endl;
+    cout << "                                5  -  Sair" << endl;
+
+    selectMenuOption(getOption());
+}
+
+int getOption() {
+    int option;
+
+    cout << endl << endl;
+    cout << "                    Informe o número da opção desejada: ";
+    cin >> option;
+
+    return option;
+}
+
+void selectMenuOption(int option) {
+    switch (option) {
+        case 1:
+            showGameModes();
+            break;
+        case 2:
+            showRules();
+            break;
+        case 3:
+            showRanking();
+            break;
+        case 4:
+            getWordData();
+            break;
+        case 5:
+            quit();
+            break;
+        default:
+            // INVÁLIDA
+            break;
+    }
+}
+
+void showGameModes()  {
+    clearScreen();
+
+    cout << endl;
+    cout << "-----------------------------     MODO DE JOGO     -----------------------------";
+    cout << endl << endl;
+
+    cout << "                                1  -  Jogo Rápido" << endl;
+    cout << "                                2  -  Modo Campeonato" << endl;
+    cout << "                                3  -  Voltar" << endl;
+
+    selectGameMode(getOption());
+}
+
+void selectGameMode(int option) {
+    switch (option) {
+        case 1:
+            fastMatchMode();
+            break;
+        case 2:
+            getPlayerData();
+            break;
+        case 3:
+            break;
+        default:
+            // INVÁLIDA
+            break;
+    }
+}
+
+void fastMatchMode()  {
+    clearScreen();
+
+    cout << endl;
+    cout << "-----------------------------     JOGO RÁPIDO     ------------------------------";
+    cout << endl << endl;
+
+    cout << "                      Como sua palavra deve ser escolhida?" << endl << endl;
+
+    cout << "                              1  -  Por Tema" << endl;
+    cout << "                              2  -  Por Dificuldade" << endl;
+    cout << "                              3  -  Aleatoriamente" << endl;
+    cout << "                              4  -  Voltar" << endl;
+
+    selectFastMatchType(getOption());
+}
+
+void selectFastMatchType(int option) {
+    switch (option) {
+        case 1:
+            themedFastMatch();
+            break;
+        case 2:
+            leveledFastMatch();
+            break;
+        case 3:
+            randomFastMatch();
+            break;
+        case 4:
+            break;
+        default:
+            // INVÁLIDA
+            break;
+    }
+}
+
+void themedFastMatch() {
+    showThemes();
+
+    vector<string> themes = getThemes();
+    int option = getOption();
+    string theme = themes[option - 1];
+    vector<Word> words = filterByTheme(theme);
+    Word randomWord = getRandomWord(words);
+
+    startGame(randomWord);
+}
+
+void showThemes() {
+    clearScreen();
+
+    cout << endl;
+    cout << "----------------------------     SELECIONAR TEMA     ---------------------------";
+    cout << endl << endl;
+
+    vector<string> themes = getThemes();
+
+    for (int i = 0; i < themes.size(); i++) {
+        cout << "                              " << i + 1 << "  -  " <<  themes[i] << endl;
+    }
+}
+
+vector<string> getThemes() {
+    vector<string> themes;
+
+    for (int i = 0; i < words.size(); i++) {
+        if (find(themes.begin(), themes.end(), words[i].theme) == themes.end()) {
+            themes.push_back(words[i].theme);
+        }
+    }
+
+    return themes;
+}
+
+vector<Word> filterByTheme(string theme) {
+    vector<Word> filteredWords;
+
+    for (int i = 0; i < words.size(); i++) {
+        if (words[i].theme == theme) {
+            filteredWords.push_back(words[i]);
+        }
+    }
+
+    return filteredWords;
+}
+
+void leveledFastMatch() {
+    showLevels();
+
+    int option = getOption();
+    vector<Word> words = filterByLevel(option);
+    Word randomWord = getRandomWord(words);
+
+    startGame(randomWord);
+}
+
+void showLevels() {
+    clearScreen();
+
+    cout << endl;
+    cout << "------------------------     SELECIONAR DIFICULDADE     ------------------------";
+    cout << endl << endl;
+
+    cout << "                              1  -  Fácil" << endl;
+    cout << "                              2  -  Médio" << endl;
+    cout << "                              3  -  Difícil" << endl;
+}
+
+vector<Word> filterByLevel(int level) {
+    vector<Word> filteredWords;
+
+    for (int i = 0; i < words.size(); i++) {
+        if (words[i].level == level) {
+            filteredWords.push_back(words[i]);
+        }
+    }
+
+    return filteredWords;
+}
+
+void randomFastMatch() {
+    Word randomWord = getRandomWord(words);
+    startGame(randomWord);
+}
+
+Word getRandomWord(vector<Word> words) {
+    srand(time(NULL));
+    int randomIndex = rand() % words.size();
+    return words[randomIndex];
+}
+
+void getPlayerData() {
+    clearScreen();
+
+    string nickname;
+
+    cout << endl;
+    cout << "---------------------------     MODO CAMPEONATO     ----------------------------";
+    cout << endl << endl;
+
+    // Como capturar um ESC?
+    cout << "                         (Pressione ESC para voltar...)";
+    cout << endl << endl << endl;
+
+    cout << "                              Insira o seu nick:" << endl << endl << endl;
+    cout << "                                   ";
+    cin >> nickname;
+
+    // CADASTRO DO JOGADOR
+
+    // INICIAR PARTIDA
+}
+
+void startGame(Word word) {
+    vector<char> guesses;
+    int lives = 7;
+    string originalWord = word.text;
+    string hiddenWord = getHiddenWord(originalWord);
+    runGame(originalWord, hiddenWord, guesses, lives);
+}
+
+string getHiddenWord(string word) {
+    string hiddenWord;
+
+    for (int i = 0; i < word.length(); i++) {
+        char c = word[i];
+
+        if (isspace(c)) {
+            hiddenWord += " ";
+        } else {
+            hiddenWord += "_";
+        }
+    }
+
+    return hiddenWord;
+}
+
+void runGame(string originalWord, string hiddenWord, vector<char> guesses, int lives) {
+    clearScreen();
+
+    showHangman(lives);
+    cout << endl << "Palavra: " << hiddenWord << endl;
+    showGuesses(guesses);
+
+    char letter = guessLetter(originalWord, hiddenWord, guesses);
+    guesses.push_back(letter);
+
+
+    string newHiddenWord = revealLetter(letter, originalWord, hiddenWord);
+
+    // Essa comparação é para verificar se o jogador adivinhou alguma letra mesmo.
+    if (hiddenWord.compare(newHiddenWord) == 0) {
+        lives--;
+    }
+
+    if (newHiddenWord.compare(originalWord) == 0) {
+        clearScreen();
+        cout << "                    Parabéns, você acaba de salvar uma vida!" << endl << endl;
+        showVictoryHangman();
+        cout << endl << "A palavra era: " << originalWord << endl << endl << endl;
+        cout << "                         [ Pressione ENTER para voltar ]" ;
+        pause();
+    } else if (lives > 0) {
+        runGame(originalWord, newHiddenWord, guesses, lives);
+    } else {
+        clearScreen();
+        showHangman(0);
+        cout << endl << "Fim de jogo... A palavra era " << originalWord << "." << endl;
+        pause();
+    }
 }
 
 void showHangman(int lives) {
@@ -169,66 +533,6 @@ void showVictoryHangman() {
     cout << "                                 /  \\       /  \\       / \\ " << endl << endl;
 }
 
-vector<string> getThemes() {
-    vector<string> themes;
-
-    for (int i = 0; i < words.size(); i++) {
-        if (find(themes.begin(), themes.end(), words[i].theme) == themes.end()) {
-            themes.push_back(words[i].theme);
-        }
-    }
-
-    return themes;
-}
-
-vector<Word> filterByTheme(string theme) {
-    vector<Word> filteredWords;
-
-    for (int i = 0; i < words.size(); i++) {
-        if (words[i].theme == theme) {
-            filteredWords.push_back(words[i]);
-        }
-    }
-
-    return filteredWords;
-}
-
-vector<Word> filterByLevel(int level) {
-    vector<Word> filteredWords;
-
-    for (int i = 0; i < words.size(); i++) {
-        if (words[i].level == level) {
-            filteredWords.push_back(words[i]);
-        }
-    }
-
-    return filteredWords;
-}
-
-string toUpper(string word) {
-    for (int i = 0; i < word.length(); i++) {
-        word[i] = toupper(word[i]);
-    }
-
-    return word;
-}
-
-int getOption() {
-    int option;
-
-    cout << endl << endl;
-    cout << "                    Informe o número da opção desejada: ";
-    cin >> option;
-
-    return option;
-}
-
-Word getRandomWord(vector<Word> words) {
-    srand(time(NULL));
-    int randomIndex = rand() % words.size();
-    return words[randomIndex];
-}
-
 void showGuesses(vector<char> guesses) {
     if (guesses.size() > 0) {
         cout << "Letras já usadas: ";
@@ -239,34 +543,6 @@ void showGuesses(vector<char> guesses) {
 
         cout << endl;
     }
-}
-
-string getHiddenWord(string word) {
-    string hiddenWord;
-
-    for (int i = 0; i < word.length(); i++) {
-        char c = word[i];
-
-        if (isspace(c)) {
-            hiddenWord += " ";
-        } else {
-            hiddenWord += "_";
-        }
-    }
-
-    return hiddenWord;
-}
-
-string revealLetter(char letter, string originalWord, string hiddenWord) {
-    for (int i = 0; i < originalWord.length(); i++) {
-        char c = originalWord[i];
-
-        if (c == letter) {
-            hiddenWord[i] = letter;
-        }
-    }
-
-    return hiddenWord;
 }
 
 char guessLetter(string originalWord, string hiddenWord, vector<char> guesses) {
@@ -286,206 +562,16 @@ char guessLetter(string originalWord, string hiddenWord, vector<char> guesses) {
     return letter;
 }
 
-void runGame(string originalWord, string hiddenWord, vector<char> guesses, int lives) {
-    clearScreen();
+string revealLetter(char letter, string originalWord, string hiddenWord) {
+    for (int i = 0; i < originalWord.length(); i++) {
+        char c = originalWord[i];
 
-    showHangman(lives);
-    cout << endl << "Palavra: " << hiddenWord << endl;
-    showGuesses(guesses);
-
-    char letter = guessLetter(originalWord, hiddenWord, guesses);
-    guesses.push_back(letter);
-
-
-    string newHiddenWord = revealLetter(letter, originalWord, hiddenWord);
-
-    // Essa comparação é para verificar se o jogador adivinhou alguma letra mesmo.
-    if (hiddenWord.compare(newHiddenWord) == 0) {
-        lives--;
+        if (c == letter) {
+            hiddenWord[i] = letter;
+        }
     }
 
-    if (newHiddenWord.compare(originalWord) == 0) {
-        clearScreen();
-        cout << "                    Parabéns, você acaba de salvar uma vida!" << endl << endl;
-        showVictoryHangman();
-        cout << endl << "A palavra era: " << originalWord << endl << endl << endl;
-        cout << "                         [ Pressione ENTER para voltar ]" ;
-        pause();
-    } else if (lives > 0) {
-        runGame(originalWord, newHiddenWord, guesses, lives);
-    } else {
-        clearScreen();
-        showHangman(0);
-        cout << endl << "Fim de jogo... A palavra era " << originalWord << "." << endl;
-        pause();
-    }
-}
-
-void startGame(Word word) {
-    vector<char> guesses;
-    int lives = 7;
-    string originalWord = word.text;
-    string hiddenWord = getHiddenWord(originalWord);
-    runGame(originalWord, hiddenWord, guesses, lives);
-}
-
-void showThemes() {
-    clearScreen();
-
-    cout << endl;
-    cout << "----------------------------     SELECIONAR TEMA     ---------------------------";
-    cout << endl << endl;
-
-    vector<string> themes = getThemes();
-
-    for (int i = 0; i < themes.size(); i++) {
-        cout << "                              " << i + 1 << "  -  " <<  themes[i] << endl;
-    }
-}
-
-void showLevels() {
-    clearScreen();
-
-    cout << endl;
-    cout << "------------------------     SELECIONAR DIFICULDADE     ------------------------";
-    cout << endl << endl;
-
-    cout << "                              1  -  Fácil" << endl;
-    cout << "                              2  -  Médio" << endl;
-    cout << "                              3  -  Difícil" << endl;
-}
-
-void themedFastMatch() {
-    showThemes();
-
-    vector<string> themes = getThemes();
-    int option = getOption();
-    string theme = themes[option - 1];
-    vector<Word> words = filterByTheme(theme);
-    Word randomWord = getRandomWord(words);
-
-    startGame(randomWord);
-}
-
-void leveledFastMatch() {
-    showLevels();
-
-    int option = getOption();
-    vector<Word> words = filterByLevel(option);
-    Word randomWord = getRandomWord(words);
-
-    startGame(randomWord);
-}
-
-void randomFastMatch() {
-    Word randomWord = getRandomWord(words);
-    startGame(randomWord);
-}
-
-void selectFastMatchType(int option) {
-    switch (option) {
-        case 1:
-            themedFastMatch();
-            break;
-        case 2:
-            leveledFastMatch();
-            break;
-        case 3:
-            randomFastMatch();
-            break;
-        case 4:
-            break;
-        default:
-            // INVÁLIDA
-            break;
-    }
-}
-
-void fastMatchMode()  {
-    clearScreen();
-
-    cout << endl;
-    cout << "-----------------------------     JOGO RÁPIDO     ------------------------------";
-    cout << endl << endl;
-
-    cout << "                      Como sua palavra deve ser escolhida?" << endl << endl;
-
-    cout << "                              1  -  Por Tema" << endl;
-    cout << "                              2  -  Por Dificuldade" << endl;
-    cout << "                              3  -  Aleatoriamente" << endl;
-    cout << "                              4  -  Voltar" << endl;
-
-    selectFastMatchType(getOption());
-}
-
-void getPlayerData() {
-    clearScreen();
-
-    string nickname;
-
-    cout << endl;
-    cout << "---------------------------     MODO CAMPEONATO     ----------------------------";
-    cout << endl << endl;
-
-    // Como capturar um ESC?
-    cout << "                         (Pressione ESC para voltar...)";
-    cout << endl << endl << endl;
-
-    cout << "                              Insira o seu nick:" << endl << endl << endl;
-    cout << "                                   ";
-    cin >> nickname;
-
-    // CADASTRO DO JOGADOR
-
-    // INICIAR PARTIDA
-}
-
-void selectGameMode(int option) {
-    switch (option) {
-        case 1:
-            fastMatchMode();
-            break;
-        case 2:
-            getPlayerData();
-            break;
-        case 3:
-            break;
-        default:
-            // INVÁLIDA
-            break;
-    }
-}
-
-void registerNewWord(string text, string theme) {
-    Word newWord;
-
-    newWord.text = toUpper(text);
-    newWord.theme = toUpper(theme);
-
-    if (text.length() < 6) {
-        newWord.level = 1;
-    } else if (text.length() < 10) {
-        newWord.level = 2;
-    } else {
-        newWord.level = 3;
-    }
-
-    words.push_back(newWord);
-    writeWords();
-}
-
-void showGameModes()  {
-    clearScreen();
-
-    cout << endl;
-    cout << "-----------------------------     MODO DE JOGO     -----------------------------";
-    cout << endl << endl;
-
-    cout << "                                1  -  Jogo Rápido" << endl;
-    cout << "                                2  -  Modo Campeonato" << endl;
-    cout << "                                3  -  Voltar" << endl;
-
-    selectGameMode(getOption());
+    return hiddenWord;
 }
 
 void showRules() {
@@ -554,6 +640,32 @@ void getWordData() {
     system("sleep 1s");
 }
 
+void registerNewWord(string text, string theme) {
+    Word newWord;
+
+    newWord.text = toUpper(text);
+    newWord.theme = toUpper(theme);
+
+    if (text.length() < 6) {
+        newWord.level = 1;
+    } else if (text.length() < 10) {
+        newWord.level = 2;
+    } else {
+        newWord.level = 3;
+    }
+
+    words.push_back(newWord);
+    writeWords();
+}
+
+string toUpper(string word) {
+    for (int i = 0; i < word.length(); i++) {
+        word[i] = toupper(word[i]);
+    }
+
+    return word;
+}
+
 void quit() {
     clearScreen();
 
@@ -578,73 +690,6 @@ void quit() {
 
     system("sleep 3s");
     exit(1);
-}
-
-void selectMenuOption(int option) {
-    switch (option) {
-        case 1:
-            showGameModes();
-            break;
-        case 2:
-            showRules();
-            break;
-        case 3:
-            showRanking();
-            break;
-        case 4:
-            getWordData();
-            break;
-        case 5:
-            quit();
-            break;
-        default:
-            // INVÁLIDA
-            break;
-    }
-}
-
-void showMenu() {
-    clearScreen();
-
-    cout << endl;
-    cout << "---------------------------------     MENU     ---------------------------------";
-    cout << endl << endl;
-
-    cout << "                                1  -  Jogar" << endl;
-    cout << "                                2  -  Regras" << endl;
-    cout << "                                3  -  Ranking" << endl;
-    cout << "                                4  -  Nova Palavra" << endl;
-    cout << "                                5  -  Sair" << endl;
-
-    selectMenuOption(getOption());
-}
-
-void showOpening() {
-    clearScreen();
-
-    cout << "      ____________..___________                                                 " << endl;
-    cout << "     | .___________))__________|                                                " << endl;
-    cout << "     | | / /       ||                                                           " << endl;
-    cout << "     | |/ /        ||                          _                                " << endl;
-    cout << "     | | /         ||.-''.                    | |                               " << endl;
-    cout << "     | |/          |/  _  \\                   | | ___   __ _  ___              " << endl;
-    cout << "     | |           ||  `/,|               _   | |/ _ \\ / _` |/ _ \\            " << endl;
-    cout << "     | |           (\\\\`_.'               | |__| | (_) | (_| | (_) |           " << endl;
-    cout << "     | |          .-`--'.                 \\____/ \\___/ \\___ |\\___/          " << endl;
-    cout << "     | |         /Y . . Y\\                              __/ |                  " << endl;
-    cout << "     | |        // |   | \\\\                            |___/                  " << endl;
-    cout << "     | |       //  | . |  \\\\                                                  " << endl;
-    cout << "     | |      ')   | _ |   (`         _           ______                        " << endl;
-    cout << "     | |           || ||             | |         |  ____|                       " << endl;
-    cout << "     | |           || ||           __| | __ _    | |__ ___  _ __ ___ __ _       " << endl;
-    cout << "     | |           || ||          / _` |/ _` |   |  __/ _ \\| '__/ __/ _` |     " << endl;
-    cout << "     | |           || ||         | (_| | (_| |   | | | (_) | | | (_| (_| |      " << endl;
-    cout << "     | |          / | | \\         \\____|\\____|   |_|  \\___/|_|  \\___\\____|" << endl;
-    cout << "     | |          `-' `-'                                                       " << endl;
-    cout << "     |_|                                                                        " << endl;
-    cout << "                                   Aguarde...                                   " << endl;
-
-   system("sleep 2s");
 }
 
 int main() {
