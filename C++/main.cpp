@@ -416,14 +416,28 @@ Word getRandomWord(vector<Word> words) {
     return words[randomIndex];
 }
 
+void setScoreChampionShipMode(string nickname, int score) {
+    for (Player& player : players) {
+        if (player.name == nickname) {
+            player.score = (player.score < score)? score:player.score;
+            break;
+        }
+    }
+}
+
 void championshipMode() {
     string nickname = getPlayerData();
     vector<Word> words = getRandomOrderWords();
-    int index = 0;
 
-    while (index < words.size() && startGame(words[index]) > 0) {
+    int index = 1;
+    int score = startGame(words[0]);
+
+    while (index < words.size() && score > 0) {
+        score += startGame(words[index]);
         index++;
     }
+
+    setScoreChampionShipMode(nickname, score);
 
     cout << endl << nickname << ", você jogou por " << index + 1 << " partida(s)." << endl;
 }
