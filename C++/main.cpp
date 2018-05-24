@@ -779,13 +779,13 @@ void showRanking() {
     cout << endl;
     cout << "--------------------------------     RANKING     -------------------------------";
     cout << endl << endl << endl;
-    cout << "                            Jogador          Pontuação" << endl << endl;
+    cout << "                             Jogador          Pontuação" << endl << endl;
 
 
     for (int i = 0; i < 9; i++) {
-        string spaces = getSpaces(22 - players[i].name.size());
-
         if (i < players.size()) {
+            string spaces = getSpaces(22 - players[i].name.size());
+
             cout << "                        " << i + 1 << "º " << players[i].name << spaces << players[i].score << endl;
         } else {
             cout << "                        " << i + 1 << "º ------------       --------" << endl;
@@ -798,7 +798,7 @@ void showRanking() {
 
         cout << "                        10º " << players[9].name << spaces << players[9].score << endl;
     } else {
-        cout << "                        10º ------------       --------" << endl;
+        cout << "                       10º ------------       --------" << endl;
     }
 
     cout << endl;
