@@ -222,10 +222,10 @@ int getOption() {
     return option;
 }
 
-Word getRandomWord(vector<Word> aWords) {
+Word getRandomWord(vector<Word> words) {
     srand(time(NULL));
-    int randomIndex = rand() % aWords.size();
-    return aWords[randomIndex];
+    int randomIndex = rand() % words.size();
+    return words[randomIndex];
 }
 
 
@@ -274,7 +274,7 @@ char guessLetter(string originalWord, string hiddenWord, vector<char> guesses) {
     cout << "Digite uma letra: ";
     cin >> letter;
     letter = toupper(letter);
-    
+
     if (find(guesses.begin(), guesses.end(), letter) != guesses.end()) {
         cout << "Essa letra já foi dita anteriormente. Tente outra!" << endl;
         return guessLetter(originalWord, hiddenWord, guesses);
@@ -293,9 +293,9 @@ void runGame(string originalWord, string hiddenWord, vector<char> guesses, int l
     cout << endl << "Palavra: " << hiddenWord << endl;
     showGuesses(guesses);
 
-    char letter = guessLetter(originalWord, hiddenWord, guesses);   
+    char letter = guessLetter(originalWord, hiddenWord, guesses);
     guesses.push_back(letter);
-    
+
 
     string newHiddenWord = revealLetter(letter, originalWord, hiddenWord);
 
@@ -566,14 +566,39 @@ void showMenu() {
     selectMenuOption(getOption());
 }
 
-// Esperando a veia artística
 void showOpening() {
     clearScreen();
+
+    cout << "      ____________..___________                                                 " << endl;
+    cout << "     | .___________))__________|                                                " << endl;
+    cout << "     | | / /       ||                                                           " << endl;
+    cout << "     | |/ /        ||                          _                                " << endl;
+    cout << "     | | /         ||.-''.                    | |                               " << endl;
+    cout << "     | |/          |/  _  \\                   | | ___   __ _  ___              " << endl;
+    cout << "     | |           ||  `/,|               _   | |/ _ \\ / _` |/ _ \\            " << endl;
+    cout << "     | |           (\\\\`_.'               | |__| | (_) | (_| | (_) |           " << endl;
+    cout << "     | |          .-`--'.                 \\____/ \\___/ \\___ |\\___/          " << endl;
+    cout << "     | |         /Y . . Y\\                              __/ |                  " << endl;
+    cout << "     | |        // |   | \\\\                            |___/                  " << endl;
+    cout << "     | |       //  | . |  \\\\                                                  " << endl;
+    cout << "     | |      ')   | _ |   (`         _           ______                        " << endl;
+    cout << "     | |           || ||             | |         |  ____|                       " << endl;
+    cout << "     | |           || ||           __| | __ _    | |__ ___  _ __ ___ __ _       " << endl;
+    cout << "     | |           || ||          / _` |/ _` |   |  __/ _ \\| '__/ __/ _` |     " << endl;
+    cout << "     | |           || ||         | (_| | (_| |   | | | (_) | | | (_| (_| |      " << endl;
+    cout << "     | |          / | | \\         \\____|\\____|   |_|  \\___/|_|  \\___\\____|" << endl;
+    cout << "     | |          `-' `-'                                                       " << endl;
+    cout << "     |_|                                                                        " << endl;
+    cout << "                                   Aguarde...                                   " << endl;
+
+   system("sleep 3s");
 }
 
 int main() {
 
     setUpWords();
+
+    showOpening();
 
     while(true) {
         showMenu();
