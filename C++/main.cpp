@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <cstdlib>
 
 using namespace std;
 
@@ -55,17 +56,22 @@ vector<Word> filterByLevel(int level);
 void randomFastMatch();
 Word getRandomWord(vector<Word> words);
 
-void getPlayerData();
+void championshipMode();
+vector<Word> getRandomOrderWords();
+string getPlayerData();
 
-void startGame(Word word);
+int startGame(Word word);
 string getHiddenWord(string word);
 
-void runGame(string originalWord, string hiddenWord, vector<char> guesses, int lives);
+int runGame(string originalWord, string hiddenWord, vector<char> guesses, int lives);
 void showHangman(int lives);
 void showVictoryHangman();
 void showGuesses(vector<char> guesses);
 char guessLetter(string originalWord, string hiddenWord, vector<char> guesses);
 string revealLetter(char letter, string originalWord, string hiddenWord);
+void showVictoryMessage();
+void showGameOverMessage();
+void revealWord(string word);
 
 void showRules();
 void showRanking();
@@ -225,7 +231,7 @@ void selectGameMode(int option) {
             fastMatchMode();
             break;
         case 2:
-            getPlayerData();
+            championshipMode();
             break;
         case 3:
             break;
@@ -366,7 +372,32 @@ Word getRandomWord(vector<Word> words) {
     return words[randomIndex];
 }
 
-void getPlayerData() {
+void championshipMode() {
+    string nickname = getPlayerData();
+    vector<Word> words = getRandomOrderWords();
+    int index = 0;
+
+    while (index < words.size() && startGame(words[index]) > 0) {
+        index++;
+    }
+
+    cout << endl << nickname << ", você jogou por " << index + 1 << " partida(s)." << endl;
+}
+
+vector<Word> getRandomOrderWords() {
+    vector<Word> randomOrderWords;
+    srand(unsigned(time(0)));
+
+    for (int level = 1; level <= 3; level++) {
+        vector<Word> currentLevelWords = filterByLevel(level);
+        random_shuffle(currentLevelWords.begin(), currentLevelWords.end());
+        randomOrderWords.insert(randomOrderWords.end(), currentLevelWords.begin(), currentLevelWords.end());
+    }
+
+    return randomOrderWords;
+}
+
+string getPlayerData() {
     clearScreen();
 
     string nickname;
@@ -383,17 +414,16 @@ void getPlayerData() {
     cout << "                                   ";
     cin >> nickname;
 
-    // CADASTRO DO JOGADOR
-
-    // INICIAR PARTIDA
+    return nickname;
 }
 
-void startGame(Word word) {
+int startGame(Word word) {
     vector<char> guesses;
     int lives = 7;
     string originalWord = word.text;
     string hiddenWord = getHiddenWord(originalWord);
-    runGame(originalWord, hiddenWord, guesses, lives);
+
+    return runGame(originalWord, hiddenWord, guesses, lives);
 }
 
 string getHiddenWord(string word) {
@@ -412,7 +442,7 @@ string getHiddenWord(string word) {
     return hiddenWord;
 }
 
-void runGame(string originalWord, string hiddenWord, vector<char> guesses, int lives) {
+int runGame(string originalWord, string hiddenWord, vector<char> guesses, int lives) {
     clearScreen();
 
     showHangman(lives);
@@ -422,28 +452,22 @@ void runGame(string originalWord, string hiddenWord, vector<char> guesses, int l
     char letter = guessLetter(originalWord, hiddenWord, guesses);
     guesses.push_back(letter);
 
-
     string newHiddenWord = revealLetter(letter, originalWord, hiddenWord);
 
-    // Essa comparação é para verificar se o jogador adivinhou alguma letra mesmo.
     if (hiddenWord.compare(newHiddenWord) == 0) {
         lives--;
     }
 
     if (newHiddenWord.compare(originalWord) == 0) {
-        clearScreen();
-        cout << "                    Parabéns, você acaba de salvar uma vida!" << endl << endl;
-        showVictoryHangman();
-        cout << endl << "A palavra era: " << originalWord << endl << endl << endl;
-        cout << "                         [ Pressione ENTER para voltar ]" ;
-        pause();
+        showVictoryMessage();
+        revealWord(originalWord);
+        return lives;
     } else if (lives > 0) {
-        runGame(originalWord, newHiddenWord, guesses, lives);
+        return runGame(originalWord, newHiddenWord, guesses, lives);
     } else {
-        clearScreen();
-        showHangman(0);
-        cout << endl << "Fim de jogo... A palavra era " << originalWord << "." << endl;
-        pause();
+        showGameOverMessage();
+        revealWord(originalWord);
+        return lives;
     }
 }
 
@@ -574,6 +598,24 @@ string revealLetter(char letter, string originalWord, string hiddenWord) {
     return hiddenWord;
 }
 
+void showVictoryMessage() {
+    clearScreen();
+    cout << "                    Parabéns, você acaba de salvar uma vida!" << endl << endl;
+    showVictoryHangman();
+}
+
+void showGameOverMessage() {
+    clearScreen();
+    cout << endl << "            É realmente uma pena, fim de jogo..." << endl << endl;
+    showHangman(0);
+}
+
+void revealWord(string word) {
+    cout << endl << "A palavra era: " << word << "." << endl << endl << endl;
+    cout << "                         [ Pressione ENTER para voltar ]" ;
+    pause();
+}
+
 void showRules() {
     clearScreen();
 
@@ -693,22 +735,21 @@ void quit() {
 }
 
 int main() {
-
     setUpWords();
 
     showOpening();
 
-    while(true) {
+    while (true) {
         showMenu();
     }
 
     for (int i = 0; i < words.size(); i++) {
         cout << words[i].text << " " << words[i].theme << " " << words[i].level << endl;
     }
+
     cout << endl;
 
     writeWords();
 
     quit();
-
 }
