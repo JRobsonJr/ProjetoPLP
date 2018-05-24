@@ -86,6 +86,7 @@ void showRules();
 void showRanking();
 
 void getWordData();
+void registerNewPlayer(string nickname);
 void registerNewWord(string text, string theme);
 string toUpper(string word);
 
@@ -456,6 +457,14 @@ string getPlayerData() {
     cout << "                              Insira o seu nick:" << endl << endl << endl;
     cout << "                                   ";
     cin >> nickname;
+
+    registerNewPlayer(nickname);
+
+    cout << endl << endl;
+    cout << "                         Jogador cadastrado com sucesso!" << endl << endl;
+    cout << "                                   Aguarde..." << endl << endl;
+
+    system("sleep 1s");
 
     return nickname;
 }
