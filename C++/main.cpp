@@ -64,6 +64,8 @@ Word getRandomWord(vector<Word> words);
 void championshipMode();
 vector<Word> getRandomOrderWords();
 string getPlayerData();
+bool validNickName(string nickname);
+void registerNewPlayer(string nickname);
 
 int startGame(Word word);
 string getHiddenWord(string word);
@@ -87,7 +89,6 @@ string getSpaces(int length);
 void showRanking();
 
 void getWordData();
-void registerNewPlayer(string nickname);
 void registerNewWord(string text, string theme);
 string toUpper(string word);
 
@@ -424,8 +425,6 @@ void setScoreChampionShipMode(string nickname, int score) {
             break;
         }
     }
-
-    writePlayers();
 }
 
 void championshipMode() {
@@ -448,6 +447,8 @@ void championshipMode() {
     }
 
     setScoreChampionShipMode(nickname, highscore);
+
+    writePlayers();
 
     cout << endl << nickname << ", você jogou por " << index + 1 << " partida(s)." << endl;
 }
@@ -491,6 +492,32 @@ string getPlayerData() {
     system("sleep 1s");
 
     return nickname;
+}
+
+bool validNickName(string nickname) {
+    for (Player& player : players) {
+        if (player.name == nickname) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void registerNewPlayer(string nickname) {
+   if (!validNickName(nickname)) {
+        Player newPlayer;
+
+        newPlayer.name = nickname;
+        newPlayer.score = 0;
+
+        players.push_back(newPlayer);
+
+        writePlayers();
+    } else {
+        //INVALIDO
+        showMenu();
+    }
 }
 
 int startGame(Word word) {
@@ -833,31 +860,6 @@ void getWordData() {
     system("sleep 1s");
 }
 
-bool validNickName(string nickname) {
-    for (Player& player : players) {
-        if (player.name == nickname) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void registerNewPlayer(string nickname) {
-   if (validNickName(nickname)) {
-        Player newPlayer;
-
-        newPlayer.name = nickname;
-        newPlayer.score = 0;
-
-        players.push_back(newPlayer);
-
-        writePlayers();
-    } else {
-        getPlayerData();
-    }
-}
-
 void registerNewWord(string text, string theme) {
     Word newWord;
 
@@ -912,6 +914,7 @@ void quit() {
 
 int main() {
     setUpWords();
+    setUpPlayers();
 
     showOpening();
 
