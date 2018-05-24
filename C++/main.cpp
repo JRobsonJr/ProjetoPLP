@@ -269,13 +269,19 @@ string revealLetter(char letter, string originalWord, string hiddenWord) {
     return hiddenWord;
 }
 
-char guessLetter(string originalWord, string hiddenWord) {
+char guessLetter(string originalWord, string hiddenWord, vector<char> guesses) {
     char letter;
     cout << "Digite uma letra: ";
     cin >> letter;
     letter = toupper(letter);
-
-    // Talvez seja interessante fazer algumas verificações nessa letra (verificar se realmente é uma letra).
+    
+    if (find(guesses.begin(), guesses.end(), letter) != guesses.end()) {
+        cout << "Essa letra já foi dita anteriormente. Tente outra!" << endl;
+        return guessLetter(originalWord, hiddenWord, guesses);
+    } else if (!isalpha(letter)) {
+        cout << "Uma letra, meu anjo." << endl;
+        return guessLetter(originalWord, hiddenWord, guesses);
+    }
 
     return letter;
 }
@@ -287,9 +293,9 @@ void runGame(string originalWord, string hiddenWord, vector<char> guesses, int l
     cout << endl << "Palavra: " << hiddenWord << endl;
     showGuesses(guesses);
 
-    char letter = guessLetter(originalWord, hiddenWord);
-    // Verificar se a letra não já foi usada. Se já foi, desconsiderar a entrada.
+    char letter = guessLetter(originalWord, hiddenWord, guesses);   
     guesses.push_back(letter);
+    
 
     string newHiddenWord = revealLetter(letter, originalWord, hiddenWord);
 
@@ -302,12 +308,14 @@ void runGame(string originalWord, string hiddenWord, vector<char> guesses, int l
         clearScreen();
         cout << "Parabéns, você acaba de salvar uma vida!" << endl;
         showVictoryHangman();
-        cout << "A palavra era: " << originalWord << endl;
+        cout << endl << "A palavra era: " << originalWord << endl;
         pause();
     } else if (lives > 0) {
         runGame(originalWord, newHiddenWord, guesses, lives);
     } else {
-        cout << "Game over!";
+        clearScreen();
+        showHangman(0);
+        cout << "Fim de jogo... A palavra era " << originalWord << "." << endl;
         pause();
     }
 }
@@ -349,11 +357,12 @@ void showLevels() {
 void themedFastMatch() {
     showThemes();
 
-    int option = getOption();
     vector<string> themes = getThemes();
+    int option = getOption();
     string theme = themes[option - 1];
     vector<Word> words = filterByTheme(theme);
     Word randomWord = getRandomWord(words);
+
     startGame(randomWord);
 }
 
@@ -363,6 +372,7 @@ void leveledFastMatch() {
     int option = getOption();
     vector<Word> words = filterByLevel(option);
     Word randomWord = getRandomWord(words);
+
     startGame(randomWord);
 }
 
