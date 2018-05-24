@@ -75,7 +75,8 @@ void writeWords(){
 }
 
 void pause() {
-    system("sleep 5s");
+    cin.ignore();
+    getchar();
 }
 
 void clearScreen() {
@@ -84,88 +85,88 @@ void clearScreen() {
 
 void showHangman(int lives) {
 
-    cout << "###############" << endl;
-    cout << "#### FORCA ####" << endl;
-    cout << "###############" << endl;
-    cout << "#      |      #" << endl;
+    cout << "                                 ###############" << endl;
+    cout << "                                 #### FORCA ####" << endl;
+    cout << "                                 ###############" << endl;
+    cout << "                                 #      |      #" << endl;
 
     switch (lives) {
 
         case 7:
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
+            cout << "                                 #             #" << endl;
+            cout << "                                 #             #" << endl;
+            cout << "                                 #             #" << endl;
+            cout << "                                 #             #" << endl;
             break;
 
         case 6:
-            cout << "#    ('-')    #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
+            cout << "                                 #    ('-')    #" << endl;
+            cout << "                                 #             #" << endl;
+            cout << "                                 #             #" << endl;
+            cout << "                                 #             #" << endl;
             break;
 
         case 5:
-            cout << "#    ('-')__  #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
+            cout << "                                 #    ('-')__  #" << endl;
+            cout << "                                 #             #" << endl;
+            cout << "                                 #             #" << endl;
+            cout << "                                 #             #" << endl;
             break;
 
         case 4:
-            cout << "#  __('-')__  #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
+            cout << "                                 #  __('-')__  #" << endl;
+            cout << "                                 #             #" << endl;
+            cout << "                                 #             #" << endl;
+            cout << "                                 #             #" << endl;
             break;
 
         case 3:
-            cout << "#  __('-')__  #" << endl;
-            cout << "#      |      #" << endl;
-            cout << "#             #" << endl;
-            cout << "#             #" << endl;
+            cout << "                                 #  __('-')__  #" << endl;
+            cout << "                                 #      |      #" << endl;
+            cout << "                                 #             #" << endl;
+            cout << "                                 #             #" << endl;
             break;
 
         case 2:
-            cout << "#  __('-')__  #" << endl;
-            cout << "#      |      #" << endl;
-            cout << "#     /       #" << endl;
-            cout << "#             #" << endl;
+            cout << "                                 #  __('-')__  #" << endl;
+            cout << "                                 #      |      #" << endl;
+            cout << "                                 #     /       #" << endl;
+            cout << "                                 #             #" << endl;
             break;
 
         case 1:
-            cout << "#  __('-')__  #" << endl;
-            cout << "#      |      #" << endl;
-            cout << "#     / \\     #" << endl;
-            cout << "#             #" << endl;
+            cout << "                                 #  __('-')__  #" << endl;
+            cout << "                                 #      |      #" << endl;
+            cout << "                                 #     / \\     #" << endl;
+            cout << "                                 #             #" << endl;
             break;
 
         default:
-            cout << "#      |      #" << endl;
-            cout << "#    (-.-)    #" << endl;
-            cout << "#     /|\\     #" << endl;
-            cout << "#     / \\     #" << endl;
+            cout << "                                 #      |      #" << endl;
+            cout << "                                 #    (-.-)    #" << endl;
+            cout << "                                 #     /|\\     #" << endl;
+            cout << "                                 #     / \\     #" << endl;
             break;
 
     }
 
-    cout << "###############" << endl;
-    cout << " /\\         /\\" << endl;
-    cout << "/  \\       /  \\" << endl;
+    cout << "                                 ###############" << endl;
+    cout << "                                  /\\         /\\" << endl;
+    cout << "                                 /  \\       /  \\" << endl;
 }
 
 void showVictoryHangman() {
-    cout << "###############" << endl;
-    cout << "#### FORCA ####" << endl;
-    cout << "###############" << endl;
-    cout << "#      |      #" << endl;
-    cout << "#             #" << endl;
-    cout << "#             #" << endl;
-    cout << "#             #" << endl;
-    cout << "#             #" << endl;
-    cout << "###############     \\('◡')/" << endl;
-    cout << " /\\         /\\         |" << endl;
-    cout << "/  \\       /  \\       / \\ " << endl;
+    cout << "                                 ###############" << endl;
+    cout << "                                 #### FORCA ####" << endl;
+    cout << "                                 ###############" << endl;
+    cout << "                                 #      |      #" << endl;
+    cout << "                                 #             #" << endl;
+    cout << "                                 #             #" << endl;
+    cout << "                                 #             #" << endl;
+    cout << "                                 #             #" << endl;
+    cout << "                                 ###############     \\('◡')/" << endl;
+    cout << "                                  /\\         /\\         |" << endl;
+    cout << "                                 /  \\       /  \\       / \\ " << endl << endl;
 }
 
 vector<string> getThemes() {
@@ -306,16 +307,17 @@ void runGame(string originalWord, string hiddenWord, vector<char> guesses, int l
 
     if (newHiddenWord.compare(originalWord) == 0) {
         clearScreen();
-        cout << "Parabéns, você acaba de salvar uma vida!" << endl;
+        cout << "                    Parabéns, você acaba de salvar uma vida!" << endl << endl;
         showVictoryHangman();
-        cout << endl << "A palavra era: " << originalWord << endl;
+        cout << endl << "A palavra era: " << originalWord << endl << endl << endl;
+        cout << "                         [ Pressione ENTER para voltar ]" ;
         pause();
     } else if (lives > 0) {
         runGame(originalWord, newHiddenWord, guesses, lives);
     } else {
         clearScreen();
         showHangman(0);
-        cout << "Fim de jogo... A palavra era " << originalWord << "." << endl;
+        cout << endl << "Fim de jogo... A palavra era " << originalWord << "." << endl;
         pause();
     }
 }
@@ -488,7 +490,9 @@ void showRules() {
          << " enfrentará diversas palavras em sequência e acumulará pontos a cada palavra rev"
          << "elada. Nesse modo, o jogo segue até que o jogador perca uma partida ou adivinhe "
          << "todas as palavras possíveis. Em qualquer um dos casos, seu desempenho será regis"
-         << "trado no ranking." << endl << endl;
+         << "trado no ranking." << endl << endl << endl;
+
+         cout << "                         [ Pressione ENTER para voltar ]" << endl << endl;
 
     pause();
 
@@ -500,7 +504,9 @@ void showRanking() {
 
     cout << endl;
     cout << "--------------------------------     RANKING     -------------------------------";
-    cout << endl << endl;
+    cout << endl << endl << endl;
+
+    cout << "                         [ Pressione ENTER para voltar ]" << endl << endl;
 
     pause();
 }
@@ -527,7 +533,7 @@ void quit() {
     cout << endl << endl;
 
 
-    pause();
+    system("sleep 3s");
     exit(1);
 }
 
@@ -591,7 +597,7 @@ void showOpening() {
     cout << "     |_|                                                                        " << endl;
     cout << "                                   Aguarde...                                   " << endl;
 
-   system("sleep 3s");
+   system("sleep 2s");
 }
 
 int main() {
