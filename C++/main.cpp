@@ -28,8 +28,8 @@ const char HELP_KEY = '#';
 
 vector<Word> words;
 vector<Player> players;
+
 int tipsUsed;
-// Utilizar Pair<int, Player> para o ranking. Vai poder aproveitar o comparador natural para ordenar.
 
 bool isFileValid(ios &file);
 void setUpWords();
@@ -64,7 +64,7 @@ Word getRandomWord(vector<Word> words);
 void championshipMode();
 vector<Word> getRandomOrderWords();
 string getPlayerData();
-bool validNickName(string nickname);
+bool registeredNickname(string nickname);
 void registerNewPlayer(string nickname);
 
 int startGame(Word word);
@@ -80,7 +80,7 @@ char guessLetter(Word originalWord, string hiddenWord, vector<char> guesses);
 string revealLetter(char letter, string originalWord, string hiddenWord);
 void showVictoryMessage();
 void showGameOverMessage();
-void showLimitTipExcedeed(int level);
+void showTipLimitExceeded(int level);
 void revealWord(string word);
 
 void showRules();
@@ -321,6 +321,7 @@ void selectFastMatchType(int option) {
     }
 }
 
+
 void themedFastMatch() {
     showThemes();
 
@@ -333,7 +334,6 @@ void themedFastMatch() {
     startGame(randomWord);
 
 }
-
 
 void showThemes() {
     clearScreen();
@@ -476,7 +476,7 @@ string getPlayerData() {
     cout << endl << endl;
 
     // Como capturar um ESC?
-    cout << "                         (Pressione ESC para voltar...)";
+    cout << "                         (Insira # para voltar...)";
     cout << endl << endl << endl;
 
     cout << "                              Insira o seu nick:" << endl << endl << endl;
@@ -494,7 +494,7 @@ string getPlayerData() {
     return nickname;
 }
 
-bool validNickName(string nickname) {
+bool registeredNickname(string nickname) {
     for (Player& player : players) {
         if (player.name == nickname) {
             return true;
@@ -505,7 +505,7 @@ bool validNickName(string nickname) {
 }
 
 void registerNewPlayer(string nickname) {
-   if (!validNickName(nickname)) {
+   if (!registeredNickname(nickname)) {
         Player newPlayer;
 
         newPlayer.name = nickname;
@@ -537,7 +537,7 @@ int getScore(Word word, int lives){
     int lengthWord = word.text.size();
     int score = (lengthWord * level * lives) + (50 * level);
 
-    return (lives == 0)? 0:score;
+    return (lives == 0) ? 0 : score;
 }
 
 string getHiddenWord(string word) {
@@ -573,6 +573,7 @@ int runGame(Word originalWord, string hiddenWord, vector<char> guesses, int live
             lives--;
         }
     }
+
     if (newHiddenWord.compare(originalWord.text) == 0) {
         showVictoryMessage();
         revealWord(originalWord.text);
@@ -684,7 +685,6 @@ void showGuesses(vector<char> guesses) {
     }
 }
 
-
 char getTip(Word word, vector<char> guesses){
 
     int random_index = rand() % word.text.size();
@@ -692,14 +692,15 @@ char getTip(Word word, vector<char> guesses){
     string originalWord = word.text;
     char letter =  originalWord[random_index];
 
-    if(tipsUsed < word.level){
-        if(find(guesses.begin(), guesses.end(), letter) != guesses.end()){
+    if (tipsUsed < word.level) {
+        if (find(guesses.begin(), guesses.end(), letter) != guesses.end()) {
             letter = getTip(word, guesses);
         }
-    }else{
-        showLimitTipExcedeed(word.level);
+    } else {
+        showTipLimitExceeded(word.level);
         letter = '\0';
     }
+
     return letter;
 }
 
@@ -709,15 +710,15 @@ char guessLetter(Word originalWord, string hiddenWord, vector<char> guesses) {
     cin >> letter;
 
     letter = toupper(letter);
-    if(letter != HELP_KEY){
+    if (letter != HELP_KEY) {
         if (find(guesses.begin(), guesses.end(), letter) != guesses.end()) {
-            cout << "Essa letra já foi dita anteriormente. Tente outra!" << endl;
+            cout << "Essa letra já foi sugerida. Tente outra!" << endl;
             return guessLetter(originalWord, hiddenWord, guesses);
         } else if (!isalpha(letter)) {
-            cout << "Uma letra, meu anjo." << endl;
+            cout << "Uma letra, meu anjo..." << endl;
             return guessLetter(originalWord, hiddenWord, guesses);
         }
-    }else{
+    } else {
         letter = getTip(originalWord, guesses);
         tipsUsed += 1;
     }
@@ -749,19 +750,17 @@ void showGameOverMessage() {
     showHangman(0);
 }
 
-void showLimitTipExcedeed(int level) {
-    cout << endl << "O limite de dicas para essa palavra e: " << level << "." << endl << endl << endl;
-    cout << "                         [ Pressione ENTER para voltar ]" ;
+void showTipLimitExceeded(int level) {
+    cout << endl << endl << "                    O limite de dicas para essa palavra é: " << level << "." << endl << endl;
+    cout << "                     [ Pressione ENTER para voltar ao jogo ]" ;
     pause();
 }
-
 
 void revealWord(string word) {
     cout << endl << "A palavra era: " << word << "." << endl << endl << endl;
     cout << "                         [ Pressione ENTER para voltar ]" ;
     pause();
 }
-
 
 void showRules() {
     clearScreen();
@@ -921,14 +920,6 @@ int main() {
     while (true) {
         showMenu();
     }
-
-    for (int i = 0; i < words.size(); i++) {
-        cout << words[i].text << " " << words[i].theme << " " << words[i].level << endl;
-    }
-
-    cout << endl;
-
-    writeWords();
 
     quit();
 }
