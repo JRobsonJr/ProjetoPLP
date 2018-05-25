@@ -421,24 +421,24 @@ void championshipMode() {
     vector<Word> words = getRandomOrderWords();
 
     int index = 0;
-    int highscore = 0;
+    int totalScore = 0;
 
     while (index < words.size()) {
         int score = startGame(words[index]);
 
         if (score > 0) {
-            highscore += score;
+            totalScore += score;
             index++;
         } else {
             break;
         }
     }
 
-    registerNewPlayer(nickname, highscore);
+    registerNewPlayer(nickname, totalScore);
 
     clearScreen();
     cout << endl << nickname << ", você jogou por " << index + 1 << " partida(s)";
-    cout << endl << "Além disso, você fez " << highscore << " pontos no total." << endl << endl;
+    cout << endl << "Além disso, você fez " << totalScore << " pontos no total." << endl << endl;
     cout << "                     [ Pressione ENTER para voltar ao jogo ]" ;
     pause();
 }
@@ -505,8 +505,8 @@ int startGame(Word word) {
 
 int getScore(Word word, int lives){
     int level = word.level;
-    int lengthWord = word.text.size();
-    int score = (lengthWord * level * lives) + (50 * level);
+    int wordLength = word.text.size();
+    int score = (wordLength * level * lives) + (50 * level) - (25 * tipsUsed);
 
     return (lives == 0) ? 0 : score;
 }
@@ -529,7 +529,7 @@ string getHiddenWord(string word) {
 
 int runGame(Word originalWord, string hiddenWord, vector<char> guesses, int lives) {
     clearScreen();
-
+    cout << endl;
     showHangman(lives);
     cout << endl << "Tema: " << originalWord.theme << endl;
     cout << endl << "Palavra: " << hiddenWord << endl;
@@ -658,7 +658,6 @@ void showGuesses(vector<char> guesses) {
 }
 
 char getTip(Word word, vector<char> guesses){
-
     int random_index = rand() % word.text.size();
 
     string originalWord = word.text;
@@ -712,7 +711,7 @@ string revealLetter(char letter, string originalWord, string hiddenWord) {
 
 void showVictoryMessage() {
     clearScreen();
-    cout << "                    Parabéns, você acaba de salvar uma vida!" << endl << endl;
+    cout << endl << "                    Parabéns, você acaba de salvar uma vida!" << endl << endl;
     showVictoryHangman();
 }
 
