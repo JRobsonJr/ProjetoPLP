@@ -322,6 +322,11 @@ void selectFastMatchType(int option) {
 }
 
 void themedFastMatch() {
+    clearScreen();
+
+    cout << endl;
+    cout << "----------------------------     SELECIONAR TEMA     ---------------------------";
+    cout << endl << endl;
     showThemes();
 
     vector<string> themes = getThemes();
@@ -334,12 +339,6 @@ void themedFastMatch() {
 }
 
 void showThemes() {
-    clearScreen();
-
-    cout << endl;
-    cout << "----------------------------     SELECIONAR TEMA     ---------------------------";
-    cout << endl << endl;
-
     vector<string> themes = getThemes();
 
     for (int i = 0; i < themes.size(); i++) {
@@ -658,10 +657,10 @@ void showGuesses(vector<char> guesses) {
 }
 
 char getTip(Word word, vector<char> guesses){
-    int random_index = rand() % word.text.size();
+    int randomIndex = rand() % word.text.size();
 
     string originalWord = word.text;
-    char letter =  originalWord[random_index];
+    char letter =  originalWord[randomIndex];
 
     if (tipsUsed < word.level) {
         if (find(guesses.begin(), guesses.end(), letter) != guesses.end()) {
@@ -826,8 +825,10 @@ void getWordData() {
     cin.ignore();
     getline(cin, text);
 
-    cout << endl;
-    cout << "          Informe o tema da palavra: ";
+    cout << endl << "                              Temas já cadastrados:" << endl;
+    showThemes();
+
+    cout << endl << "          Informe o tema da palavra (por extenso): ";
     getline(cin, theme);
 
     registerNewWord(text, theme);
