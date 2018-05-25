@@ -24,6 +24,7 @@ struct Player {
 const char DELIMITER = ',';
 const string FILENAME_WORDS = "words.csv";
 const string FILENAME_PLAYERS = "players.csv";
+
 const char HELP_KEY = '#';
 
 vector<Word> words;
@@ -64,8 +65,7 @@ Word getRandomWord(vector<Word> words);
 void championshipMode();
 vector<Word> getRandomOrderWords();
 string getPlayerData();
-bool registeredNickname(string nickname);
-bool registerNewPlayer(string nickname);
+void registerNewPlayer(string nickname, int score);
 
 int startGame(Word word);
 string getHiddenWord(string word);
@@ -321,7 +321,6 @@ void selectFastMatchType(int option) {
     }
 }
 
-
 void themedFastMatch() {
     showThemes();
 
@@ -332,7 +331,6 @@ void themedFastMatch() {
     Word randomWord = getRandomWord(words);
 
     startGame(randomWord);
-
 }
 
 void showThemes() {
@@ -418,15 +416,6 @@ Word getRandomWord(vector<Word> words) {
     return words[randomIndex];
 }
 
-void setScoreChampionShipMode(string nickname, int score) {
-    for (Player& player : players) {
-        if (player.name == nickname) {
-            player.score = (player.score < score)? score : player.score;
-            break;
-        }
-    }
-}
-
 void championshipMode() {
     string nickname = getPlayerData();
     vector<Word> words = getRandomOrderWords();
@@ -439,18 +428,19 @@ void championshipMode() {
 
         if (score > 0) {
             highscore += score;
+            index++;
         } else {
             break;
         }
-
-        index++;
     }
 
-    setScoreChampionShipMode(nickname, highscore);
+    registerNewPlayer(nickname, highscore);
 
-    writePlayers();
-
-    cout << endl << nickname << ", você jogou por " << index + 1 << " partida(s)." << endl;
+    clearScreen();
+    cout << endl << nickname << ", você jogou por " << index + 1 << " partida(s)";
+    cout << endl << "Além disso, você fez " << highscore << " pontos no total." << endl << endl;
+    cout << "                     [ Pressione ENTER para voltar ao jogo ]" ;
+    pause();
 }
 
 vector<Word> getRandomOrderWords() {
@@ -475,7 +465,6 @@ string getPlayerData() {
     cout << "---------------------------     MODO CAMPEONATO     ----------------------------";
     cout << endl << endl;
 
-    // Como capturar um ESC?
     cout << "                         (Insira # para voltar...)";
     cout << endl << endl << endl;
 
@@ -483,49 +472,23 @@ string getPlayerData() {
     cout << "                                   ";
     cin >> nickname;
     cout << endl << endl;
-
-    if (registerNewPlayer(nickname)) {
-        cout << "                         Jogador cadastrado com sucesso!" << endl << endl;
-        cout << "                                   Aguarde..." << endl << endl;
-    } else {
-        cout << "              Seja um pouco mais criativo, este nick ja esta em uso!" << endl << endl;
-        cout << "                                   Aguarde..." << endl << endl;
-
-        system("sleep 1.5s");
-
-        getPlayerData();
-    }
+    cout << "                         Jogador cadastrado com sucesso!" << endl << endl;
+    cout << "                                   Aguarde..." << endl << endl;
 
     system("sleep 1s");
 
     return nickname;
 }
 
-bool registeredNickname(string nickname) {
-    for (Player& player : players) {
-        if (player.name == nickname) {
-            return true;
-        }
-    }
+void registerNewPlayer(string nickname, int score) {
+    Player newPlayer;
 
-    return false;
-}
+    newPlayer.name = nickname;
+    newPlayer.score = score;
 
-bool registerNewPlayer(string nickname) {
-   if (!registeredNickname(nickname)) {
-        Player newPlayer;
+    players.push_back(newPlayer);
 
-        newPlayer.name = nickname;
-        newPlayer.score = 0;
-
-        players.push_back(newPlayer);
-
-        writePlayers();
-
-        return true;
-    }
-
-    return false;
+    writePlayers();
 }
 
 int startGame(Word word) {
