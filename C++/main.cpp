@@ -91,6 +91,7 @@ void showRanking();
 void getWordData();
 string getLineValue();
 void registerNewWord(string text, string theme);
+bool isAlreadyRegistered(string text, string theme);
 string toUpper(string word);
 
 void quit();
@@ -832,13 +833,22 @@ void getWordData() {
     cout << endl << "          Informe o tema da palavra (por extenso): ";
     theme = getLineValue();
 
-    registerNewWord(text, theme);
+    if (!isAlreadyRegistered(text, theme)) {
+        registerNewWord(text, theme);
 
-    cout << endl << endl;
-    cout << "                         Palavra cadastrada com sucesso!" << endl << endl;
-    cout << "                                   Aguarde..." << endl << endl;
+        cout << endl << endl;
+        cout << "                         Palavra cadastrada com sucesso!" << endl << endl;
+        cout << "                                   Aguarde..." << endl << endl;
 
-    system("sleep 1s");
+        system("sleep 1s");
+    } else {
+        cout << endl << endl;
+        cout << "                       Opa, essa palavra já foi cadastrada..." << endl << endl;
+        cout << "                      [ Pressione ENTER para tentar novamente ]" << endl << endl;
+        pause();
+
+        getWordData();
+    }
 }
 
 string getLineValue() {
@@ -869,6 +879,16 @@ void registerNewWord(string text, string theme) {
 
     words.push_back(newWord);
     writeWords();
+}
+
+bool isAlreadyRegistered(string text, string theme) {
+    for (Word word : words) {
+        if (word.text == toUpper(text) && word.theme == toUpper(theme)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 string toUpper(string word) {
