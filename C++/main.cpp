@@ -65,7 +65,7 @@ void championshipMode();
 vector<Word> getRandomOrderWords();
 string getPlayerData();
 bool registeredNickname(string nickname);
-void registerNewPlayer(string nickname);
+bool registerNewPlayer(string nickname);
 
 int startGame(Word word);
 string getHiddenWord(string word);
@@ -85,7 +85,7 @@ void revealWord(string word);
 
 void showRules();
 
-string getSpaces(int length);
+string getSpaces(int length, int scoreLength);
 void showRanking();
 
 void getWordData();
@@ -421,7 +421,7 @@ Word getRandomWord(vector<Word> words) {
 void setScoreChampionShipMode(string nickname, int score) {
     for (Player& player : players) {
         if (player.name == nickname) {
-            player.score = (player.score < score)? score:player.score;
+            player.score = (player.score < score)? score : player.score;
             break;
         }
     }
@@ -482,12 +482,19 @@ string getPlayerData() {
     cout << "                              Insira o seu nick:" << endl << endl << endl;
     cout << "                                   ";
     cin >> nickname;
-
-    registerNewPlayer(nickname);
-
     cout << endl << endl;
-    cout << "                         Jogador cadastrado com sucesso!" << endl << endl;
-    cout << "                                   Aguarde..." << endl << endl;
+
+    if (registerNewPlayer(nickname)) {
+        cout << "                         Jogador cadastrado com sucesso!" << endl << endl;
+        cout << "                                   Aguarde..." << endl << endl;
+    } else {
+        cout << "              Seja um pouco mais criativo, este nick ja esta em uso!" << endl << endl;
+        cout << "                                   Aguarde..." << endl << endl;
+
+        system("sleep 1.5s");
+
+        getPlayerData();
+    }
 
     system("sleep 1s");
 
@@ -504,7 +511,7 @@ bool registeredNickname(string nickname) {
     return false;
 }
 
-void registerNewPlayer(string nickname) {
+bool registerNewPlayer(string nickname) {
    if (!registeredNickname(nickname)) {
         Player newPlayer;
 
@@ -514,10 +521,11 @@ void registerNewPlayer(string nickname) {
         players.push_back(newPlayer);
 
         writePlayers();
-    } else {
-        //INVALIDO
-        showMenu();
+
+        return true;
     }
+
+    return false;
 }
 
 int startGame(Word word) {
@@ -560,6 +568,7 @@ int runGame(Word originalWord, string hiddenWord, vector<char> guesses, int live
     clearScreen();
 
     showHangman(lives);
+    cout << endl << "Tema: " << originalWord.theme << endl;
     cout << endl << "Palavra: " << hiddenWord << endl;
     showGuesses(guesses);
 
@@ -789,7 +798,9 @@ void showRules() {
 
 }
 
-string getSpaces(int length) {
+string getSpaces(int length, int scoreLength) {
+    length -= (scoreLength > 2)? (scoreLength - 2) : 0;
+
     string spaces = "";
 
     for (int j = 0; j < length; j++) {
@@ -797,6 +808,10 @@ string getSpaces(int length) {
     }
 
     return spaces;
+}
+
+bool compareScore(const Player& player1, const Player& player2) {
+    return player1.score > player2.score;
 }
 
 void showRanking() {
@@ -807,24 +822,27 @@ void showRanking() {
     cout << endl << endl << endl;
     cout << "                             Jogador          Pontuação" << endl << endl;
 
+    sort (players.begin(), players.end(), compareScore);
 
     for (int i = 0; i < 9; i++) {
         if (i < players.size()) {
-            string spaces = getSpaces(22 - players[i].name.size());
+            int scoreLength = to_string(players[i].score).size();
+            string spaces = getSpaces(23 - players[i].name.size(), scoreLength);
 
             cout << "                        " << i + 1 << "º " << players[i].name << spaces << players[i].score << endl;
         } else {
-            cout << "                        " << i + 1 << "º ------------       --------" << endl;
+            cout << "                        " << i + 1 << "º ------------       ---------" << endl;
         }
 
     }
 
     if (9 < players.size()) {
-        string spaces = getSpaces(22 - players[9].name.size());
+        int scoreLength = to_string(players[9].score).size();
+        string spaces = getSpaces(22 - players[9].name.size(), scoreLength);
 
         cout << "                        10º " << players[9].name << spaces << players[9].score << endl;
     } else {
-        cout << "                       10º ------------       --------" << endl;
+        cout << "                       10º ------------       ---------" << endl;
     }
 
     cout << endl;
