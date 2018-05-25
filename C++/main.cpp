@@ -89,6 +89,7 @@ string getSpaces(int length, int scoreLength);
 void showRanking();
 
 void getWordData();
+string getLineValue();
 void registerNewWord(string text, string theme);
 string toUpper(string word);
 
@@ -823,13 +824,13 @@ void getWordData() {
     cout << endl << endl;
     cout << "          Informe a nova palavra: ";
     cin.ignore();
-    getline(cin, text);
+    text = getLineValue();
 
     cout << endl << "                              Temas já cadastrados:" << endl;
     showThemes();
 
     cout << endl << "          Informe o tema da palavra (por extenso): ";
-    getline(cin, theme);
+    theme = getLineValue();
 
     registerNewWord(text, theme);
 
@@ -838,6 +839,18 @@ void getWordData() {
     cout << "                                   Aguarde..." << endl << endl;
 
     system("sleep 1s");
+}
+
+string getLineValue() {
+    string value;
+    getline(cin, value);
+
+    if (value.empty() || value.find_first_not_of(' ') == value.npos) {
+        cout << "          O valor não pode ser vazio. Tente novamente: ";
+        return getLineValue();
+    }
+
+    return value;
 }
 
 void registerNewWord(string text, string theme) {
