@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iomanip>
 #include <stdlib.h>
 #include <fstream>
 #include <sstream>
@@ -66,6 +65,7 @@ vector<Word> filterByLevel(int level);
 void randomFastMatch();
 Word getRandomWord(vector<Word> words);
 
+bool goBackChampionship(string nickname);
 void championshipMode();
 vector<Word> getRandomOrderWords();
 string getPlayerData();
@@ -448,34 +448,42 @@ Word getRandomWord(vector<Word> words) {
     return words[randomIndex];
 }
 
+bool goBackChampionship(string nickname){
+    return nickname.size() == 1 && nickname[0] == HELP_KEY;
+}
+
 void championshipMode() {
 
     string nickname = getPlayerData();
 
-    vector<Word> words = getRandomOrderWords();
+    if(!goBackChampionship(nickname)){
+        vector<Word> words = getRandomOrderWords();
 
-    int index = 0;
-    int totalScore = 0;
+        int index = 0;
+        int totalScore = 0;
 
-    while (index < words.size()) {
-        int score = startGame(words[index]);
+        while (index < words.size()) {
 
-        if (score > 0) {
-            totalScore += score;
-            index++;
-        } else {
-            break;
+            int score = startGame(words[index]);
+            if (score > 0) {
+                totalScore += score;
+                index++;
+            } else {
+                break;
+            }
         }
+
+        registerNewPlayer(nickname, totalScore);
+        clearScreen();
+
+        cout << endl << nickname << ", você jogou por " << index + 1 << " partida(s)";
+        cout << endl << "Além disso, você fez " << totalScore << " pontos no total." << endl << endl;
+        cout << "                     [ Pressione ENTER para voltar ao jogo ]"  << endl << endl;
+        getchar();
+
+    } else {
+        showMenu();
     }
-
-    registerNewPlayer(nickname, totalScore);
-
-    clearScreen();
-
-    cout << endl << nickname << ", você jogou por " << index + 1 << " partida(s)";
-    cout << endl << "Além disso, você fez " << totalScore << " pontos no total." << endl << endl;
-    cout << "                     [ Pressione ENTER para voltar ao jogo ]"  << endl << endl;
-    getchar();
 }
 
 vector<Word> getRandomOrderWords() {
@@ -507,14 +515,11 @@ string getPlayerData() {
     cout << "                                   ";
     cin >> nickname;
 
-    bool goBackChampionship = nickname.size() == 1 && nickname[0] == HELP_KEY;
-    if(goBackChampionship){
-        showMenu();
+    if(!goBackChampionship(nickname)){
+        cout << endl << endl;
+        cout << "                         Jogador cadastrado com sucesso!" << endl << endl;
+        cout << "                                   Aguarde..." << endl << endl;
     }
-
-    cout << endl << endl;
-    cout << "                         Jogador cadastrado com sucesso!" << endl << endl;
-    cout << "                                   Aguarde..." << endl << endl;
 
     system("sleep 1s");
     return nickname;
@@ -578,8 +583,8 @@ int runGame(Word originalWord, string hiddenWord, vector<char> guesses, int live
     char letter = guessLetter(originalWord, guesses);
     string newHiddenWord = revealLetter(letter, originalWord.text, hiddenWord);
 
-    //Se a string é vazia ele estorou o lim. de dicas.
-    if (letter != '\0') {
+    //estorou o lim. de dicas.
+    if (letter != HELP_KEY) {
         guesses.push_back(letter);
         if (hiddenWord.compare(newHiddenWord) == 0) {
             lives--;
@@ -699,15 +704,15 @@ char getTip(Word word, vector<char> guesses) {
     int randomIndex = rand() % word.text.size();
 
     string originalWord = word.text;
-    char letter =  originalWord[randomIndex];
+    char letter = originalWord[randomIndex];
 
     if (tipsUsed < word.level) {
-        if (find(guesses.begin(), guesses.end(), letter) != guesses.end()) {
+        if (find(guesses.begin(), guesses.end(), letter) != guesses.end() || letter == '\0') {
             letter = getTip(word, guesses);
         }
     } else {
         showTipLimitExceeded(word.level);
-        letter = '\0';
+        letter = HELP_KEY;
     }
 
     return letter;
@@ -765,8 +770,7 @@ void showGameOverMessage() {
 
 void showTipLimitExceeded(int level) {
     cout << endl << endl << "                    O limite de dicas para essa palavra é: " << level << "." << endl << endl;
-    cout << "                     [ Pressione ENTER para voltar ao jogo ]" ;
-    pause();
+     system("sleep 1s");
 }
 
 void revealWord(string word) {
