@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <stdlib.h>
 #include <fstream>
 #include <sstream>
@@ -79,7 +80,7 @@ void showHangman(int lives);
 void showVictoryHangman();
 void showGuesses(vector<char> guesses);
 char getTip(Word word, vector<char> guesses);
-char guessLetter(Word originalWord, string hiddenWord, vector<char> guesses);
+char guessLetter(Word originalWord, vector<char> guesses);
 string revealLetter(char letter, string originalWord, string hiddenWord);
 void showVictoryMessage();
 void showGameOverMessage();
@@ -331,9 +332,9 @@ void selectFastMatchType(int option) {
     }
 }
 
-void themedFastMatch() {    
+void themedFastMatch() {
     string theme = selectTheme();
-    
+
     vector<Word> words = filterByTheme(theme);
     Word randomWord = getRandomWord(words);
 
@@ -403,7 +404,7 @@ int selectLevel() {
     showLevels();
 
     int level = getOption();
-    
+
     if (level < 1 || level > 3) {
         showInvalidOptionMessage();
         return selectLevel();
@@ -468,10 +469,11 @@ void championshipMode() {
     registerNewPlayer(nickname, totalScore);
 
     clearScreen();
+
     cout << endl << nickname << ", você jogou por " << index + 1 << " partida(s)";
     cout << endl << "Além disso, você fez " << totalScore << " pontos no total." << endl << endl;
-    cout << "                     [ Pressione ENTER para voltar ao jogo ]" ;
-    pause();
+    cout << "                     [ Pressione ENTER para voltar ao jogo ]"  << endl << endl;
+    getchar();
 }
 
 vector<Word> getRandomOrderWords() {
@@ -502,6 +504,7 @@ string getPlayerData() {
     cout << "                              Insira o seu nick:" << endl << endl << endl;
     cout << "                                   ";
     cin >> nickname;
+
     cout << endl << endl;
     cout << "                         Jogador cadastrado com sucesso!" << endl << endl;
     cout << "                                   Aguarde..." << endl << endl;
@@ -513,7 +516,7 @@ string getPlayerData() {
 
 void registerNewPlayer(string nickname, int score) {
     Player newPlayer;
-    
+
     newPlayer.name = nickname;
     newPlayer.score = score;
 
@@ -566,7 +569,7 @@ int runGame(Word originalWord, string hiddenWord, vector<char> guesses, int live
     cout << endl << "Palavra: " << hiddenWord << endl;
     showGuesses(guesses);
 
-    char letter = guessLetter(originalWord, hiddenWord, guesses);
+    char letter = guessLetter(originalWord, guesses);
     string newHiddenWord = revealLetter(letter, originalWord.text, hiddenWord);
 
     //Se a string é vazia ele estorou o lim. de dicas.
@@ -704,19 +707,23 @@ char getTip(Word word, vector<char> guesses) {
     return letter;
 }
 
-char guessLetter(Word originalWord, string hiddenWord, vector<char> guesses) {
+char guessLetter(Word originalWord, vector<char> guesses) {
+
     char letter;
     cout << "Digite uma letra ou # para dica: ";
+
+    cin.ignore(numeric_limits<streamsize>::max(),'\n');
     cin >> letter;
+
     letter = toupper(letter);
 
     if (letter != HELP_KEY) {
         if (find(guesses.begin(), guesses.end(), letter) != guesses.end()) {
             cout << "Essa letra já foi sugerida. Tente outra!" << endl;
-            return guessLetter(originalWord, hiddenWord, guesses);
+            return guessLetter(originalWord, guesses);
         } else if (!isalpha(letter)) {
             cout << "Uma letra, meu anjo..." << endl;
-            return guessLetter(originalWord, hiddenWord, guesses);
+            return guessLetter(originalWord, guesses);
         }
     } else {
         letter = getTip(originalWord, guesses);
@@ -873,7 +880,7 @@ void getWordData() {
         cout << endl << endl;
         cout << "                       Opa, essa palavra já foi cadastrada..." << endl << endl;
         cout << "                      [ Pressione ENTER para tentar novamente ]" << endl << endl;
-        pause();
+        getchar();
 
         getWordData();
     }
