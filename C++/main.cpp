@@ -67,7 +67,6 @@ void randomFastMatch();
 Word getRandomWord(vector<Word> words);
 
 void championshipMode();
-bool goBackChampionship(char option);
 vector<Word> getRandomOrderWords();
 string getPlayerData();
 void registerNewPlayer(string nickname, int score);
@@ -449,17 +448,9 @@ Word getRandomWord(vector<Word> words) {
     return words[randomIndex];
 }
 
-
-bool goBackChampionship(string option){
-    return option.size() == 1 && option[0] == HELP_KEY;
-}
-
 void championshipMode() {
 
     string nickname = getPlayerData();
-    if(goBackChampionship(nickname)){
-        showMenu();
-    }
 
     vector<Word> words = getRandomOrderWords();
 
@@ -516,11 +507,14 @@ string getPlayerData() {
     cout << "                                   ";
     cin >> nickname;
 
-    if(!goBackChampionship(nickname)){
-        cout << endl << endl;
-        cout << "                         Jogador cadastrado com sucesso!" << endl << endl;
-        cout << "                                   Aguarde..." << endl << endl;
+    bool goBackChampionship = nickname.size() == 1 && nickname[0] == HELP_KEY;
+    if(goBackChampionship){
+        showMenu();
     }
+
+    cout << endl << endl;
+    cout << "                         Jogador cadastrado com sucesso!" << endl << endl;
+    cout << "                                   Aguarde..." << endl << endl;
 
     system("sleep 1s");
     return nickname;
