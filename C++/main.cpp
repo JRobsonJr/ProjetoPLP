@@ -42,6 +42,7 @@ void clearScreen();
 void showOpening();
 void showMenu();
 int getOption();
+void showInvalidOptionMessage();
 void selectMenuOption(int option);
 
 void showGameModes();
@@ -51,11 +52,13 @@ void fastMatchMode();
 void selectFastMatchType(int option);
 
 void themedFastMatch();
+string selectTheme();
 void showThemes();
 vector<string> getThemes();
 vector<Word> filterByTheme(string theme);
 
 void leveledFastMatch();
+int selectLevel();
 void showLevels();
 vector<Word> filterByLevel(int level);
 
@@ -234,6 +237,11 @@ int getOption() {
     return option;
 }
 
+void showInvalidOptionMessage() {
+    cout << "                       Opção inválida... Tente novamente!" << endl;
+    system("sleep 1s");
+}
+
 void selectMenuOption(int option) {
     switch (option) {
         case 1:
@@ -252,7 +260,7 @@ void selectMenuOption(int option) {
             quit();
             break;
         default:
-            // INVÁLIDA
+            showInvalidOptionMessage();
             break;
     }
 }
@@ -282,7 +290,7 @@ void selectGameMode(int option) {
         case 3:
             break;
         default:
-            // INVÁLIDA
+            showInvalidOptionMessage();
             break;
     }
 }
@@ -318,12 +326,21 @@ void selectFastMatchType(int option) {
         case 4:
             break;
         default:
-            // INVÁLIDA
+            showInvalidOptionMessage();
             break;
     }
 }
 
-void themedFastMatch() {
+void themedFastMatch() {    
+    string theme = selectTheme();
+    
+    vector<Word> words = filterByTheme(theme);
+    Word randomWord = getRandomWord(words);
+
+    startGame(randomWord);
+}
+
+string selectTheme() {
     clearScreen();
 
     cout << endl;
@@ -333,11 +350,13 @@ void themedFastMatch() {
 
     vector<string> themes = getThemes();
     int option = getOption();
-    string theme = themes[option - 1];
-    vector<Word> words = filterByTheme(theme);
-    Word randomWord = getRandomWord(words);
 
-    startGame(randomWord);
+    if (option > themes.size()) {
+        showInvalidOptionMessage();
+        return selectTheme();
+    }
+
+    return themes[option - 1];
 }
 
 void showThemes() {
@@ -373,13 +392,24 @@ vector<Word> filterByTheme(string theme) {
 }
 
 void leveledFastMatch() {
-    showLevels();
-
-    int option = getOption();
-    vector<Word> words = filterByLevel(option);
+    int level = selectLevel();
+    vector<Word> words = filterByLevel(level);
     Word randomWord = getRandomWord(words);
 
     startGame(randomWord);
+}
+
+int selectLevel() {
+    showLevels();
+
+    int level = getOption();
+    
+    if (level < 1 || level > 3) {
+        showInvalidOptionMessage();
+        return selectLevel();
+    }
+
+    return level;
 }
 
 void showLevels() {
@@ -483,7 +513,7 @@ string getPlayerData() {
 
 void registerNewPlayer(string nickname, int score) {
     Player newPlayer;
-
+    
     newPlayer.name = nickname;
     newPlayer.score = score;
 
@@ -532,7 +562,7 @@ int runGame(Word originalWord, string hiddenWord, vector<char> guesses, int live
     clearScreen();
     cout << endl;
     showHangman(lives);
-    cout << endl << "Tema: " << originalWord.theme << endl;
+    cout << endl << "Tema: " << originalWord.theme;
     cout << endl << "Palavra: " << hiddenWord << endl;
     showGuesses(guesses);
 
@@ -540,7 +570,7 @@ int runGame(Word originalWord, string hiddenWord, vector<char> guesses, int live
     string newHiddenWord = revealLetter(letter, originalWord.text, hiddenWord);
 
     //Se a string é vazia ele estorou o lim. de dicas.
-    if(letter != '\0'){
+    if (letter != '\0') {
         guesses.push_back(letter);
         if (hiddenWord.compare(newHiddenWord) == 0) {
             lives--;
@@ -561,14 +591,12 @@ int runGame(Word originalWord, string hiddenWord, vector<char> guesses, int live
 }
 
 void showHangman(int lives) {
-
     cout << "                                 ###############" << endl;
     cout << "                                 #### FORCA ####" << endl;
     cout << "                                 ###############" << endl;
     cout << "                                 #      |      #" << endl;
 
     switch (lives) {
-
         case 7:
             cout << "                                 #             #" << endl;
             cout << "                                 #             #" << endl;
@@ -658,7 +686,7 @@ void showGuesses(vector<char> guesses) {
     }
 }
 
-char getTip(Word word, vector<char> guesses){
+char getTip(Word word, vector<char> guesses) {
     int randomIndex = rand() % word.text.size();
 
     string originalWord = word.text;
@@ -680,8 +708,8 @@ char guessLetter(Word originalWord, string hiddenWord, vector<char> guesses) {
     char letter;
     cout << "Digite uma letra ou # para dica: ";
     cin >> letter;
-
     letter = toupper(letter);
+
     if (letter != HELP_KEY) {
         if (find(guesses.begin(), guesses.end(), letter) != guesses.end()) {
             cout << "Essa letra já foi sugerida. Tente outra!" << endl;
