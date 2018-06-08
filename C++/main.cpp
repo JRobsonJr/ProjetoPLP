@@ -514,6 +514,7 @@ string getPlayerData() {
     cout << "                              Insira o seu nick:" << endl << endl << endl;
     cout << "                                   ";
     cin >> nickname;
+    cin.clear();
 
     if(!goBackChampionship(nickname)){
         cout << endl << endl;
@@ -720,12 +721,12 @@ char getTip(Word word, vector<char> guesses) {
 
 char guessLetter(Word originalWord, vector<char> guesses) {
 
-    char letter;
+    string input = "";
     cout << "Digite uma letra ou # para dica: ";
 
-    cin.ignore(numeric_limits<streamsize>::max(),'\n');
-    cin >> letter;
+    cin >> input;
 
+    char letter = input[0];
     letter = toupper(letter);
 
     if (letter != HELP_KEY) {
