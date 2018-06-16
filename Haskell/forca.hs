@@ -1,3 +1,39 @@
+import System.IO
+
+-- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
+data Word = Word { 
+    text :: String,
+    theme :: String,
+    level :: Int
+} deriving (Show)
+
+setUpWords :: IO [Main.Word]
+setUpWords = do
+    words <- readWords
+    return $ createWordList words
+
+readWords :: IO [String]
+readWords = do
+    words <- openFile "words.csv" ReadMode
+    contents <- hGetContents words
+    return $ lines contents
+
+createWordList :: [String] -> [Main.Word]
+createWordList [] = []
+createWordList (head:tail) = [createWord $ splitOnComma head] ++ createWordList tail
+
+createWord :: [String] -> Main.Word
+createWord (text:theme:level:_) = Word text theme (read level)
+
+splitOnComma :: String -> [String]
+splitOnComma s = split s ""
+
+-- essa funcao podia ter um nome melhor
+split :: String -> String -> [String]
+split [] w = [w]
+split (',':tail) w = [w] ++ split tail ""
+split (head:tail) w = split tail (w ++ [head])
+
 showOpening :: IO()
 showOpening = do
     putStrLn "      ____________..___________                                                 "
@@ -31,21 +67,21 @@ showMenu = do
     putStrLn "                                4  -  Nova Palavra"
     putStrLn "                                5  -  Sair"
     option <- getOption
-    selectMenuOption (read option :: Int)
+    selectMenuOption (read option)
     
 getOption :: IO String
 getOption = do
-    putStrLn "\n\n                    Informe o número da opção desejada: "
+    putStr "\n\n                    Informe o número da opção desejada: "
     option <- getLine
     return option
 
 selectMenuOption :: Int -> IO()
-selectMenuOption 1 = do showGameModes
-selectMenuOption 2 = do showRules
-selectMenuOption 3 = do showRanking
-selectMenuOption 4 = do getWordData
-selectMenuOption 5 = do quit
-selectMenuOption n = do showInvalidOptionMessage
+selectMenuOption 1 = showGameModes
+selectMenuOption 2 = showRules
+selectMenuOption 3 = showRanking
+selectMenuOption 4 = getWordData
+selectMenuOption 5 = quit
+selectMenuOption n = showInvalidOptionMessage
 
 showInvalidOptionMessage :: IO()
 showInvalidOptionMessage = do
