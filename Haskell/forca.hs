@@ -71,7 +71,7 @@ showMenu = do
     
 getOption :: IO String
 getOption = do
-    putStr "\n\n                    Informe o número da opção desejada: "
+    putStrLn "\n\n                    Informe o número da opção desejada: "
     option <- getLine
     return option
 
@@ -87,27 +87,71 @@ showInvalidOptionMessage :: IO()
 showInvalidOptionMessage = do
     putStrLn "                       Opção inválida... Tente novamente!\n"
 
+notImplementedYet :: IO()
+notImplementedYet = do
+    putStrLn "                         Not implemented yet, meu anjo!\n"
+
 showGameModes :: IO()
 showGameModes = do
-    putStrLn "\n-----------------------------     MODO DE JOGO     -----------------------------\n\n"
-    putStrLn "                                1  -  Jogo Rápido\n"
-    putStrLn "                                2  -  Modo Campeonato\n"
-    putStrLn "                                3  -  Voltar\n"
+    putStrLn "\n-----------------------------     MODO DE JOGO     -----------------------------\n"
+    putStrLn "                                1  -  Jogo Rápido"
+    putStrLn "                                2  -  Modo Campeonato"
+    putStrLn "                                3  -  Voltar"
+    
+    option <- getOption
+    selectGameMode (read option)
+
+selectGameMode :: Int -> IO()
+selectGameMode 1 = fastMatchMode
+selectGameMode 2 = championshipMode
+selectGameMode 3 = notImplementedYet
+selectGameMode n = showInvalidOptionMessage
+
+fastMatchMode :: IO()
+fastMatchMode = do
+    putStrLn "\n-----------------------------     JOGO RÁPIDO     ------------------------------\n"
+    putStrLn "                      Como sua palavra deve ser escolhida?\n"
+    putStrLn "                              1  -  Por Tema"
+    putStrLn "                              2  -  Por Dificuldade"
+    putStrLn "                              3  -  Aleatoriamente"
+    putStrLn "                              4  -  Voltar"
+
+    option <- getOption
+    selectFastMatchType (read option)
+
+selectFastMatchType :: Int -> IO()
+selectFastMatchType 1 = themedFastMatch
+selectFastMatchType 2 = leveledFastMatch
+selectFastMatchType 3 = randomFastMatch
+selectFastMatchType 4 = notImplementedYet
+selectFastMatchType n = showInvalidOptionMessage
+
+themedFastMatch :: IO()
+themedFastMatch = notImplementedYet
+
+leveledFastMatch :: IO()
+leveledFastMatch = notImplementedYet
+
+randomFastMatch :: IO()
+randomFastMatch = notImplementedYet
+
+championshipMode :: IO()
+championshipMode = notImplementedYet
 
 showRules :: IO()
 showRules = do 
     putStrLn "\n--------------------------------     REGRAS     --------------------------------\n\n"
-    putStrLn "REGRAS!"
+    notImplementedYet
 
 showRanking :: IO()
 showRanking = do
     putStrLn "\n--------------------------------     RANKING     -------------------------------\n\n\n"
-    putStrLn "RANKING!"
+    notImplementedYet
 
 getWordData :: IO()
 getWordData = do
     putStrLn "\n---------------------------     CADASTRAR PALAVRA     --------------------------\n\n\n"
-    putStrLn "CADASTRO!"
+    notImplementedYet
 
 quit :: IO()
 quit = do
