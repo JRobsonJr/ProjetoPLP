@@ -83,7 +83,7 @@ showMenu = do
     putStrLn "                                4  -  Nova Palavra"
     putStrLn "                                5  -  Sair"
     option <- getOption
-    selectMenuOption (read option)
+    selectMenuOption $ read option
     
 getOption :: IO String
 getOption = do
@@ -115,7 +115,7 @@ showGameModes = do
     putStrLn "                                3  -  Voltar"
     
     option <- getOption
-    selectGameMode (read option)
+    selectGameMode $ read option
 
 selectGameMode :: Int -> IO()
 selectGameMode 1 = fastMatchMode
@@ -133,7 +133,7 @@ fastMatchMode = do
     putStrLn "                              4  -  Voltar"
 
     option <- getOption
-    selectFastMatchType (read option)
+    selectFastMatchType $ read option
 
 selectFastMatchType :: Int -> IO()
 selectFastMatchType 1 = themedFastMatch
@@ -153,6 +153,28 @@ randomFastMatch = notImplementedYet
 
 championshipMode :: IO()
 championshipMode = notImplementedYet
+
+getHiddenWord :: [Char] -> [Char]
+getHiddenWord [] = []
+getHiddenWord (' ':tail) = [' '] ++ getHiddenWord tail
+getHiddenWord (head:tail) = ['_'] ++ getHiddenWord tail
+
+getScore :: Main.Word -> Int -> Int -> Int
+getScore word 0 tipsUsed = 0
+getScore word lives tipsUsed = wordLength * wordLevel * lives + 50 * wordLevel - 25 * tipsUsed
+    where wordLength = length $ text word
+          wordLevel = level word
+
+showGuesses :: [Char] -> [Char]
+showGuesses [] = []
+showGuesses (head:[]) = [head]
+showGuesses (head:tail) = [head] ++ [' '] ++ showGuesses tail
+
+revealLetter :: Char -> [Char] -> [Char] -> [Char]
+revealLetter letter [] [] = []
+revealLetter letter (head:tail) (head':tail')
+    | letter == head = [letter] ++ revealLetter letter tail tail'
+    | otherwise = [head'] ++ revealLetter letter tail tail'
 
 showRules :: IO()
 showRules = do 
@@ -182,5 +204,4 @@ quit = do
 
 main :: IO()
 main = do
-    showOpening
-    showMenu
+    print $ revealLetter 'A' "SIA KATE" "_I_ __T_"
