@@ -84,13 +84,13 @@ showMenu = do
     putStrLn "                                4  -  Nova Palavra"
     putStrLn "                                5  -  Sair"
     option <- getOption
-    selectMenuOption $ read option
+    selectMenuOption option
     
-getOption :: IO String
+getOption :: IO Int
 getOption = do
     putStrLn "\n\n                    Informe o número da opção desejada: "
     option <- getLine
-    return option
+    return $ read option
 
 selectMenuOption :: Int -> IO()
 selectMenuOption 1 = showGameModes
@@ -116,7 +116,7 @@ showGameModes = do
     putStrLn "                                3  -  Voltar"
     
     option <- getOption
-    selectGameMode $ read option
+    selectGameMode option
 
 selectGameMode :: Int -> IO()
 selectGameMode 1 = fastMatchMode
@@ -134,7 +134,7 @@ fastMatchMode = do
     putStrLn "                              4  -  Voltar"
 
     option <- getOption
-    selectFastMatchType $ read option
+    selectFastMatchType option
 
 selectFastMatchType :: Int -> IO()
 selectFastMatchType 1 = themedFastMatch
@@ -148,10 +148,27 @@ themedFastMatch = do
     selectTheme
     notImplementedYet
 
-selectTheme :: IO()
+selectTheme :: IO String
 selectTheme = do
     putStrLn "\n----------------------------     SELECIONAR TEMA     ---------------------------\n"
-    notImplementedYet
+    showThemes
+    themes <- getThemes
+    option <- getOption
+    if (option < length themes) 
+        then return $ themes !! (option - 1)
+        else do
+            showInvalidOptionMessage
+            selectTheme
+
+showThemes :: IO()
+showThemes = do
+    themes <- getThemes
+    putStrLn $ showThemes' themes 0
+    where
+        showThemes' [] index = []
+        showThemes' (head:tail) index = spaces ++ show (index + 1) ++ "  -  " ++ head ++ "\n" ++ showThemes' tail (index + 1)
+            where
+                spaces = "                              "
 
 leveledFastMatch :: IO()
 leveledFastMatch = notImplementedYet
