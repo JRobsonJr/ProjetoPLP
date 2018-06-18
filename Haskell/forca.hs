@@ -15,7 +15,7 @@ setUpWords = do
 
 readWords :: IO [String]
 readWords = do
-    words <- openFile "words.csv" ReadMode
+    words <- openFile "../resources/words.csv" ReadMode
     contents <- hGetContents words
     return $ lines contents
 
