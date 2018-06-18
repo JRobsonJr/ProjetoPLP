@@ -1,4 +1,5 @@
 import System.IO
+import Data.Char
 
 -- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
 data Word = Word { 
@@ -143,7 +144,14 @@ selectFastMatchType 4 = showGameModes
 selectFastMatchType n = showInvalidOptionMessage
 
 themedFastMatch :: IO()
-themedFastMatch = notImplementedYet
+themedFastMatch = do
+    selectTheme
+    notImplementedYet
+
+selectTheme :: IO()
+selectTheme = do
+    putStrLn "\n----------------------------     SELECIONAR TEMA     ---------------------------\n"
+    notImplementedYet
 
 leveledFastMatch :: IO()
 leveledFastMatch = notImplementedYet
@@ -154,7 +162,7 @@ randomFastMatch = notImplementedYet
 championshipMode :: IO()
 championshipMode = notImplementedYet
 
-getHiddenWord :: [Char] -> [Char]
+getHiddenWord :: String -> String
 getHiddenWord [] = []
 getHiddenWord (' ':tail) = [' '] ++ getHiddenWord tail
 getHiddenWord (head:tail) = ['_'] ++ getHiddenWord tail
@@ -165,16 +173,20 @@ getScore word lives tipsUsed = wordLength * wordLevel * lives + 50 * wordLevel -
     where wordLength = length $ text word
           wordLevel = level word
 
-showGuesses :: [Char] -> [Char]
+showGuesses :: String -> String
 showGuesses [] = []
 showGuesses (head:[]) = [head]
 showGuesses (head:tail) = [head] ++ [' '] ++ showGuesses tail
 
-revealLetter :: Char -> [Char] -> [Char] -> [Char]
+revealLetter :: Char -> String -> String -> String
 revealLetter letter [] [] = []
 revealLetter letter (head:tail) (head':tail')
     | letter == head = [letter] ++ revealLetter letter tail tail'
     | otherwise = [head'] ++ revealLetter letter tail tail'
+
+toUpper' :: String -> String
+toUpper' [] = []
+toUpper' (head:tail) = [toUpper head] ++ toUpper' tail
 
 showRules :: IO()
 showRules = do 
