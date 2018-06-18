@@ -120,7 +120,7 @@ showGameModes = do
 selectGameMode :: Int -> IO()
 selectGameMode 1 = fastMatchMode
 selectGameMode 2 = championshipMode
-selectGameMode 3 = notImplementedYet
+selectGameMode 3 = showMenu
 selectGameMode n = showInvalidOptionMessage
 
 fastMatchMode :: IO()
@@ -139,7 +139,7 @@ selectFastMatchType :: Int -> IO()
 selectFastMatchType 1 = themedFastMatch
 selectFastMatchType 2 = leveledFastMatch
 selectFastMatchType 3 = randomFastMatch
-selectFastMatchType 4 = notImplementedYet
+selectFastMatchType 4 = showGameModes
 selectFastMatchType n = showInvalidOptionMessage
 
 themedFastMatch :: IO()
@@ -204,4 +204,5 @@ quit = do
 
 main :: IO()
 main = do
-    print $ revealLetter 'A' "SIA KATE" "_I_ __T_"
+    showOpening
+    showMenu
