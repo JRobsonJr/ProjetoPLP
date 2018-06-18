@@ -8,21 +8,34 @@ data Word = Word {
     level :: Int
 } deriving (Show)
 
+data Player = Player {
+    name :: String,
+    score:: Int
+} deriving (Show)
+
+setUpPlayers :: IO [Player]
+setUpPlayers = do
+    players <- readPlayers
+    return $ createPlayerList players
+    where readPlayers = do
+              players <- openFile "../resources/players.csv" ReadMode
+              contents <- hGetContents players
+              return $ lines contents
+          createPlayerList [] = []
+          createPlayerList (head:tail) = [createPlayer $ splitOnComma head] ++ createPlayerList tail
+              where createPlayer (name:score:_) = Player name (read score)
+
 setUpWords :: IO [Main.Word]
 setUpWords = do
     words <- readWords
     return $ createWordList words
-
-readWords :: IO [String]
-readWords = do
-    words <- openFile "words.csv" ReadMode
-    contents <- hGetContents words
-    return $ lines contents
-
-createWordList :: [String] -> [Main.Word]
-createWordList [] = []
-createWordList (head:tail) = [createWord $ splitOnComma head] ++ createWordList tail
-    where createWord (text:theme:level:_) = Word text theme (read level)
+    where readWords = do
+              words <- openFile "../resources/words.csv" ReadMode
+              contents <- hGetContents words
+              return $ lines contents
+          createWordList [] = []
+          createWordList (head:tail) = [createWord $ splitOnComma head] ++ createWordList tail
+              where createWord (text:theme:level:_) = Word text theme (read level)
 
 splitOnComma :: String -> [String]
 splitOnComma s = splitOnComma' s ""

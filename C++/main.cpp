@@ -22,8 +22,8 @@ struct Player {
 };
 
 const char DELIMITER = ',';
-const string FILENAME_WORDS = "words.csv";
-const string FILENAME_PLAYERS = "players.csv";
+const string FILENAME_WORDS = "../resources/words.csv";
+const string FILENAME_PLAYERS = "../resources/players.csv";
 
 const char HELP_KEY = '#';
 
