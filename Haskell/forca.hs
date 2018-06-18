@@ -21,18 +21,34 @@ readWords = do
 createWordList :: [String] -> [Main.Word]
 createWordList [] = []
 createWordList (head:tail) = [createWord $ splitOnComma head] ++ createWordList tail
-
-createWord :: [String] -> Main.Word
-createWord (text:theme:level:_) = Word text theme (read level)
+    where createWord (text:theme:level:_) = Word text theme (read level)
 
 splitOnComma :: String -> [String]
-splitOnComma s = split s ""
+splitOnComma s = splitOnComma' s ""
+    where
+        splitOnComma' [] w = [w]
+        splitOnComma' (',':tail) w = [w] ++ splitOnComma' tail ""
+        splitOnComma' (head:tail) w = splitOnComma' tail (w ++ [head])
 
--- essa funcao podia ter um nome melhor
-split :: String -> String -> [String]
-split [] w = [w]
-split (',':tail) w = [w] ++ split tail ""
-split (head:tail) w = split tail (w ++ [head])
+getThemes :: IO [String]
+getThemes = do
+    words <- setUpWords
+    return $ getThemes' words []
+    where
+        getThemes' [] result = result
+        getThemes' (head:tail) result
+            | (theme head) `elem` result = getThemes' tail result
+            | otherwise = getThemes' tail (result ++ [theme head])
+
+filterByTheme :: String -> IO [Main.Word]
+filterByTheme t = do
+    words <- setUpWords
+    return $ filter (\word -> (theme word) == t) words
+
+filterByLevel :: Int -> IO [Main.Word]
+filterByLevel l = do
+    words <- setUpWords
+    return $ filter (\word -> (level word) == l) words
 
 showOpening :: IO()
 showOpening = do
