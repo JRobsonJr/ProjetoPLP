@@ -213,6 +213,14 @@ revealLetter letter [] [] = []
 revealLetter letter (head:tail) (head':tail')
     | letter == head = [letter] ++ revealLetter letter tail tail'
     | otherwise = [head'] ++ revealLetter letter tail tail'
+    
+getLetter::IO()
+letter <- getChar
+
+guessLetter :: Main.Word -> Char -> [Char] -> Char
+guessLetter  
+	putStrLn "Digite uma letra ou # para dica"
+	letter <- getChar
 
 toUpper' :: String -> String
 toUpper' [] = []
