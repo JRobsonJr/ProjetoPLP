@@ -218,6 +218,83 @@ toUpper' :: String -> String
 toUpper' [] = []
 toUpper' (head:tail) = [toUpper head] ++ toUpper' tail
 
+showHangmanBody :: Int -> IO()
+showHangmanBody lives
+    | lives == 7 = do
+        putStrLn "                                 #             #"
+        putStrLn "                                 #             #"
+        putStrLn "                                 #             #"
+        putStrLn "                                 #             #"
+    
+    | lives == 6 = do
+        putStrLn "                                 #    ('-')    #"
+        putStrLn "                                 #             #"
+        putStrLn "                                 #             #"
+        putStrLn "                                 #             #"
+
+    | lives == 5 = do
+        putStrLn "                                 #    ('-')__  #"
+        putStrLn "                                 #             #"
+        putStrLn "                                 #             #"
+        putStrLn "                                 #             #"
+
+    | lives == 4 = do
+        putStrLn "                                 #  __('-')__  #"
+        putStrLn "                                 #             #"
+        putStrLn "                                 #             #"
+        putStrLn "                                 #             #"
+
+    | lives == 3 = do
+        putStrLn "                                 #  __('-')__  #"
+        putStrLn "                                 #      |      #"
+        putStrLn "                                 #             #"
+        putStrLn "                                 #             #"
+
+    | lives == 2 = do
+        putStrLn "                                 #  __('-')__  #"
+        putStrLn "                                 #      |      #"
+        putStrLn "                                 #     /       #"
+        putStrLn "                                 #             #"
+
+    | lives == 1 = do
+        putStrLn "                                 #  __('-')__  #"
+        putStrLn "                                 #      |      #"
+        putStrLn "                                 #     / \\     #"
+        putStrLn "                                 #             #"
+
+    | otherwise = do
+        putStrLn "                                 #      |      #"
+        putStrLn "                                 #    (-.-)    #"
+        putStrLn "                                 #     /|\\     #"
+        putStrLn "                                 #     / \\     #"
+
+showHangman :: Int -> IO()
+showHangman lives = do
+    putStrLn "                                 ###############"
+    putStrLn "                                 #### FORCA ####"
+    putStrLn "                                 ###############"
+    putStrLn "                                 #      |      #"
+    
+    showHangmanBody lives
+    
+    putStrLn "                                 ###############"
+    putStrLn "                                  /\\         /\\"
+    putStrLn "                                 /  \\       /  \\ \n"
+
+showVictoryHangman :: IO()
+showVictoryHangman = do
+    putStrLn "                                 ###############"
+    putStrLn "                                 #### FORCA ####"
+    putStrLn "                                 ###############"
+    putStrLn "                                 #      |      #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 ###############     \\('◡')/"
+    putStrLn "                                  /\\         /\\         |"
+    putStrLn "                                 /  \\       /  \\       / \\ \n\n"
+
 showRules :: IO()
 showRules = do 
     putStrLn "\n--------------------------------     REGRAS     --------------------------------\n\n"
