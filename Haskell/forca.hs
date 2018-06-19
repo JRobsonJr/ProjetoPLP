@@ -158,8 +158,11 @@ selectFastMatchType n = showInvalidOptionMessage
 
 themedFastMatch :: IO()
 themedFastMatch = do
-    selectTheme
-    notImplementedYet
+    theme <- selectTheme
+    words <- filterByTheme theme
+    print words
+    startGame randomWord
+    	where randomWord = getRandomWord words
 
 selectTheme :: IO String
 selectTheme = do
@@ -180,8 +183,24 @@ showThemes = do
     where
         showThemes' [] index = []
         showThemes' (head:tail) index = spaces ++ show (index + 1) ++ "  -  " ++ head ++ "\n" ++ showThemes' tail (index + 1)
-            where
-                spaces = "                              "
+            where spaces = "                              "
+
+getRandomWord :: [Main.Word] -> Main.Word
+getRandomWord words = words !! 0 --notImplementedYet
+
+startGame :: Main.Word -> IO()
+startGame word = do
+	print hiddenWord
+		where hiddenWord = getHiddenWord $ text word
+	runGame word hiddenWord [] 7
+
+runGame :: Main.Word -> String -> [Char] -> Int -> IO()
+runGame originalWord hiddenWord guesses lives = do
+	--showHangman lives
+	putStrLn $ "Tema: " ++ theme originalWord 
+	putStrLn $ "Palavra: " ++ text originalWord
+	print $ showGuesses guesses
+	notImplementedYet
 
 leveledFastMatch :: IO()
 leveledFastMatch = notImplementedYet
@@ -203,7 +222,7 @@ getScore word lives tipsUsed = wordLength * wordLevel * lives + 50 * wordLevel -
     where wordLength = length $ text word
           wordLevel = level word
 
-showGuesses :: String -> String
+showGuesses :: [Char] -> String
 showGuesses [] = []
 showGuesses (head:[]) = [head]
 showGuesses (head:tail) = [head] ++ [' '] ++ showGuesses tail
