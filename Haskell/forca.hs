@@ -214,13 +214,17 @@ revealLetter letter (head:tail) (head':tail')
     | letter == head = [letter] ++ revealLetter letter tail tail'
     | otherwise = [head'] ++ revealLetter letter tail tail'
     
-getLetter::IO()
-letter <- getChar
+getLetter::IO Char
+getLetter = do
+    letter <- getChar
+    return letter
 
-guessLetter :: Main.Word -> Char -> [Char] -> Char
-guessLetter  
-	putStrLn "Digite uma letra ou # para dica"
-	letter <- getChar
+guessLetter::[Char] -> Char -> Char
+guessLetter _ '#' = 'a' -- getTip
+guessLetter guesses letter 
+    | (isLetter letter && (not (letter `elem` guesses))) = letter
+    | not (isLetter letter) = 'b' -- chamada recursiva
+    | otherwise = 'j' -- chamada recursiva
 
 toUpper' :: String -> String
 toUpper' [] = []
@@ -331,5 +335,8 @@ quit = do
 
 main :: IO()
 main = do
-    showOpening
-    showMenu
+    -- showOpening
+    -- showMenu
+    teste <- getLetter
+    let lista = ['a'..'c']
+    putChar $ guessLetter lista teste
