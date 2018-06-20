@@ -214,25 +214,28 @@ revealLetter letter (head:tail) (head':tail')
     | letter == head = [letter] ++ revealLetter letter tail tail'
     | otherwise = [head'] ++ revealLetter letter tail tail'
     
-getLetter::IO Char
+getLetter :: IO Char
 getLetter = do
     letter <- getChar
+    getChar
     return letter
+
+guessLetter' :: [Char] -> Char -> IO()
+guessLetter' _ '#' = putChar 'A' -- getTip
+guessLetter' guesses letter 
+    | isLetter letter && not(letter `elem` guesses) = do 
+        putChar letter
+    | not (isLetter letter) = do
+        putStrLn "Uma letra, meu anjo..."
+        guessLetter guesses
+    | otherwise = do
+        putStrLn "Essa letra já foi sugerida. Tente outra!"
+        guessLetter guesses
 
 guessLetter :: [Char] -> IO()
 guessLetter guesses = do
     letter <- getLetter
-    if letter == '#'
-        then do
-            putChar 'A' -- getTip
-    else if not (isLetter letter)
-        then do
-            guessLetter guesses
-    else if (letter `elem` guesses)
-        then do
-            guessLetter guesses
-    else do
-        putChar letter
+    guessLetter' guesses letter
 
 toUpper' :: String -> String
 toUpper' [] = []
@@ -345,5 +348,7 @@ main :: IO()
 main = do
     -- showOpening
     -- showMenu
+    hSetBuffering stdin NoBuffering
+    hSetBuffering stdout NoBuffering
     let lista = ['a'..'c']
     guessLetter lista
