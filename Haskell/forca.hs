@@ -219,19 +219,20 @@ getLetter = do
     letter <- getChar
     return letter
 
-guessLetter::[Char] -> IO()
+guessLetter :: [Char] -> IO()
 guessLetter guesses = do
     letter <- getLetter
-    if letter == '#'
-        then putChar 'A' -- getTiṕ
+    if letter == '#' then do
+        putChar 'A' -- getTip
     else do
-        if not (isLetter letter) then 
-            guessLetter guesses
-        else 
-            if (letter `elem` guesses) then 
+        if not (isLetter letter)
+            then do
+               guessLetter guesses
+        else if (letter `elem` guesses)
+            then do
                 guessLetter guesses
-            else
-                putChar letter
+        else do
+            putChar letter
 
 toUpper' :: String -> String
 toUpper' [] = []
