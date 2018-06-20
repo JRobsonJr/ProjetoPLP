@@ -219,12 +219,19 @@ getLetter = do
     letter <- getChar
     return letter
 
-guessLetter::[Char] -> Char -> Char
-guessLetter _ '#' = 'a' -- getTip
-guessLetter guesses letter 
-    | (isLetter letter && (not (letter `elem` guesses))) = letter
-    | not (isLetter letter) = 'b' -- chamada recursiva
-    | otherwise = 'j' -- chamada recursiva
+guessLetter::[Char] -> IO()
+guessLetter guesses = do
+    letter <- getLetter
+    if letter == '#'
+        then putChar 'A' -- getTiṕ
+    else do
+        if not (isLetter letter) then 
+            guessLetter guesses
+        else 
+            if (letter `elem` guesses) then 
+                guessLetter guesses
+            else
+                putChar letter
 
 toUpper' :: String -> String
 toUpper' [] = []
@@ -337,6 +344,5 @@ main :: IO()
 main = do
     -- showOpening
     -- showMenu
-    teste <- getLetter
     let lista = ['a'..'c']
-    putChar $ guessLetter lista teste
+    guessLetter lista
