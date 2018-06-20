@@ -1,5 +1,6 @@
 import System.IO
 import Data.Char
+import Data.Time.Clock
 
 -- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
 data Word = Word { 
@@ -214,28 +215,48 @@ revealLetter letter (head:tail) (head':tail')
     | letter == head = [letter] ++ revealLetter letter tail tail'
     | otherwise = [head'] ++ revealLetter letter tail tail'
     
+getCurrentTimestamp :: IO Int
+getCurrentTimestamp = do
+    currentTime <- getCurrentTime
+    let currTimestamp = floor $ utctDayTime currentTime :: Int
+    return currTimestamp
+
+getTip :: Main.Word -> [Char] -> IO()
+getTip word guesses =  do 
+    currTimestamp <- getCurrentTimestamp
+    let value = text word
+    let index = currTimestamp `mod` (length value)
+    let tip = value !! index
+    
+    if tip `elem` guesses
+        then do
+            getTip word guesses
+    else do
+        putChar tip
+
 getLetter :: IO Char
 getLetter = do
     letter <- getChar
     getChar
     return letter
 
-guessLetter' :: [Char] -> Char -> IO()
-guessLetter' _ '#' = putChar 'A' -- getTip
-guessLetter' guesses letter 
+guessLetter :: Main.Word -> [Char] -> IO()
+guessLetter word guesses = do
+    letter <- getLetter
+    guessLetter' word guesses letter
+
+guessLetter' :: Main.Word -> [Char] -> Char -> IO()
+guessLetter' word guesses letter 
+    | letter == '#' = do
+        getTip word guesses
     | isLetter letter && not(letter `elem` guesses) = do 
         putChar letter
     | not (isLetter letter) = do
         putStrLn "Uma letra, meu anjo..."
-        guessLetter guesses
+        guessLetter word guesses
     | otherwise = do
         putStrLn "Essa letra já foi sugerida. Tente outra!"
-        guessLetter guesses
-
-guessLetter :: [Char] -> IO()
-guessLetter guesses = do
-    letter <- getLetter
-    guessLetter' guesses letter
+        guessLetter word guesses
 
 toUpper' :: String -> String
 toUpper' [] = []
@@ -350,5 +371,6 @@ main = do
     -- showMenu
     hSetBuffering stdin NoBuffering
     hSetBuffering stdout NoBuffering
+    let a = Word {text="Ford", theme="Mustang", level=1}  
     let lista = ['a'..'c']
-    guessLetter lista
+    guessLetter a lista
