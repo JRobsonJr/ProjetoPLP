@@ -37,12 +37,31 @@ setUpWords = do
           createWordList (head:tail) = [createWord $ splitOnComma head] ++ createWordList tail
               where createWord (text:theme:level:_) = Word text theme (read level)
 
+writePlayer :: String -> Int -> IO ()
+writePlayer nickname score = do
+    let player = joinWithCommas [nickname, show score]
+    appendFile "../resources/players.csv" ("\n" ++ player)
+
+writeWord :: String -> String -> IO ()
+writeWord text theme = do
+    let word = joinWithCommas $ map toUpper' [text, theme, (getLevel text)]
+    appendFile "../resources/words.csv" ("\n" ++ word)
+    where getLevel text
+            | length text < 6  = "1"
+            | length text < 10 = "2"
+            | otherwise        = "3"
+
 splitOnComma :: String -> [String]
 splitOnComma s = splitOnComma' s ""
     where
         splitOnComma' [] w = [w]
         splitOnComma' (',':tail) w = [w] ++ splitOnComma' tail ""
         splitOnComma' (head:tail) w = splitOnComma' tail (w ++ [head])
+
+joinWithCommas :: [String] -> String
+joinWithCommas [] = []
+joinWithCommas (head:[]) = head
+joinWithCommas (head:tail) = head ++ "," ++ joinWithCommas tail
 
 getThemes :: IO [String]
 getThemes = do
@@ -215,8 +234,7 @@ revealLetter letter (head:tail) (head':tail')
     | otherwise = [head'] ++ revealLetter letter tail tail'
 
 toUpper' :: String -> String
-toUpper' [] = []
-toUpper' (head:tail) = [toUpper head] ++ toUpper' tail
+toUpper' s = map toUpper s
 
 showHangmanBody :: Int -> IO()
 showHangmanBody lives
