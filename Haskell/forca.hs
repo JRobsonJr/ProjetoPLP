@@ -240,42 +240,46 @@ getCurrentTimestamp = do
     let currTimestamp = floor $ utctDayTime currentTime :: Int
     return currTimestamp
 
-getTip :: Main.Word -> [Char] -> IO()
-getTip word guesses =  do 
+getHint :: Int -> Main.Word -> [Char] -> IO()
+getHint tipsUsed word guesses =  do 
     currTimestamp <- getCurrentTimestamp
     let value = text word
     let index = currTimestamp `mod` (length value)
     let tip = value !! index
-    
-    if tip `elem` guesses
-        then do
-            getTip word guesses
+    if level word > tipsUsed 
+        then do 
+            if tip `elem` guesses
+                then do
+                    getHint tipsUsed word guesses
+            else do
+                putChar tip
     else do
-        putChar tip
+        showTipLimitExceeded (level word)
+        putChar '#'
 
 getLetter :: IO Char
 getLetter = do
     letter <- getChar
-    getChar
+    _ <- getChar
     return letter
 
-guessLetter :: Main.Word -> [Char] -> IO()
-guessLetter word guesses = do
+guessLetter :: Int -> Main.Word -> [Char] -> IO()
+guessLetter tipsUsed word guesses = do
     letter <- getLetter
-    guessLetter' word guesses letter
+    guessLetter' tipsUsed word guesses letter
 
-guessLetter' :: Main.Word -> [Char] -> Char -> IO()
-guessLetter' word guesses letter 
+guessLetter' :: Int -> Main.Word -> [Char] -> Char -> IO()
+guessLetter' tipsUsed word guesses letter 
     | letter == '#' = do
-        getTip word guesses
+        getHint tipsUsed word guesses
     | isLetter letter && not(letter `elem` guesses) = do 
         putChar letter
     | not (isLetter letter) = do
         putStrLn "Uma letra, meu anjo..."
-        guessLetter word guesses
+        guessLetter tipsUsed word guesses
     | otherwise = do
         putStrLn "Essa letra já foi sugerida. Tente outra!"
-        guessLetter word guesses
+        guessLetter tipsUsed word guesses
 
 toUpper' :: String -> String
 toUpper' s = map toUpper s
@@ -379,6 +383,12 @@ showRules = do
     putStrLn "                         [ Pressione ENTER para voltar ]\n\n"
     notImplementedYet
 
+
+showTipLimitExceeded::Int -> IO()
+showTipLimitExceeded level =  
+    putStrLn $ "\n\n                    O limite de dicas para essa palavra é: " ++( show level)++ ".\n\n"
+    
+
 showRanking :: IO()
 showRanking = do
     putStrLn "\n--------------------------------     RANKING     -------------------------------\n\n\n"
@@ -402,10 +412,7 @@ quit = do
 
 main :: IO()
 main = do
-    -- showOpening
-    -- showMenu
     hSetBuffering stdin NoBuffering
     hSetBuffering stdout NoBuffering
-    let a = Word {text="Ford", theme="Mustang", level=1}  
-    let lista = ['a'..'c']
-    guessLetter a lista
+    showOpening
+    showMenu
