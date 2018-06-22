@@ -386,7 +386,7 @@ showRules = do
 
 showTipLimitExceeded::Int -> IO()
 showTipLimitExceeded level =  
-    putStrLn $ "\n\n                    O limite de dicas para essa palavra é: " ++( show level)++ ".\n\n"
+    putStrLn $ "\n\n                    O limite de dicas para essa palavra é: " ++(show level)++ ".\n\n"
     
 
 showRanking :: IO()
