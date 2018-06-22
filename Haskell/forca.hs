@@ -38,12 +38,31 @@ setUpWords = do
           createWordList (head:tail) = [createWord $ splitOnComma head] ++ createWordList tail
               where createWord (text:theme:level:_) = Word text theme (read level)
 
+writePlayer :: String -> Int -> IO ()
+writePlayer nickname score = do
+    let player = joinWithCommas [nickname, show score]
+    appendFile "../resources/players.csv" ("\n" ++ player)
+
+writeWord :: String -> String -> IO ()
+writeWord text theme = do
+    let word = joinWithCommas $ map toUpper' [text, theme, (getLevel text)]
+    appendFile "../resources/words.csv" ("\n" ++ word)
+    where getLevel text
+            | length text < 6  = "1"
+            | length text < 10 = "2"
+            | otherwise        = "3"
+
 splitOnComma :: String -> [String]
 splitOnComma s = splitOnComma' s ""
     where
         splitOnComma' [] w = [w]
         splitOnComma' (',':tail) w = [w] ++ splitOnComma' tail ""
         splitOnComma' (head:tail) w = splitOnComma' tail (w ++ [head])
+
+joinWithCommas :: [String] -> String
+joinWithCommas [] = []
+joinWithCommas (head:[]) = head
+joinWithCommas (head:tail) = head ++ "," ++ joinWithCommas tail
 
 getThemes :: IO [String]
 getThemes = do
@@ -259,8 +278,7 @@ guessLetter' word guesses letter
         guessLetter word guesses
 
 toUpper' :: String -> String
-toUpper' [] = []
-toUpper' (head:tail) = [toUpper head] ++ toUpper' tail
+toUpper' s = map toUpper s
 
 showHangmanBody :: Int -> IO()
 showHangmanBody lives
@@ -342,6 +360,23 @@ showVictoryHangman = do
 showRules :: IO()
 showRules = do 
     putStrLn "\n--------------------------------     REGRAS     --------------------------------\n\n"
+    
+    putStr "    No jogo da forca, o jogador deve acertar a palavra que lhe foi proposta a pa"
+    putStr "rtir do número de letras dessa palavra e do tema ligado a ela. A cada rodada, o "
+    putStr "jogador deve sugerir uma letra. Se a palavra proposta contiver a letra sugerida,"
+    putStr " todas as ocorrências dessa letra são reveladas. Caso contrário, uma parte do en"
+    putStr "forcado será desenhada. Para vencer, o jogador deve ser capaz de revelar a palav"
+    putStrLn "ra por completo antes que todo o corpo do enforcado seja desenhado."
+    
+    putStr "    O jogador poderá se desafiar em dois modos distintos: o rápido e o campeonat"
+    putStr "o. No modo rápido, o jogador enfrentará apenas uma palavra, podendo especificar "
+    putStr "a dificuldade ou o tema dela, se assim desejar. Já no modo campeonato, o jogador"
+    putStr "enfrentará diversas palavras em sequência e acumulará pontos a cada palavra reve"
+    putStr "lada. Nesse modo, o jogo segue até que o jogador perca uma partida ou adivinhe "
+    putStr "todas as palavras possíveis. Em qualquer um dos casos, seu desempenho será regis"
+    putStr "trado no ranking.\n\n"
+    
+    putStrLn "                         [ Pressione ENTER para voltar ]\n\n"
     notImplementedYet
 
 showRanking :: IO()
