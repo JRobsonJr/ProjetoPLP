@@ -254,7 +254,8 @@ getHint tipsUsed word guesses =  do
             return tip
     else do
         showTipLimitExceeded (level word)
-        return '#'
+        letter <- guessLetter tipsUsed word guesses
+        return letter
 
 getLetter :: IO Char
 getLetter = do
