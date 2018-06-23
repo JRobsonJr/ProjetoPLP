@@ -241,8 +241,25 @@ showLevels = do
     putStrLn "                              3  -  Difícil\n\n"
 
 
+getCurrentTimestamp :: IO Int
+getCurrentTimestamp = do
+    currentTime <- getCurrentTime
+    let currTimestamp = floor $ utctDayTime currentTime :: Int
+    return currTimestamp
+
 randomFastMatch :: IO()
-randomFastMatch = notImplementedYet
+randomFastMatch = do
+    words <- setUpWords
+    randomWord <- getRandomWord words
+    putStrLn (text randomWord)
+    -- startGame
+
+getRandomWord  :: [Main.Word] -> IO Main.Word
+getRandomWord words = do
+    currTimestamp <- getCurrentTimestamp
+    let index = currTimestamp `mod` (length words)
+    let word = words !! index
+    return word
 
 championshipMode :: IO()
 championshipMode = notImplementedYet
@@ -268,6 +285,55 @@ revealLetter letter [] [] = []
 revealLetter letter (head:tail) (head':tail')
     | letter == head = [letter] ++ revealLetter letter tail tail'
     | otherwise = [head'] ++ revealLetter letter tail tail'
+    
+getCurrentTimestamp :: IO Int
+getCurrentTimestamp = do
+    currentTime <- getCurrentTime
+    let currTimestamp = floor $ utctDayTime currentTime :: Int
+    return currTimestamp
+
+getHint :: Int -> Main.Word -> [Char] -> IO Char
+getHint tipsUsed word guesses =  do 
+    currTimestamp <- getCurrentTimestamp
+    let value = text word
+    let index = currTimestamp `mod` (length value)
+    let tip = value !! index
+
+    if level word > tipsUsed then do 
+        if tip `elem` guesses then do
+                getHint tipsUsed word guesses
+        else do
+            return tip
+    else do
+        showTipLimitExceeded (level word)
+        letter <- guessLetter tipsUsed word guesses
+        return letter
+
+getLetter :: IO Char
+getLetter = do
+    letter <- getChar
+    _ <- getChar
+    return letter
+
+guessLetter :: Int -> Main.Word -> [Char] -> IO Char
+guessLetter tipsUsed word guesses = do
+    letter <- getLetter
+    result <- guessLetter' tipsUsed word guesses letter
+    return result
+
+guessLetter' :: Int -> Main.Word -> [Char] -> Char -> IO Char
+guessLetter' tipsUsed word guesses letter 
+    | letter == '#' = do
+        tip <- getHint tipsUsed word guesses
+        return tip
+    | isLetter letter && not(letter `elem` guesses) = do 
+        return letter
+    | not (isLetter letter) = do
+        putStrLn "Uma letra, meu anjo..."
+        guessLetter tipsUsed word guesses
+    | otherwise = do
+        putStrLn "Essa letra já foi sugerida. Tente outra!"
+        guessLetter tipsUsed word guesses
 
 toUpper' :: String -> String
 toUpper' s = map toUpper s
@@ -371,6 +437,9 @@ showRules = do
     putStrLn "                         [ Pressione ENTER para voltar ]\n\n"
     notImplementedYet
 
+showTipLimitExceeded::Int -> IO()
+showTipLimitExceeded level =  
+    putStrLn $ "\n\n                    O limite de dicas para essa palavra é: " ++(show level)++ ".\n\n"
 
 showVictoryMessage :: IO()
 showVictoryMessage = do
@@ -412,5 +481,8 @@ quit = do
 
 main :: IO()
 main = do
+    hSetBuffering stdin NoBuffering
+    hSetBuffering stdout NoBuffering
     showOpening
     showMenu
+
