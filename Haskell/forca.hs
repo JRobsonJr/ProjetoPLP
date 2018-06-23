@@ -1,5 +1,7 @@
 import System.IO
 import Data.Char
+import Data.List
+import Data.Time.Clock
 
 -- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
 data Word = Word { 
@@ -72,6 +74,7 @@ getThemes = do
         getThemes' (head:tail) result
             | (theme head) `elem` result = getThemes' tail result
             | otherwise = getThemes' tail (result ++ [theme head])
+
 
 filterByTheme :: String -> IO [Main.Word]
 filterByTheme t = do
@@ -175,9 +178,23 @@ selectFastMatchType 3 = randomFastMatch
 selectFastMatchType 4 = showGameModes
 selectFastMatchType n = showInvalidOptionMessage
 
+
+getCurrentTimestamp :: IO Int
+getCurrentTimestamp = do
+    currentTime <- getCurrentTime
+    let currTimestamp = floor $ utctDayTime currentTime :: Int
+    return currTimestamp
+
 themedFastMatch :: IO()
 themedFastMatch = do
-    selectTheme
+    theme <- selectTheme
+    words <- filterByTheme theme
+    currTimestamp <- getCurrentTimestamp
+
+    let index = currTimestamp `mod` (length words)
+    let word = words !! index
+    putStrLn (text word)
+    -- run game
     notImplementedYet
 
 selectTheme :: IO String
