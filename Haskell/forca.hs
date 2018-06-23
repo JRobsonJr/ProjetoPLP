@@ -203,22 +203,14 @@ showThemes = do
             where
                 spaces = "                              "
 
-
-getCurrentTimestamp :: IO Int
-getCurrentTimestamp = do
-    currentTime <- getCurrentTime
-    let currTimestamp = floor $ utctDayTime currentTime :: Int
-    return currTimestamp                
-
+                
 leveledFastMatch :: IO()
 leveledFastMatch = do
     level <- selectLevel
     words <- filterByLevel level
-    currTimestamp <- getCurrentTimestamp
-
-    let index = currTimestamp `mod` (length words)
-    let word = words !! index
-    putStrLn (text word)
+    randomWord <- getRandomWord words
+    putStrLn (text randomWord)
+    -- startGame
 
 selectLevel :: IO Int
 selectLevel = do
@@ -286,11 +278,6 @@ revealLetter letter (head:tail) (head':tail')
     | letter == head = [letter] ++ revealLetter letter tail tail'
     | otherwise = [head'] ++ revealLetter letter tail tail'
     
-getCurrentTimestamp :: IO Int
-getCurrentTimestamp = do
-    currentTime <- getCurrentTime
-    let currTimestamp = floor $ utctDayTime currentTime :: Int
-    return currTimestamp
 
 getHint :: Int -> Main.Word -> [Char] -> IO Char
 getHint tipsUsed word guesses =  do 
@@ -485,4 +472,6 @@ main = do
     hSetBuffering stdout NoBuffering
     showOpening
     showMenu
+
+
 
