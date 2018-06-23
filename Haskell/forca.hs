@@ -206,8 +206,25 @@ showThemes = do
 leveledFastMatch :: IO()
 leveledFastMatch = notImplementedYet
 
+getCurrentTimestamp :: IO Int
+getCurrentTimestamp = do
+    currentTime <- getCurrentTime
+    let currTimestamp = floor $ utctDayTime currentTime :: Int
+    return currTimestamp
+
 randomFastMatch :: IO()
-randomFastMatch = notImplementedYet
+randomFastMatch = do
+    words <- setUpWords
+    randomWord <- getRandomWord words
+    putStrLn (text randomWord)
+    -- startGame
+
+getRandomWord  :: [Main.Word] -> IO Main.Word
+getRandomWord words = do
+    currTimestamp <- getCurrentTimestamp
+    let index = currTimestamp `mod` (length words)
+    let word = words !! index
+    return word
 
 championshipMode :: IO()
 championshipMode = notImplementedYet
@@ -433,3 +450,4 @@ main = do
     hSetBuffering stdout NoBuffering
     showOpening
     showMenu
+
