@@ -1,6 +1,5 @@
 import System.IO
 import Data.Char
-import Data.List
 import Data.Time.Clock
 
 -- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
