@@ -240,22 +240,21 @@ getCurrentTimestamp = do
     let currTimestamp = floor $ utctDayTime currentTime :: Int
     return currTimestamp
 
-getHint :: Int -> Main.Word -> [Char] -> IO()
+getHint :: Int -> Main.Word -> [Char] -> IO Char
 getHint tipsUsed word guesses =  do 
     currTimestamp <- getCurrentTimestamp
     let value = text word
     let index = currTimestamp `mod` (length value)
     let tip = value !! index
-    if level word > tipsUsed 
-        then do 
-            if tip `elem` guesses
-                then do
-                    getHint tipsUsed word guesses
-            else do
-                putChar tip
+
+    if level word > tipsUsed then do 
+        if tip `elem` guesses then do
+                getHint tipsUsed word guesses
+        else do
+            return tip
     else do
         showTipLimitExceeded (level word)
-        putChar '#'
+        return '#'
 
 getLetter :: IO Char
 getLetter = do
@@ -263,17 +262,19 @@ getLetter = do
     _ <- getChar
     return letter
 
-guessLetter :: Int -> Main.Word -> [Char] -> IO()
+guessLetter :: Int -> Main.Word -> [Char] -> IO Char
 guessLetter tipsUsed word guesses = do
     letter <- getLetter
-    guessLetter' tipsUsed word guesses letter
+    result <- guessLetter' tipsUsed word guesses letter
+    return result
 
-guessLetter' :: Int -> Main.Word -> [Char] -> Char -> IO()
+guessLetter' :: Int -> Main.Word -> [Char] -> Char -> IO Char
 guessLetter' tipsUsed word guesses letter 
     | letter == '#' = do
-        getHint tipsUsed word guesses
+        tip <- getHint tipsUsed word guesses
+        return tip
     | isLetter letter && not(letter `elem` guesses) = do 
-        putChar letter
+        return letter
     | not (isLetter letter) = do
         putStrLn "Uma letra, meu anjo..."
         guessLetter tipsUsed word guesses
