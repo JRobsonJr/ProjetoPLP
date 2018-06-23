@@ -1,5 +1,6 @@
 import System.IO
 import Data.Char
+import Data.Time.Clock
 
 -- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
 data Word = Word { 
@@ -205,8 +206,25 @@ showThemes = do
 leveledFastMatch :: IO()
 leveledFastMatch = notImplementedYet
 
+getCurrentTimestamp :: IO Int
+getCurrentTimestamp = do
+    currentTime <- getCurrentTime
+    let currTimestamp = floor $ utctDayTime currentTime :: Int
+    return currTimestamp
+
 randomFastMatch :: IO()
-randomFastMatch = notImplementedYet
+randomFastMatch = do
+    words <- setUpWords
+    randomWord <- getRandomWord words
+    putStrLn (text randomWord)
+    -- startGame
+
+getRandomWord  :: [Main.Word] -> IO Main.Word
+getRandomWord words = do
+    currTimestamp <- getCurrentTimestamp
+    let index = currTimestamp `mod` (length words)
+    let word = words !! index
+    return word
 
 championshipMode :: IO()
 championshipMode = notImplementedYet
@@ -378,3 +396,4 @@ main :: IO()
 main = do
     showOpening
     showMenu
+
