@@ -384,11 +384,26 @@ showRules = do
     putStrLn "                         [ Pressione ENTER para voltar ]\n\n"
     notImplementedYet
 
-
 showTipLimitExceeded::Int -> IO()
 showTipLimitExceeded level =  
     putStrLn $ "\n\n                    O limite de dicas para essa palavra é: " ++(show level)++ ".\n\n"
-    
+
+showVictoryMessage :: IO()
+showVictoryMessage = do
+    putStrLn "\n                    Parabéns, você acaba de salvar uma vida!\n"
+    showVictoryHangman
+
+
+showGameOverMessage :: IO()
+showGameOverMessage = do
+    putStrLn "\n                       É realmente uma pena, fim de jogo...\n"
+    showHangman 0
+
+
+revealWord :: Main.Word -> IO()
+revealWord word = do
+    putStrLn $ "\nA palavra era: "++ (text word) ++".\n\n"
+    putStr "                         [ Pressione ENTER para voltar ]"
 
 showRanking :: IO()
 showRanking = do
