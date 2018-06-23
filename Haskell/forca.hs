@@ -1,5 +1,6 @@
 import System.IO
 import Data.Char
+import Data.Time.Clock
 
 -- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
 data Word = Word { 
@@ -202,8 +203,43 @@ showThemes = do
             where
                 spaces = "                              "
 
+
+getCurrentTimestamp :: IO Int
+getCurrentTimestamp = do
+    currentTime <- getCurrentTime
+    let currTimestamp = floor $ utctDayTime currentTime :: Int
+    return currTimestamp                
+
 leveledFastMatch :: IO()
-leveledFastMatch = notImplementedYet
+leveledFastMatch = do
+    level <- selectLevel
+    words <- filterByLevel level
+    currTimestamp <- getCurrentTimestamp
+
+    let index = currTimestamp `mod` (length words)
+    let word = words !! index
+    putStrLn (text word)
+
+selectLevel :: IO Int
+selectLevel = do
+    showLevels
+    level <- getOption
+
+    if (level < 1 || level > 3) 
+        then do
+            showInvalidOptionMessage
+            selectLevel
+    else do
+        return level
+
+
+showLevels :: IO()
+showLevels = do
+    putStrLn "\n------------------------     SELECIONAR DIFICULDADE     ------------------------\n\n";
+    putStrLn "                              1  -  Fácil"
+    putStrLn "                              2  -  Médio"
+    putStrLn "                              3  -  Difícil\n\n"
+
 
 randomFastMatch :: IO()
 randomFastMatch = notImplementedYet
