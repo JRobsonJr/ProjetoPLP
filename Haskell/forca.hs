@@ -209,8 +209,35 @@ showThemes = do
             where
                 spaces = "                              "
 
+                
 leveledFastMatch :: IO()
-leveledFastMatch = notImplementedYet
+leveledFastMatch = do
+    level <- selectLevel
+    words <- filterByLevel level
+    randomWord <- getRandomWord words
+    putStrLn (text randomWord)
+    -- startGame
+
+selectLevel :: IO Int
+selectLevel = do
+    showLevels
+    level <- getOption
+
+    if (level < 1 || level > 3) 
+        then do
+            showInvalidOptionMessage
+            selectLevel
+    else do
+        return level
+
+
+showLevels :: IO()
+showLevels = do
+    putStrLn "\n------------------------     SELECIONAR DIFICULDADE     ------------------------\n\n";
+    putStrLn "                              1  -  Fácil"
+    putStrLn "                              2  -  Médio"
+    putStrLn "                              3  -  Difícil\n\n"
+
 
 getCurrentTimestamp :: IO Int
 getCurrentTimestamp = do
