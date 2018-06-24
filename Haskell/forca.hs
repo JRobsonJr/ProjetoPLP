@@ -74,6 +74,7 @@ getThemes = do
             | (theme head) `elem` result = getThemes' tail result
             | otherwise = getThemes' tail (result ++ [theme head])
 
+
 filterByTheme :: String -> IO [Main.Word]
 filterByTheme t = do
     words <- setUpWords
@@ -176,9 +177,14 @@ selectFastMatchType 3 = randomFastMatch
 selectFastMatchType 4 = showGameModes
 selectFastMatchType n = showInvalidOptionMessage
 
+
 themedFastMatch :: IO()
 themedFastMatch = do
-    selectTheme
+    theme <- selectTheme
+    words <- filterByTheme theme
+    randomWord <- getRandomWord words
+    putStrLn (text randomWord)
+    -- run game
     notImplementedYet
 
 selectTheme :: IO String
@@ -472,6 +478,3 @@ main = do
     hSetBuffering stdout NoBuffering
     showOpening
     showMenu
-
-
-
