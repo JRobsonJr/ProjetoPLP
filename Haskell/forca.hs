@@ -450,11 +450,34 @@ revealWord :: Main.Word -> IO()
 revealWord word = do
     putStrLn $ "\nA palavra era: "++ (text word) ++".\n\n"
     putStr "                         [ Pressione ENTER para voltar ]"
+    
+getSpaces :: Int -> String
+getSpaces 0 = ""
+getSpaces n = " " ++ getSpaces (n - 1)
+
+getLengthSpacing :: Int -> Int -> String
+getLengthSpacing length scoreLength = do
+    if (scoreLength > 2) then getSpaces (length - (scoreLength - 2)) else getSpaces length
+    
+showPlayers :: [Player] -> Int -> String
+showPlayers [] 10 = "                       " ++ show(10) ++ "º ------------       ---------\n"
+showPlayers [] i = "                        " ++ show(i) ++ "º ------------       ---------\n" ++ showPlayers [] (i + 1)
+showPlayers (head:tail) i = "                        " ++ show(i) ++ "º " ++ name head ++ getLengthSpacing (22 - length(name head)) (length (show(score head))) ++ show(score head) ++ "\n" ++ showPlayers tail (i + 1)
 
 showRanking :: IO()
 showRanking = do
     putStrLn "\n--------------------------------     RANKING     -------------------------------\n\n\n"
-    notImplementedYet
+    putStrLn "                             Jogador          Pontuação\n\n"
+    
+    players <- setUpPlayers
+    
+    -- Ordenar os jogadores pela pontuacao
+    
+    putStrLn (showPlayers players 1)
+    
+    putStrLn "\n                         [ Pressione ENTER para voltar ]\n\n"
+    
+    -- Pause
 
 getWordData :: IO()
 getWordData = do
