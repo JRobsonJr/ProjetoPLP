@@ -183,9 +183,7 @@ themedFastMatch = do
     theme <- selectTheme
     words <- filterByTheme theme
     randomWord <- getRandomWord words
-    putStrLn (text randomWord)
-    -- run game
-    notImplementedYet
+    startGame randomWord
 
 selectTheme :: IO String
 selectTheme = do
@@ -215,8 +213,7 @@ leveledFastMatch = do
     level <- selectLevel
     words <- filterByLevel level
     randomWord <- getRandomWord words
-    putStrLn (text randomWord)
-    -- startGame
+    startGame randomWord
 
 selectLevel :: IO Int
 selectLevel = do
@@ -249,8 +246,7 @@ randomFastMatch :: IO()
 randomFastMatch = do
     words <- setUpWords
     randomWord <- getRandomWord words
-    putStrLn (text randomWord)
-    -- startGame
+    startGame randomWord
 
 getRandomWord  :: [Main.Word] -> IO Main.Word
 getRandomWord words = do
@@ -261,6 +257,42 @@ getRandomWord words = do
 
 championshipMode :: IO()
 championshipMode = notImplementedYet
+
+startGame :: Main.Word -> IO()
+startGame word = do
+    let hiddenWord = getHiddenWord $ text word
+    (lives, tipsUsed) <- runGame word hiddenWord [] 7 0
+    print $ getScore word lives tipsUsed
+
+runGame :: Main.Word -> String -> [Char] -> Int -> Int -> IO (Int, Int)
+runGame originalWord hiddenWord guesses lives tipsUsed = do
+    showHangman lives
+    putStrLn $ "Tema: " ++ theme originalWord
+    putStrLn $ "Palavra: " ++ hiddenWord
+    putStrLn $ "Letras já usadas: " ++ showGuesses guesses
+
+    letter <- guessLetter tipsUsed originalWord guesses
+    let hiddenWord' = revealLetter letter (text originalWord) hiddenWord
+    let guesses' = guesses ++ [letter]
+    let lives' = getLives hiddenWord hiddenWord' lives
+
+    --let tipsUsed' = ... (atualizar o número de dicas usadas de alguma forma rs)
+
+    if hiddenWord' == text originalWord then do
+        showVictoryMessage
+        revealWord originalWord
+        return (lives', tipsUsed)
+    else if lives' > 0 then do
+        runGame originalWord hiddenWord' guesses' lives' tipsUsed
+    else do
+        showGameOverMessage
+        revealWord originalWord
+        return (0, tipsUsed)
+
+getLives :: String -> String -> Int -> Int
+getLives word word' currentLives
+    | word == word' = currentLives - 1
+    | otherwise = currentLives
 
 getHiddenWord :: String -> String
 getHiddenWord [] = []
