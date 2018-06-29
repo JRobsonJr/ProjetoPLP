@@ -3,6 +3,7 @@ import Data.Char
 import Data.List
 import Data.Ord
 import Data.Time.Clock
+import qualified System.Process
 
 -- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
 data Word = Word { 
@@ -110,6 +111,7 @@ showOpening = do
     putStrLn "     | |          `-' `-'                                                       "
     putStrLn "     |_|                                                                        "
     putStrLn "                                   Aguarde...                                   "
+    clearScreen
 
 showMenu :: IO()
 showMenu = do
@@ -126,6 +128,7 @@ getOption :: IO Int
 getOption = do
     putStrLn "\n\n                    Informe o número da opção desejada: "
     option <- getLine
+    clearScreen
     return $ read option
 
 selectMenuOption :: Int -> IO()
@@ -152,6 +155,7 @@ showGameModes = do
     putStrLn "                                3  -  Voltar"
     
     option <- getOption
+    clearScreen
     selectGameMode option
 
 selectGameMode :: Int -> IO()
@@ -170,6 +174,7 @@ fastMatchMode = do
     putStrLn "                              4  -  Voltar"
 
     option <- getOption
+    clearScreen
     selectFastMatchType option
 
 selectFastMatchType :: Int -> IO()
@@ -359,12 +364,18 @@ getHint tipsUsed word guesses =  do
         showTipLimitExceeded (level word)
         letter <- guessLetter tipsUsed word guesses
         return letter
+        
+clearScreen :: IO()
+clearScreen = do
+    _ <- System.Process.system "reset"
+    return ()
 
 getLetter :: IO Char
 getLetter = do
     letter <- getChar
     _ <- getChar
-    return letter
+    clearScreen
+    return (toUpper letter)
 
 guessLetter :: Int -> Main.Word -> [Char] -> IO Char
 guessLetter tipsUsed word guesses = do
