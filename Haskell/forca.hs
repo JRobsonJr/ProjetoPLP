@@ -111,6 +111,7 @@ showOpening = do
     putStrLn "     | |          `-' `-'                                                       "
     putStrLn "     |_|                                                                        "
     putStrLn "                                   Aguarde...                                   "
+    sleep3s
     clearScreen
 
 showMenu :: IO()
@@ -367,8 +368,18 @@ getHint tipsUsed word guesses =  do
         
 clearScreen :: IO()
 clearScreen = do
-    _ <- System.Process.system "reset"
+    _ <- System.Process.system "clear"
     return ()
+
+sleep3s :: IO()
+sleep3s = do
+    _ <- System.Process.system "sleep 3s"
+    return ()
+
+pause :: IO ()
+pause = do
+    x <- getChar
+    putStrLn ""
 
 getLetter :: IO Char
 getLetter = do
