@@ -1,5 +1,7 @@
 import System.IO
 import Data.Char
+import Data.List
+import Data.Ord
 import Data.Time.Clock
 
 -- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
@@ -12,7 +14,7 @@ data Word = Word {
 data Player = Player {
     name :: String,
     score:: Int
-} deriving (Show)
+} deriving (Ord, Eq, Show)
 
 setUpPlayers :: IO [Player]
 setUpPlayers = do
@@ -492,9 +494,13 @@ getLengthSpacing length scoreLength = do
     if (scoreLength > 2) then getSpaces (length - (scoreLength - 2)) else getSpaces length
     
 showPlayers :: [Player] -> Int -> String
-showPlayers [] 10 = "                       " ++ show(10) ++ "º ------------       ---------\n"
+showPlayers [] 11 = ""
+showPlayers [] 10 = "                       10º ------------       ---------\n"
 showPlayers [] i = "                        " ++ show(i) ++ "º ------------       ---------\n" ++ showPlayers [] (i + 1)
-showPlayers (head:tail) i = "                        " ++ show(i) ++ "º " ++ name head ++ getLengthSpacing (22 - length(name head)) (length (show(score head))) ++ show(score head) ++ "\n" ++ showPlayers tail (i + 1)
+showPlayers (head:tail) i = "                        " ++ show(i) ++ "º " ++ name head ++ getLengthSpacing (23 - length(name head)) (length (show(score head))) ++ show(score head) ++ "\n" ++ showPlayers tail (i + 1)
+
+sortByScore :: [Player] -> [Player]
+sortByScore = sortBy $ flip $ comparing score
 
 showRanking :: IO()
 showRanking = do
@@ -503,9 +509,7 @@ showRanking = do
     
     players <- setUpPlayers
     
-    -- Ordenar os jogadores pela pontuacao
-    
-    putStrLn (showPlayers players 1)
+    putStrLn (showPlayers (sortByScore players) 1)
     
     putStrLn "\n                         [ Pressione ENTER para voltar ]\n\n"
     
