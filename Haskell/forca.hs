@@ -257,9 +257,33 @@ getRandomWord words = do
     let word = words !! index
     return word
 
-championshipMode :: IO()
-championshipMode = notImplementedYet
+goBackChampionship :: String -> Bool
+goBackChampionship nickname = (length nickname) == 1 && nickname == "#";
 
+championshipMode :: IO()
+championshipMode = do
+    nickname <- getPlayerData
+    
+    if not (goBackChampionship nickname)
+    then notImplementedYet
+    else showMenu
+
+getPlayerData :: IO String
+getPlayerData = do
+    putStrLn "\n---------------------------     MODO CAMPEONATO     ----------------------------\n\n"
+    putStrLn "                         (Insira # para voltar...)\n\n\n"
+    putStr "                              Insira o seu nick: "
+    
+    nickname <- getLine
+    
+    if not (goBackChampionship nickname)
+    then putStrLn "\n\n                         Jogador cadastrado com sucesso!\n\n                                   Aguarde...\n\n"
+    else putStrLn ""
+
+    --system("sleep 1s");
+    
+    return nickname
+    
 startGame :: Main.Word -> IO()
 startGame word = do
     let hiddenWord = getHiddenWord $ text word
