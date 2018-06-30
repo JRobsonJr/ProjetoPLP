@@ -270,9 +270,17 @@ championshipMode :: IO()
 championshipMode = do
     nickname <- getPlayerData
     
-    if not (goBackChampionship nickname)
-    then notImplementedYet
+    if not (goBackChampionship nickname) then
+        notImplementedYet
     else showMenu
+
+championshipMode':: Int-> Int -> [Main.Word] -> IO Int
+championshipMode' score totalScore (head:tail)
+    | (score < 0) || ((length tail) == 0) = return totalScore
+    | otherwise = do
+        let total = totalScore + score
+        -- getScoreBy startGame(head)
+        championshipMode' score total tail
 
 
 getRandomOrderWords :: Int -> [Main.Word]-> IO [Main.Word]
@@ -286,9 +294,9 @@ getRandomOrderWords level randomOrderWords = do
 getRandomOrderWords' :: [Main.Word] -> [Main.Word] -> IO [Main.Word]
 getRandomOrderWords' randomOrderWords currentLevelWords = do
     if (length randomOrderWords) < (length currentLevelWords) then do 
-        randomOrderWord <- getRandomOrderWord randomOrderWords currentLevelWords 
-        let shuffleList = randomOrderWords++[randomOrderWord]
-        getRandomOrderWords' shuffleList currentLevelWords
+        randomOrderWord <- getRandomOrderWord randomOrderWords currentLevelWords
+        putStrLn (show randomOrderWord)
+        getRandomOrderWords' (randomOrderWords++[randomOrderWord]) currentLevelWords
     else
         return randomOrderWords
 
@@ -619,4 +627,4 @@ main = do
     -- showOpening
     -- showMenu
     a <- getRandomOrderWords 1 []
-    printList a
+    putStrLn "Opa"
