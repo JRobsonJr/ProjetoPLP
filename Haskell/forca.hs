@@ -279,8 +279,8 @@ getRandomOrderWords :: Int -> [Main.Word]-> IO [Main.Word]
 getRandomOrderWords 4 randomOrderWords = return randomOrderWords 
 getRandomOrderWords level randomOrderWords = do
     currentLevelWords <- filterByLevel level
-    shuffleList <- getRandomOrderWords' randomOrderWords currentLevelWords
-    getRandomOrderWords (level+1) shuffleList
+    shuffleList <- getRandomOrderWords' [] currentLevelWords
+    getRandomOrderWords (level+1) (randomOrderWords++shuffleList)
     
     
 getRandomOrderWords' :: [Main.Word] -> [Main.Word] -> IO [Main.Word]
