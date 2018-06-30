@@ -10,7 +10,7 @@ data Word = Word {
     text :: String,
     theme :: String,
     level :: Int
-} deriving (Show)
+} deriving (Eq, Show)
 
 data Player = Player {
     name :: String,
@@ -273,6 +273,33 @@ championshipMode = do
     if not (goBackChampionship nickname)
     then notImplementedYet
     else showMenu
+
+
+getRandomOrderWords :: Int -> [Main.Word]-> IO [Main.Word]
+getRandomOrderWords 4 randomOrderWords = return randomOrderWords 
+getRandomOrderWords level randomOrderWords = do
+    currentLevelWords <- filterByLevel level
+    shuffleList <- getRandomOrderWords' randomOrderWords currentLevelWords
+    getRandomOrderWords (level+1) shuffleList
+    
+    
+getRandomOrderWords' :: [Main.Word] -> [Main.Word] -> IO [Main.Word]
+getRandomOrderWords' randomOrderWords currentLevelWords = do
+    if (length randomOrderWords) < (length currentLevelWords) then do 
+        randomOrderWord <- getRandomOrderWord randomOrderWords currentLevelWords 
+        let shuffleList = randomOrderWords++[randomOrderWord]
+        getRandomOrderWords' shuffleList currentLevelWords
+    else
+        return randomOrderWords
+
+
+getRandomOrderWord :: [Main.Word] -> [Main.Word] -> IO Main.Word
+getRandomOrderWord randomOrderWords currentLevelWords = do 
+    word <- getRandomWord currentLevelWords
+    if word `elem` randomOrderWords then
+        getRandomOrderWord randomOrderWords currentLevelWords
+    else
+        return word
 
 getPlayerData :: IO String
 getPlayerData = do
@@ -577,9 +604,19 @@ quit = do
     putStrLn "                         Misael Augusto Silva da Costa" 
     putStrLn "                            Paulo José Bastos Leitão\n\n" 
 
+
+printList :: [Main.Word] -> IO()
+printList [] = putStrLn "FINISH"
+printList (x:xs) = do
+    putStrLn (text x)
+    printList xs
+
+
 main :: IO()
 main = do
-    hSetBuffering stdin NoBuffering
-    hSetBuffering stdout NoBuffering
-    showOpening
-    showMenu
+    -- hSetBuffering stdin NoBuffering
+    -- hSetBuffering stdout NoBuffering
+    -- showOpening
+    -- showMenu
+    a <- getRandomOrderWords 1 []
+    printList a
