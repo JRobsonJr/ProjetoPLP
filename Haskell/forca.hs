@@ -2,7 +2,7 @@ import System.IO
 import Data.Char
 import Data.List
 import Data.Ord
-import Data.Time.Clock
+import Data.Time.Clock.POSIX
 import qualified System.Process
 
 -- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
@@ -191,7 +191,8 @@ themedFastMatch = do
     theme <- selectTheme
     words <- filterByTheme theme
     randomWord <- getRandomWord words
-    startGame randomWord
+    score <- startGame randomWord
+    putStrLn (show score)
 
 selectTheme :: IO String
 selectTheme = do
@@ -221,7 +222,8 @@ leveledFastMatch = do
     level <- selectLevel
     words <- filterByLevel level
     randomWord <- getRandomWord words
-    startGame randomWord
+    score <- startGame randomWord
+    putStrLn (show score)
 
 selectLevel :: IO Int
 selectLevel = do
@@ -246,15 +248,16 @@ showLevels = do
 
 getCurrentTimestamp :: IO Int
 getCurrentTimestamp = do
-    currentTime <- getCurrentTime
-    let currTimestamp = floor $ utctDayTime currentTime :: Int
+    currentTime <- getPOSIXTime
+    let currTimestamp = floor $ currentTime * 100000
     return currTimestamp
 
 randomFastMatch :: IO()
 randomFastMatch = do
     words <- setUpWords
     randomWord <- getRandomWord words
-    startGame randomWord
+    score <- startGame randomWord
+    putStrLn (show score)
 
 getRandomWord  :: [Main.Word] -> IO Main.Word
 getRandomWord words = do
@@ -270,16 +273,24 @@ championshipMode :: IO()
 championshipMode = do
     nickname <- getPlayerData
     
-    if not (goBackChampionship nickname) then
-        notImplementedYet
+    if not (goBackChampionship nickname) then do
+        words <- getRandomOrderWords 1 []
+        score <- championshipMode' 1 1 words
+        putStrLn (show score)
+        -- registerNewPlayer
+        sleep3s
+        clearScreen
+        showChampionshipScore score
+
     else showMenu
 
 championshipMode':: Int-> Int -> [Main.Word] -> IO Int
 championshipMode' score totalScore (head:tail)
-    | (score < 0) || ((length tail) == 0) = return totalScore
+    | (score == 0) || ((length tail) == 0) = return totalScore
     | otherwise = do
         let total = totalScore + score
-        -- getScoreBy startGame(head)
+        score <- startGame(head)
+        putStrLn (show score)
         championshipMode' score total tail
 
 
@@ -295,7 +306,6 @@ getRandomOrderWords' :: [Main.Word] -> [Main.Word] -> IO [Main.Word]
 getRandomOrderWords' randomOrderWords currentLevelWords = do
     if (length randomOrderWords) < (length currentLevelWords) then do 
         randomOrderWord <- getRandomOrderWord randomOrderWords currentLevelWords
-        putStrLn (show randomOrderWord)
         getRandomOrderWords' (randomOrderWords++[randomOrderWord]) currentLevelWords
     else
         return randomOrderWords
@@ -325,11 +335,11 @@ getPlayerData = do
     
     return nickname
     
-startGame :: Main.Word -> IO()
+startGame :: Main.Word -> IO Int
 startGame word = do
     let hiddenWord = getHiddenWord $ text word
     (lives, tipsUsed) <- runGame word hiddenWord [] 7 0
-    print $ getScore word lives tipsUsed
+    return $ getScore word lives tipsUsed
 
 runGame :: Main.Word -> String -> [Char] -> Int -> Int -> IO (Int, Int)
 runGame originalWord hiddenWord guesses lives tipsUsed = do
@@ -561,6 +571,13 @@ showGameOverMessage = do
     showHangman 0
 
 
+showChampionshipScore :: Int -> IO ()
+showChampionshipScore totalScore = do    
+    putStrLn $ "\nAlém disso, você fez " ++ (show totalScore) ++ " pontos no total.\n\n"
+    putStrLn "                     [ Pressione ENTER para voltar ao jogo ]\n\n"
+    _ <- getChar 
+    return ()
+
 revealWord :: Main.Word -> IO()
 revealWord word = do
     putStrLn $ "\nA palavra era: "++ (text word) ++".\n\n"
@@ -612,19 +629,10 @@ quit = do
     putStrLn "                         Misael Augusto Silva da Costa" 
     putStrLn "                            Paulo José Bastos Leitão\n\n" 
 
-
-printList :: [Main.Word] -> IO()
-printList [] = putStrLn "FINISH"
-printList (x:xs) = do
-    putStrLn (text x)
-    printList xs
-
-
 main :: IO()
 main = do
     -- hSetBuffering stdin NoBuffering
     -- hSetBuffering stdout NoBuffering
     -- showOpening
     -- showMenu
-    a <- getRandomOrderWords 1 []
-    putStrLn "Opa"
+   championshipMode
