@@ -290,7 +290,6 @@ championshipMode' score totalScore (head:tail)
     | otherwise = do
         let total = totalScore + score
         score <- startGame(head)
-        putStrLn (show score)
         championshipMode' score total tail
 
 
