@@ -4,8 +4,8 @@ import Data.List
 import Data.Ord
 import Data.Time.Clock.POSIX
 import qualified System.Process
+import Control.Monad
 
--- esse nome da conflito com um bagulho q ja existe, mas n sei q nome botar
 data Word = Word { 
     text :: String,
     theme :: String,
@@ -54,6 +54,19 @@ writeWord text theme = do
             | length text < 6  = "1"
             | length text < 10 = "2"
             | otherwise        = "3"
+
+isAlreadyRegistered :: String -> String -> IO Bool
+isAlreadyRegistered text theme = do
+    words <- setUpWords
+    return $ isAlreadyRegistered' words text theme
+
+isAlreadyRegistered' :: [Main.Word] -> String -> String -> Bool
+isAlreadyRegistered' [] _ _ = False
+isAlreadyRegistered' (head:tail) newText newTheme
+    | isSameWord && isSameTheme = True
+    | otherwise = isAlreadyRegistered' tail newText newTheme
+    where isSameWord = (text head) == (toUpper' newText)
+          isSameTheme = (theme head) == (toUpper' newTheme)
 
 splitOnComma :: String -> [String]
 splitOnComma s = splitOnComma' s ""
@@ -124,6 +137,7 @@ showMenu = do
     putStrLn "                                5  -  Sair"
     option <- getOption
     selectMenuOption option
+    when (not $ option == 5) $ do clearScreen; showMenu
     
 getOption :: IO Int
 getOption = do
@@ -552,7 +566,8 @@ showRules = do
     putStr "trado no ranking.\n\n"
     
     putStrLn "                         [ Pressione ENTER para voltar ]\n\n"
-    notImplementedYet
+    _ <- getLine
+    return ()
 
 showTipLimitExceeded::Int -> IO()
 showTipLimitExceeded level =  
@@ -581,6 +596,8 @@ revealWord :: Main.Word -> IO()
 revealWord word = do
     putStrLn $ "\nA palavra era: "++ (text word) ++".\n\n"
     putStr "                         [ Pressione ENTER para voltar ]"
+    _ <- getLine
+    return ()
     
 getSpaces :: Int -> String
 getSpaces 0 = ""
@@ -609,13 +626,41 @@ showRanking = do
     putStrLn (showPlayers (sortByScore players) 1)
     
     putStrLn "\n                         [ Pressione ENTER para voltar ]\n\n"
-    
+    _ <- getLine
+    return()
     -- Pause
 
 getWordData :: IO()
 getWordData = do
+    clearScreen
     putStrLn "\n---------------------------     CADASTRAR PALAVRA     --------------------------\n\n\n"
-    notImplementedYet
+    putStr "          Informe a nova palavra: "
+    text <- getLine
+
+    putStrLn "\n                              Temas já cadastrados:"
+    showThemes
+
+    putStr "\n          Informe o tema da palavra (por extenso): "
+    theme <- getLine
+
+    registered <- isAlreadyRegistered text theme
+    if not registered
+        then getWordDataSuccess text theme
+        else getWordDataFailure
+
+getWordDataSuccess :: String -> String -> IO()
+getWordDataSuccess text theme = do
+    writeWord text theme
+    putStrLn "\n\n                         Palavra cadastrada com sucesso!\n"
+    putStrLn "                                   Aguarde...\n\n"
+    sleep3s
+
+getWordDataFailure :: IO()
+getWordDataFailure = do
+    putStrLn "\n\n                       Opa, essa palavra já foi cadastrada...\n"
+    putStrLn "                      [ Pressione ENTER para tentar novamente ]\n\n"
+    _ <- getLine
+    getWordData
 
 quit :: IO()
 quit = do
@@ -630,8 +675,7 @@ quit = do
 
 main :: IO()
 main = do
-    -- hSetBuffering stdin NoBuffering
-    -- hSetBuffering stdout NoBuffering
-    -- showOpening
-    -- showMenu
-   championshipMode
+    hSetBuffering stdin NoBuffering
+    hSetBuffering stdout NoBuffering
+    showOpening
+    showMenu
