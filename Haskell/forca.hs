@@ -125,10 +125,10 @@ showOpening = do
     putStrLn "     |_|                                                                        "
     putStrLn "                                   Aguarde...                                   "
     sleep3s
-    clearScreen
 
 showMenu :: IO()
 showMenu = do
+    clearScreen
     putStrLn "\n---------------------------------     MENU     ---------------------------------\n\n"
     putStrLn "                                1  -  Jogar"
     putStrLn "                                2  -  Regras"
@@ -137,13 +137,13 @@ showMenu = do
     putStrLn "                                5  -  Sair"
     option <- getOption
     selectMenuOption option
+    clearScreen
     when (not $ option == 5) $ do clearScreen; showMenu
     
 getOption :: IO Int
 getOption = do
     putStrLn "\n\n                    Informe o número da opção desejada: "
     option <- getLine
-    clearScreen
     return $ read option
 
 selectMenuOption :: Int -> IO()
@@ -156,21 +156,18 @@ selectMenuOption n = showInvalidOptionMessage
 
 showInvalidOptionMessage :: IO()
 showInvalidOptionMessage = do
-    putStrLn "                       Opção inválida... Tente novamente!\n"
-
-notImplementedYet :: IO()
-notImplementedYet = do
-    putStrLn "                         Not implemented yet, meu anjo!\n"
+    putStrLn "           Opção inválida... Pressione ENTER para tentar novamente!\n"
+    pause
 
 showGameModes :: IO()
 showGameModes = do
+    clearScreen
     putStrLn "\n-----------------------------     MODO DE JOGO     -----------------------------\n"
     putStrLn "                                1  -  Jogo Rápido"
     putStrLn "                                2  -  Modo Campeonato"
     putStrLn "                                3  -  Voltar"
     
     option <- getOption
-    clearScreen
     selectGameMode option
 
 selectGameMode :: Int -> IO()
@@ -181,6 +178,7 @@ selectGameMode n = showInvalidOptionMessage
 
 fastMatchMode :: IO()
 fastMatchMode = do
+    clearScreen
     putStrLn "\n-----------------------------     JOGO RÁPIDO     ------------------------------\n"
     putStrLn "                      Como sua palavra deve ser escolhida?\n"
     putStrLn "                              1  -  Por Tema"
@@ -189,7 +187,6 @@ fastMatchMode = do
     putStrLn "                              4  -  Voltar"
 
     option <- getOption
-    clearScreen
     selectFastMatchType option
 
 selectFastMatchType :: Int -> IO()
@@ -198,7 +195,6 @@ selectFastMatchType 2 = leveledFastMatch
 selectFastMatchType 3 = randomFastMatch
 selectFastMatchType 4 = showGameModes
 selectFastMatchType n = showInvalidOptionMessage
-
 
 themedFastMatch :: IO()
 themedFastMatch = do
@@ -210,6 +206,7 @@ themedFastMatch = do
 
 selectTheme :: IO String
 selectTheme = do
+    clearScreen
     putStrLn "\n----------------------------     SELECIONAR TEMA     ---------------------------\n"
     showThemes
     themes <- getThemes
@@ -230,7 +227,6 @@ showThemes = do
             where
                 spaces = "                              "
 
-                
 leveledFastMatch :: IO()
 leveledFastMatch = do
     level <- selectLevel
@@ -251,14 +247,13 @@ selectLevel = do
     else do
         return level
 
-
 showLevels :: IO()
 showLevels = do
+    clearScreen
     putStrLn "\n------------------------     SELECIONAR DIFICULDADE     ------------------------\n\n";
     putStrLn "                              1  -  Fácil"
     putStrLn "                              2  -  Médio"
     putStrLn "                              3  -  Difícil\n\n"
-
 
 getCurrentTimestamp :: IO Int
 getCurrentTimestamp = do
@@ -306,14 +301,12 @@ championshipMode' score totalScore (head:tail)
         score <- startGame(head)
         championshipMode' score total tail
 
-
 getRandomOrderWords :: Int -> [Main.Word]-> IO [Main.Word]
 getRandomOrderWords 4 randomOrderWords = return randomOrderWords 
 getRandomOrderWords level randomOrderWords = do
     currentLevelWords <- filterByLevel level
     shuffleList <- getRandomOrderWords' [] currentLevelWords
     getRandomOrderWords (level+1) (randomOrderWords++shuffleList)
-    
     
 getRandomOrderWords' :: [Main.Word] -> [Main.Word] -> IO [Main.Word]
 getRandomOrderWords' randomOrderWords currentLevelWords = do
@@ -322,7 +315,6 @@ getRandomOrderWords' randomOrderWords currentLevelWords = do
         getRandomOrderWords' (randomOrderWords++[randomOrderWord]) currentLevelWords
     else
         return randomOrderWords
-
 
 getRandomOrderWord :: [Main.Word] -> [Main.Word] -> IO Main.Word
 getRandomOrderWord randomOrderWords currentLevelWords = do 
@@ -334,6 +326,7 @@ getRandomOrderWord randomOrderWords currentLevelWords = do
 
 getPlayerData :: IO String
 getPlayerData = do
+    clearScreen
     putStrLn "\n---------------------------     MODO CAMPEONATO     ----------------------------\n\n"
     putStrLn "                         (Insira # para voltar...)\n\n\n"
     putStr "                              Insira o seu nick: "
@@ -343,9 +336,8 @@ getPlayerData = do
     if not (goBackChampionship nickname)
     then putStrLn "\n\n                         Jogador cadastrado com sucesso!\n\n                                   Aguarde...\n\n"
     else putStrLn ""
-
-    --system("sleep 1s");
     
+    sleep3s
     return nickname
     
 startGame :: Main.Word -> IO Int
@@ -406,7 +398,6 @@ revealLetter letter (head:tail) (head':tail')
     | letter == head = [letter] ++ revealLetter letter tail tail'
     | otherwise = [head'] ++ revealLetter letter tail tail'
     
-
 getHint :: Int -> Main.Word -> [Char] -> IO Char
 getHint tipsUsed word guesses =  do 
     currTimestamp <- getCurrentTimestamp
@@ -443,7 +434,6 @@ getLetter :: IO Char
 getLetter = do
     letter <- getChar
     _ <- getChar
-    clearScreen
     return (toUpper letter)
 
 guessLetter :: Int -> Main.Word -> [Char] -> IO Char
@@ -521,6 +511,7 @@ showHangmanBody lives
 
 showHangman :: Int -> IO()
 showHangman lives = do
+    clearScreen
     putStrLn "                                 ###############"
     putStrLn "                                 #### FORCA ####"
     putStrLn "                                 ###############"
@@ -534,6 +525,7 @@ showHangman lives = do
 
 showVictoryHangman :: IO()
 showVictoryHangman = do
+    clearScreen
     putStrLn "                                 ###############"
     putStrLn "                                 #### FORCA ####"
     putStrLn "                                 ###############"
@@ -548,6 +540,7 @@ showVictoryHangman = do
 
 showRules :: IO()
 showRules = do 
+    clearScreen
     putStrLn "\n--------------------------------     REGRAS     --------------------------------\n\n"
     
     putStr "    No jogo da forca, o jogador deve acertar a palavra que lhe foi proposta a pa"
@@ -578,12 +571,10 @@ showVictoryMessage = do
     putStrLn "\n                    Parabéns, você acaba de salvar uma vida!\n"
     showVictoryHangman
 
-
 showGameOverMessage :: IO()
 showGameOverMessage = do
     putStrLn "\n                       É realmente uma pena, fim de jogo...\n"
     showHangman 0
-
 
 showChampionshipScore :: Int -> IO ()
 showChampionshipScore totalScore = do    
@@ -618,8 +609,9 @@ sortByScore = sortBy $ flip $ comparing score
 
 showRanking :: IO()
 showRanking = do
+    clearScreen
     putStrLn "\n--------------------------------     RANKING     -------------------------------\n\n\n"
-    putStrLn "                             Jogador          Pontuação\n\n"
+    putStrLn "                             Jogador          Pontuação\n"
     
     players <- setUpPlayers
     
@@ -664,6 +656,7 @@ getWordDataFailure = do
 
 quit :: IO()
 quit = do
+    clearScreen
     putStrLn "\n\n                                 Até a próxima!"
     putStrLn "\n\n             Paradigmas de Linguagem de Programação - 2018.1 - UFCG"
     putStrLn "\n\n                                DESENVOLVIDO POR:\n"
@@ -671,7 +664,8 @@ quit = do
     putStrLn "                       José Robson da Silva Araujo Junior" 
     putStrLn "                            Matheus Alves dos Santos" 
     putStrLn "                         Misael Augusto Silva da Costa" 
-    putStrLn "                            Paulo José Bastos Leitão\n\n" 
+    putStrLn "                            Paulo José Bastos Leitão\n\n"
+    sleep3s
 
 main :: IO()
 main = do
