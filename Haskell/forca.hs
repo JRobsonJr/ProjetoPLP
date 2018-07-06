@@ -285,8 +285,7 @@ championshipMode = do
     if not (goBackChampionship nickname) then do
         words <- getRandomOrderWords 1 []
         score <- championshipMode' 1 1 words
-        putStrLn (show score)
-        -- registerNewPlayer
+        writePlayer nickname score
         sleep3s
         clearScreen
         showChampionshipScore score
@@ -578,7 +577,7 @@ showGameOverMessage = do
 
 showChampionshipScore :: Int -> IO ()
 showChampionshipScore totalScore = do    
-    putStrLn $ "\nAlém disso, você fez " ++ (show totalScore) ++ " pontos no total.\n\n"
+    putStrLn $ "\nVocê fez " ++ (show totalScore) ++ " pontos no total.\n\n"
     putStrLn "                     [ Pressione ENTER para voltar ao jogo ]\n\n"
     _ <- getChar 
     return ()
