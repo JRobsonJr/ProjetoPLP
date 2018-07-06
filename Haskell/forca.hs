@@ -226,7 +226,7 @@ selectTheme = do
     showThemes
     themes <- getThemes
     option <- getOption
-    if (option < length themes) 
+    if (option > 0 && option <= length themes) 
         then return $ themes !! (option - 1)
         else do
             showInvalidOptionMessage
@@ -348,8 +348,10 @@ getPlayerData = do
     nickname <- getLine
     
     if not (goBackChampionship nickname)
-    then putStrLn "\n\n                         Jogador cadastrado com sucesso!\n\n                                   Aguarde...\n\n"
+    then putStrLn "\n\n                         Jogador cadastrado com sucesso!"
     else putStrLn ""
+    
+    putStrLn "                                   Aguarde...\n\n"
     
     sleep3s
     return nickname
@@ -514,16 +516,15 @@ showHangmanBody 1 = do
     putStrLn "                                 #      |      #"
     putStrLn "                                 #     / \\     #"
     putStrLn "                                 #             #"
-
-showHangmanBody _ = do
+    
+showHangmanBody 0 = do
     putStrLn "                                 #      |      #"
     putStrLn "                                 #    (-.-)    #"
     putStrLn "                                 #     /|\\     #"
     putStrLn "                                 #     / \\     #"
-
+    
 showVictoryHangman :: IO()
 showVictoryHangman = do
-    clearScreen
     putStrLn "                                 ###############"
     putStrLn "                                 #### FORCA ####"
     putStrLn "                                 ###############"
@@ -535,6 +536,20 @@ showVictoryHangman = do
     putStrLn "                                 ###############     \\('◡')/"
     putStrLn "                                  /\\         /\\         |"
     putStrLn "                                 /  \\       /  \\       / \\ \n\n"
+
+showDefeatHangman :: IO()
+showDefeatHangman = do
+    putStrLn "                                 ###############"
+    putStrLn "                                 #### FORCA ####"
+    putStrLn "                                 ###############"
+    putStrLn "                                 #      |      #"
+    putStrLn "                                 #      |      #"
+    putStrLn "                                 #    (-.-)    #"
+    putStrLn "                                 #     /|\\     #"
+    putStrLn "                                 #     / \\     #"
+    putStrLn "                                 ###############"
+    putStrLn "                                  /\\         /\\"
+    putStrLn "                                 /  \\       /  \\ \n"
 
 showRules :: IO()
 showRules = do 
@@ -566,17 +581,19 @@ showHintLimitExceeded level =
 
 showVictoryMessage :: IO()
 showVictoryMessage = do
-    putStrLn "\n                    Parabéns, você acaba de salvar uma vida!\n"
+    clearScreen
+    putStrLn "                     Parabéns, você acaba de salvar uma vida!\n\n"
     showVictoryHangman
 
 showGameOverMessage :: IO()
 showGameOverMessage = do
-    putStrLn "\n                       É realmente uma pena, fim de jogo...\n"
-    showHangman 0
+    clearScreen
+    putStrLn "                       É realmente uma pena, fim de jogo...\n\n"
+    showDefeatHangman
 
 showChampionshipScore :: Int -> IO ()
 showChampionshipScore totalScore = do    
-    putStrLn $ "\nVocê fez " ++ (show totalScore) ++ " pontos no total.\n\n"
+    putStrLn $ "Você fez " ++ (show totalScore) ++ " pontos no total.\n\n"
     putStrLn "                     [ Pressione ENTER para voltar ao jogo ]\n\n"
     _ <- getChar 
     return ()
