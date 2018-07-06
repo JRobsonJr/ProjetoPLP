@@ -101,6 +101,21 @@ filterByLevel l = do
     words <- setUpWords
     return $ filter (\word -> (level word) == l) words
 
+clearScreen :: IO()
+clearScreen = do
+    _ <- System.Process.system "clear"
+    return ()
+
+sleep3s :: IO()
+sleep3s = do
+    _ <- System.Process.system "sleep 3s"
+    return ()
+
+pause :: IO ()
+pause = do
+    x <- getChar
+    putStrLn ""
+
 showOpening :: IO()
 showOpening = do
     putStrLn "      ____________..___________                                                 "
@@ -255,18 +270,18 @@ showLevels = do
     putStrLn "                              2  -  Médio"
     putStrLn "                              3  -  Difícil\n\n"
 
-getCurrentTimestamp :: IO Int
-getCurrentTimestamp = do
-    currentTime <- getPOSIXTime
-    let currTimestamp = floor $ currentTime * 100000
-    return currTimestamp
-
 randomFastMatch :: IO()
 randomFastMatch = do
     words <- setUpWords
     randomWord <- getRandomWord words
     score <- startGame randomWord
     putStrLn (show score)
+    
+getCurrentTimestamp :: IO Int
+getCurrentTimestamp = do
+    currentTime <- getPOSIXTime
+    let currTimestamp = floor $ currentTime * 100000
+    return currTimestamp
 
 getRandomWord  :: [Main.Word] -> IO Main.Word
 getRandomWord words = do
@@ -357,7 +372,7 @@ runGame originalWord hiddenWord guesses lives tipsUsed = do
     let guesses' = guesses ++ [letter]
     let lives' = getLives hiddenWord hiddenWord' lives
 
-    --let tipsUsed' = ... (atualizar o número de dicas usadas de alguma forma rs)
+    -- (atualizar o número de dicas usadas)
 
     if hiddenWord' == text originalWord then do
         showVictoryMessage
@@ -413,27 +428,15 @@ getHint tipsUsed word guesses =  do
         showTipLimitExceeded (level word)
         letter <- guessLetter tipsUsed word guesses
         return letter
-        
-clearScreen :: IO()
-clearScreen = do
-    _ <- System.Process.system "clear"
-    return ()
-
-sleep3s :: IO()
-sleep3s = do
-    _ <- System.Process.system "sleep 3s"
-    return ()
-
-pause :: IO ()
-pause = do
-    x <- getChar
-    putStrLn ""
 
 getLetter :: IO Char
 getLetter = do
     letter <- getChar
     _ <- getChar
     return (toUpper letter)
+    
+toUpper' :: String -> String
+toUpper' s = map toUpper s
 
 guessLetter :: Int -> Main.Word -> [Char] -> IO Char
 guessLetter tipsUsed word guesses = do
@@ -455,8 +458,19 @@ guessLetter' tipsUsed word guesses letter
         putStrLn "Essa letra já foi sugerida. Tente outra!"
         guessLetter tipsUsed word guesses
 
-toUpper' :: String -> String
-toUpper' s = map toUpper s
+showHangman :: Int -> IO()
+showHangman lives = do
+    clearScreen
+    putStrLn "                                 ###############"
+    putStrLn "                                 #### FORCA ####"
+    putStrLn "                                 ###############"
+    putStrLn "                                 #      |      #"
+    
+    showHangmanBody lives
+    
+    putStrLn "                                 ###############"
+    putStrLn "                                  /\\         /\\"
+    putStrLn "                                 /  \\       /  \\ \n"
 
 showHangmanBody :: Int -> IO()
 showHangmanBody lives
@@ -507,20 +521,6 @@ showHangmanBody lives
         putStrLn "                                 #    (-.-)    #"
         putStrLn "                                 #     /|\\     #"
         putStrLn "                                 #     / \\     #"
-
-showHangman :: Int -> IO()
-showHangman lives = do
-    clearScreen
-    putStrLn "                                 ###############"
-    putStrLn "                                 #### FORCA ####"
-    putStrLn "                                 ###############"
-    putStrLn "                                 #      |      #"
-    
-    showHangmanBody lives
-    
-    putStrLn "                                 ###############"
-    putStrLn "                                  /\\         /\\"
-    putStrLn "                                 /  \\       /  \\ \n"
 
 showVictoryHangman :: IO()
 showVictoryHangman = do
@@ -619,7 +619,6 @@ showRanking = do
     putStrLn "\n                         [ Pressione ENTER para voltar ]\n\n"
     _ <- getLine
     return()
-    -- Pause
 
 getWordData :: IO()
 getWordData = do
