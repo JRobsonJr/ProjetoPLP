@@ -357,33 +357,32 @@ getPlayerData = do
 startGame :: Main.Word -> IO Int
 startGame word = do
     let hiddenWord = getHiddenWord $ text word
-    (lives, tipsUsed) <- runGame word hiddenWord [] 7 0
-    return $ getScore word lives tipsUsed
+    (lives, hintsUsed) <- runGame word hiddenWord [] 7 0
+    return $ getScore word lives hintsUsed
 
 runGame :: Main.Word -> String -> [Char] -> Int -> Int -> IO (Int, Int)
-runGame originalWord hiddenWord guesses lives tipsUsed = do
+runGame originalWord hiddenWord guesses lives hintsUsed = do
     showHangman lives
     putStrLn $ "Tema: " ++ theme originalWord
     putStrLn $ "Palavra: " ++ hiddenWord
     putStrLn $ "Letras já usadas: " ++ showGuesses guesses
+    putStrLn $ "Dicas usadas: " ++ show hintsUsed
 
-    letter <- guessLetter tipsUsed originalWord guesses
+    (letter, hintsUsed') <- guessLetter hintsUsed originalWord guesses
     let hiddenWord' = revealLetter letter (text originalWord) hiddenWord
     let guesses' = guesses ++ [letter]
     let lives' = getLives hiddenWord hiddenWord' lives
 
-    -- (atualizar o número de dicas usadas)
-
     if hiddenWord' == text originalWord then do
         showVictoryMessage
         revealWord originalWord
-        return (lives', tipsUsed)
+        return (lives', hintsUsed')
     else if lives' > 0 then do
-        runGame originalWord hiddenWord' guesses' lives' tipsUsed
+        runGame originalWord hiddenWord' guesses' lives' hintsUsed'
     else do
         showGameOverMessage
         revealWord originalWord
-        return (0, tipsUsed)
+        return (0, hintsUsed')
 
 getLives :: String -> String -> Int -> Int
 getLives word word' currentLives
@@ -396,8 +395,8 @@ getHiddenWord (' ':tail) = [' '] ++ getHiddenWord tail
 getHiddenWord (head:tail) = ['_'] ++ getHiddenWord tail
 
 getScore :: Main.Word -> Int -> Int -> Int
-getScore word 0 tipsUsed = 0
-getScore word lives tipsUsed = wordLength * wordLevel * lives + 50 * wordLevel - 25 * tipsUsed
+getScore word 0 hintsUsed = 0
+getScore word lives hintsUsed = wordLength * wordLevel * lives + 50 * wordLevel - 25 * hintsUsed
     where wordLength = length $ text word
           wordLevel = level word
 
@@ -412,22 +411,22 @@ revealLetter letter (head:tail) (head':tail')
     | letter == head = [letter] ++ revealLetter letter tail tail'
     | otherwise = [head'] ++ revealLetter letter tail tail'
     
-getHint :: Int -> Main.Word -> [Char] -> IO Char
-getHint tipsUsed word guesses =  do 
+getHint :: Int -> Main.Word -> [Char] -> IO (Char, Int)
+getHint hintsUsed word guesses =  do 
     currTimestamp <- getCurrentTimestamp
     let value = text word
     let index = currTimestamp `mod` (length value)
-    let tip = value !! index
+    let hint = value !! index
 
-    if level word > tipsUsed then do 
-        if tip `elem` guesses then do
-                getHint tipsUsed word guesses
+    if level word > hintsUsed then do 
+        if hint `elem` guesses || hint == ' ' then do
+                getHint hintsUsed word guesses
         else do
-            return tip
+            return (hint, hintsUsed + 1)
     else do
-        showTipLimitExceeded (level word)
-        letter <- guessLetter tipsUsed word guesses
-        return letter
+        showHintLimitExceeded (level word)
+        (letter, hintsUsed') <- guessLetter hintsUsed word guesses
+        return (letter, hintsUsed')
 
 getLetter :: IO Char
 getLetter = do
@@ -438,25 +437,26 @@ getLetter = do
 toUpper' :: String -> String
 toUpper' s = map toUpper s
 
-guessLetter :: Int -> Main.Word -> [Char] -> IO Char
-guessLetter tipsUsed word guesses = do
+guessLetter :: Int -> Main.Word -> [Char] -> IO (Char, Int)
+guessLetter hintsUsed word guesses = do
+    putStrLn "\nDigite uma letra ou # para dica: "
     letter <- getLetter
-    result <- guessLetter' tipsUsed word guesses letter
-    return result
+    (letter, hintsUsed') <- guessLetter' hintsUsed word guesses letter
+    return (letter, hintsUsed')
 
-guessLetter' :: Int -> Main.Word -> [Char] -> Char -> IO Char
-guessLetter' tipsUsed word guesses letter 
+guessLetter' :: Int -> Main.Word -> [Char] -> Char -> IO (Char, Int)
+guessLetter' hintsUsed word guesses letter 
     | letter == '#' = do
-        tip <- getHint tipsUsed word guesses
-        return tip
+        (hint, hintsUsed') <- getHint hintsUsed word guesses
+        return (hint, hintsUsed')
     | isLetter letter && not(letter `elem` guesses) = do 
-        return letter
+        return (letter, hintsUsed)
     | not (isLetter letter) = do
         putStrLn "Uma letra, meu anjo..."
-        guessLetter tipsUsed word guesses
+        guessLetter hintsUsed word guesses
     | otherwise = do
         putStrLn "Essa letra já foi sugerida. Tente outra!"
-        guessLetter tipsUsed word guesses
+        guessLetter hintsUsed word guesses
 
 showHangman :: Int -> IO()
 showHangman lives = do
@@ -473,54 +473,53 @@ showHangman lives = do
     putStrLn "                                 /  \\       /  \\ \n"
 
 showHangmanBody :: Int -> IO()
-showHangmanBody lives
-    | lives == 7 = do
-        putStrLn "                                 #             #"
-        putStrLn "                                 #             #"
-        putStrLn "                                 #             #"
-        putStrLn "                                 #             #"
-    
-    | lives == 6 = do
-        putStrLn "                                 #    ('-')    #"
-        putStrLn "                                 #             #"
-        putStrLn "                                 #             #"
-        putStrLn "                                 #             #"
+showHangmanBody 7 = do
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
 
-    | lives == 5 = do
-        putStrLn "                                 #    ('-')__  #"
-        putStrLn "                                 #             #"
-        putStrLn "                                 #             #"
-        putStrLn "                                 #             #"
+showHangmanBody 6 = do
+    putStrLn "                                 #    ('-')    #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
 
-    | lives == 4 = do
-        putStrLn "                                 #  __('-')__  #"
-        putStrLn "                                 #             #"
-        putStrLn "                                 #             #"
-        putStrLn "                                 #             #"
+showHangmanBody 5 = do
+    putStrLn "                                 #    ('-')__  #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
 
-    | lives == 3 = do
-        putStrLn "                                 #  __('-')__  #"
-        putStrLn "                                 #      |      #"
-        putStrLn "                                 #             #"
-        putStrLn "                                 #             #"
+showHangmanBody 4 = do
+    putStrLn "                                 #  __('-')__  #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
 
-    | lives == 2 = do
-        putStrLn "                                 #  __('-')__  #"
-        putStrLn "                                 #      |      #"
-        putStrLn "                                 #     /       #"
-        putStrLn "                                 #             #"
+showHangmanBody 3 = do
+    putStrLn "                                 #  __('-')__  #"
+    putStrLn "                                 #      |      #"
+    putStrLn "                                 #             #"
+    putStrLn "                                 #             #"
 
-    | lives == 1 = do
-        putStrLn "                                 #  __('-')__  #"
-        putStrLn "                                 #      |      #"
-        putStrLn "                                 #     / \\     #"
-        putStrLn "                                 #             #"
+showHangmanBody 2 = do
+    putStrLn "                                 #  __('-')__  #"
+    putStrLn "                                 #      |      #"
+    putStrLn "                                 #     /       #"
+    putStrLn "                                 #             #"
 
-    | otherwise = do
-        putStrLn "                                 #      |      #"
-        putStrLn "                                 #    (-.-)    #"
-        putStrLn "                                 #     /|\\     #"
-        putStrLn "                                 #     / \\     #"
+showHangmanBody 1 = do
+    putStrLn "                                 #  __('-')__  #"
+    putStrLn "                                 #      |      #"
+    putStrLn "                                 #     / \\     #"
+    putStrLn "                                 #             #"
+
+showHangmanBody _ = do
+    putStrLn "                                 #      |      #"
+    putStrLn "                                 #    (-.-)    #"
+    putStrLn "                                 #     /|\\     #"
+    putStrLn "                                 #     / \\     #"
 
 showVictoryHangman :: IO()
 showVictoryHangman = do
@@ -561,9 +560,9 @@ showRules = do
     _ <- getLine
     return ()
 
-showTipLimitExceeded::Int -> IO()
-showTipLimitExceeded level =  
-    putStrLn $ "\n\n                    O limite de dicas para essa palavra é: " ++(show level)++ ".\n\n"
+showHintLimitExceeded::Int -> IO()
+showHintLimitExceeded level =  
+    putStrLn $ "\n                    O limite de dicas para essa palavra é: " ++(show level)++ ".\n"
 
 showVictoryMessage :: IO()
 showVictoryMessage = do
@@ -600,8 +599,11 @@ getLengthSpacing length scoreLength = do
 showPlayers :: [Player] -> Int -> String
 showPlayers [] 11 = ""
 showPlayers [] 10 = "                       10º ------------       ---------\n"
-showPlayers [] i = "                        " ++ show(i) ++ "º ------------       ---------\n" ++ showPlayers [] (i + 1)
-showPlayers (head:tail) i = "                        " ++ show(i) ++ "º " ++ name head ++ getLengthSpacing (23 - length(name head)) (length (show(score head))) ++ show(score head) ++ "\n" ++ showPlayers tail (i + 1)
+showPlayers [] i = "                        " ++ show i ++ "º ------------       ---------\n" 
+                   ++ showPlayers [] (i + 1)
+showPlayers (head:tail) i = "                        " ++ show i ++ "º " ++ name head
+                            ++ getLengthSpacing (23 - length (name head)) (length (show(score head)))
+                            ++ show (score head) ++ "\n" ++ showPlayers tail (i + 1)
 
 sortByScore :: [Player] -> [Player]
 sortByScore = sortBy $ flip $ comparing score
