@@ -17,10 +17,18 @@ setup_words(Data) :-
 setup_players(Data) :-
     read_data('../resources/players.csv', Data).
 
+get_themes(Themes):-
+    setup_words(Data),
+    get_themes_loop(Data, Themes).
 
+get_themes_loop([], Themes):-!.
+get_themes_loop([Head|Tail], Themes):-
+    nth0(1, Head, X),
+    (member(X, Themes) -> get_themes_loop(Tail, Themes);
+    get_themes_loop(Tail, [X|Themes])).
+    
 :- initialization(main).
 main :-
-    setup_players(X),
-    writeln(X),
-    setup_words(Y),
-    writeln(Y).
+    get_themes(Themes),
+    writeln(Themes).
+
