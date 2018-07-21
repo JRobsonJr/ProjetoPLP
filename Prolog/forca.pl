@@ -60,7 +60,7 @@ filter_words_loop([Head|Tail], Criteria, List, Result):-
         filter_words_loop(Tail, Criteria, NewList, Result);
     filter_words_loop(Tail, Criteria, List, Result).
 
-themed_fast_match():- 
+themed_fast_match:- 
     % lower_case
     % chamar metodo com a interface(select_theme),
     read(Theme),
@@ -69,7 +69,7 @@ themed_fast_match():-
     writeln(RandomWord).
     % chamar startGame.
 
-leveled_fast_match():-
+leveled_fast_match:-
     % chamar select_level
     read(Level),
     filter_words(Level, Result),
