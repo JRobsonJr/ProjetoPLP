@@ -2,11 +2,13 @@
 :- use_module(library(csv)).
 
 write_word_file :-
+    setup_words,
 	tell('words.pl'),nl,
 	listing(word/3),
 	told.
 
 write_player_file :-
+    setup_players,
 	tell('players.pl'),nl,
 	listing(player/2),
 	told.
@@ -14,7 +16,7 @@ write_player_file :-
 setup_words :-
     reconsult('words.pl').
 
-setup_players(Data) :-
+setup_players :-
     reconsult('players.pl').
 
 write_word(Text, Theme):-
@@ -23,7 +25,7 @@ write_word(Text, Theme):-
     write_word_file.
 
 write_player(Nickname, Score):-
-    assertz(player(Nickname, Level)),
+    assertz(player(Nickname, Score)),
     write_player_file.
 
 get_themes(Result):-
@@ -194,5 +196,5 @@ quit :-
 
 :- initialization(main).
 main:-
-    themed_fast_match.
+    write_player(opa, 80).
     
