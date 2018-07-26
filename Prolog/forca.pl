@@ -73,6 +73,10 @@ get_random_word(Words, RandomWord):-
 clear_screen :-
     tty_clear.
 
+pause :-
+    get_char(X),
+    clear_screen.
+
 sleep_3s :-
     sleep(3).
 
@@ -170,8 +174,8 @@ show_rules :-
     writeln("todas as palavras possíveis. Em qualquer um dos casos, seu desempenho será regis"),
     writeln("trado no ranking.\n\n\n"),
     
-    writeln("                         [ Pressione ENTER para voltar ]\n\n\n").
-    % pause
+    writeln("                         [ Pressione ENTER para voltar ]\n\n\n"),
+    pause.
 
 show_victory_message :-
     clear_screen,
@@ -191,7 +195,7 @@ show_ranking :-
     % ranking
     
     writeln("\n                         [ Pressione ENTER para voltar ]\n\n").
-    % pause
+    pause.
 
 quit :-
     clear_screen,
@@ -209,5 +213,6 @@ quit :-
 :- initialization(main).
 main:-
     show_opening,
+    show_rules,
     quit.
     
