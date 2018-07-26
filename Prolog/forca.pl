@@ -194,7 +194,16 @@ quit :-
     writeln("                            Paulo José Bastos Leitão\n\n").
     % wait
 
-:- initialization(main).
-main:-
-    write_player(opa, 80).
-    
+get_hidden_word(Word, HiddenWord):-
+    string_chars(Word, CharList),
+    get_hidden_word_chars(CharList, HiddenWordChars),
+    string_chars(HiddenWord, HiddenWordChars).
+
+get_hidden_word_chars([], []).
+get_hidden_word_chars([' '|Tail], HiddenWordChars):-
+    get_hidden_word_chars(Tail, HiddenWordCharsAux),
+    HiddenWordChars = [' '|HiddenWordCharsAux].
+get_hidden_word_chars([Head|Tail], HiddenWordChars):-
+    Head \= ' ',
+    get_hidden_word_chars(Tail, HiddenWordCharsAux),
+    HiddenWordChars = ['_'|HiddenWordCharsAux].
