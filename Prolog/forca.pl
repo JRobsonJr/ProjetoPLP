@@ -235,11 +235,4 @@ quit :-
 
 :- initialization(main).
 main:-
-<<<<<<< HEAD
     show_menu.
-=======
-    show_opening,
-    show_rules,
-    quit.
-    
->>>>>>> 44daaa9df8823668e6b70121c16fb3663679f25d
