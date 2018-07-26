@@ -207,3 +207,15 @@ get_hidden_word_chars([Head|Tail], HiddenWordChars):-
     Head \= ' ',
     get_hidden_word_chars(Tail, HiddenWordCharsAux),
     HiddenWordChars = ['_'|HiddenWordCharsAux].
+
+getScore(_, 0, 0):-!.
+get_score(Word, Lives, Score, HintsUsed):-
+    setup_words,
+    word(Word, _, Level),
+    string_length(Word, Length),
+    Score is Length * Level * Lives + 50 * Level - 25 * HintsUsed.
+
+:- initialization(main).
+main:-
+    get_score('taylor swift', 10, Score, 10),
+    write(Score).
