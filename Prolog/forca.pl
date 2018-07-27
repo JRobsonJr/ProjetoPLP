@@ -229,8 +229,17 @@ reveal_letter_chars([_|WordTail], [HiddenWordHead|HiddenWordTail], Letter, Resul
     reveal_letter_chars(WordTail, HiddenWordTail, Letter, ResultCharsAux),
     ResultChars = [HiddenWordHead|ResultCharsAux].
 
+show_guesses([], '').
+show_guesses([GuessesHead], GuessesHead).
+show_guesses([GuessesHead|GuessesTail], Result):-
+    show_guesses(GuessesTail, ResultAux),
+    string_add_space(GuessesHead, GuessesHeadWithSpace),
+    string_concat(GuessesHeadWithSpace, ResultAux, Result).
+
+string_add_space(String, StringWithSpace):-
+    string_concat(String, ' ', StringWithSpace).
+
 :- initialization(main).
 main:-
-    reveal_letter('taylor swift', 'tayl_r s_ift', 't', R),
-    reveal_letter('taylor swift', R, 'o', R1),
+    show_guesses(['a', 'b', 'c'], R1),
     write(R1).
