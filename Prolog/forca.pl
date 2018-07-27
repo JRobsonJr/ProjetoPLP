@@ -477,7 +477,7 @@ string_add_space(String, StringWithSpace):-
 
 guess_letter(Word, Guesses, Result):-
     writeln("Digite uma letra ou # para dica: "),
-    get_char(Letter),
+    get_lower_char(Letter),
     get_char(_),
     guess_letter_aux(Word, Guesses, Letter, Result).
 
@@ -557,6 +557,10 @@ get_tip_aux(RandomLetter, Guesses, Letter):-
     get_tip(Word, Guesses, Letter).
 
 get_tip_aux(RandomLetter, Guesses, RandomLetter).
+
+get_lower_char(U):-
+    get_char(C),
+    char_type(U, to_lower(C)).
 
 :- initialization(main).
 
