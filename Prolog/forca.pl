@@ -19,20 +19,59 @@ setup_words :-
 setup_players :-
     reconsult('players.pl').
 
- 
 compare_to(<,A,B) :- 
     nth0(1,A,X),
     nth0(1,B,Y), 
     X =< Y.
 compare_to(>,_,_).
 
-sort_by_score(SortedList) :-
+sort_players_by_score(SortedList) :-
     setup_players,
     findall([Player, Score], player(Player, Score), Queries),
     predsort(compare_to, Queries, List),
     reverse(List, SortedList).
 
+get_spaces(0, "").
+get_spaces(Quantity, Result):-
+	Quantity1 is Quantity-1,
+	get_spaces(Quantity1, Result1),
+	string_concat(" ", Result1, Result).
 
+get_length_spacing(Size, SizeScore, Result):-
+	compare(>, SizeScore, 2),
+	Value is Size - (SizeScore - 2),
+	get_spaces(Value, Result).
+
+get_length_spacing(Size, _, Result):-
+	get_spaces(Size, Result).
+
+show_players([], 11, "").
+show_players([], 10, Result):- 
+	Result is "                       10º ------------       ---------\n".
+show_players([], Index, Result):-
+	string_concat("                        ", Index, Result1),
+	string_concat(Result1, "º ------------       ---------\n", Result2),
+	show_players([], Index+1, Result3),
+	string_concat(Result2, Result3,Result).
+
+show_players([Head|Tail], Index, Result):- 
+	string_concat("                        ", Index, Result1),
+	string_concat(Result1, "º ", Result2),
+	nth0(0,Head,Name),
+	nth0(1,Head,Score),
+	atom_length(Name, SizeName),
+	atom_length(Score, SizeScore),
+	atom_string(Name, StringName),
+	string_concat(Result2, StringName, Result3),
+	Value is 23 - SizeName,
+	get_length_spacing(Value, SizeScore, StringResult),
+	string_concat(Result3, StringResult, Result4),
+	atom_string(Score, StringScore),
+	string_concat(Result4, StringScore, Result5),
+	string_concat(Result5, "\n", Result6),
+	Index1 is Index+1,
+	show_players(Tail, Index1, Result7),
+	string_concat(Result6, Result7, Result).
 
 write_word(Text, Theme):-
     get_level(Text, Level),
@@ -321,16 +360,17 @@ show_game_over_message :-
     clear_screen,
     writeln("                       É realmente uma pena, fim de jogo...\n\n"),
     show_defeat_hangman.
-    
-show_ranking :-
-    % clear_screen
-    writeln("\n--------------------------------     RANKING     -------------------------------\n\n\n"),
-    writeln("                             Jogador          Pontuação\n"),
-    
-    % ranking
-    
-    writeln("\n                         [ Pressione ENTER para voltar ]\n\n"),
-    pause.
+
+show_ranking:-
+	clear_screen,
+	writeln("\n--------------------------------     RANKING     -------------------------------\n\n\n"),
+	writeln("                             Jogador          Pontuação\n"),
+	sort_players_by_score(SortedList),
+	show_players(SortedList, 1, Result),
+	writeln(Result),
+	writeln("\n                         [ Pressione ENTER para voltar ]\n\n"),
+	pause.
+
 
 get_word_data :-
     clear_screen,
@@ -488,5 +528,4 @@ reveal_word(Word):-
 :- initialization(main).
 
 main:-
-    start_game('pizza', R1),
-    write(R1).
+	show_ranking.
