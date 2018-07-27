@@ -525,7 +525,23 @@ reveal_word(Word):-
     write(".\n\n                         [ Pressione ENTER para voltar ]"),
     get_char(_).
 
+get_tip(Word, Guesses, Letter):-
+    atom_string(Word, StringWord),
+    string_chars(Word, Chars),
+    length(Chars, Size),
+    random(0, Size, RandomIndex),
+    nth0(RandomIndex, Chars, RandomLetter),
+    get_tip_aux(RandomLetter, Guesses, Letter).
+
+get_tip_aux(RandomLetter, Guesses, Letter):-
+    member(RandomLetter, Guesses),
+    get_tip(Word, Guesses, Letter).
+
+get_tip_aux(RandomLetter, Guesses, RandomLetter).
+
+
 :- initialization(main).
 
 main:-
-	show_ranking.
+	get_tip(fanny, ['a','a','a','a','a','a'], Letter),
+    writeln(Letter).
