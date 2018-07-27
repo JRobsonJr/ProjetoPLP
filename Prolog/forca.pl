@@ -134,13 +134,21 @@ get_random_word(Words, RandomWord):-
     nth0(RandomIndex, Words, RandomWord).
     
 get_option(Option) :-
-    writeln("\n\n                    Informe o número da opção desejada: "),
+    write("\n\n                    Informe o número da opção desejada: "),
     read(Option). 
+
+select_menu_option(1) :- show_game_modes.
+select_menu_option(2) :- show_rules.
+select_menu_option(3) :- show_ranking.
+select_menu_option(4) :- get_word_data.
+select_menu_option(5) :- quit.
+select_menu_option(_) :- show_invalid_option_message.
 
 clear_screen :-
     tty_clear.
 
 pause :-
+    get_char(_),
     get_char(_),
     clear_screen.
 
@@ -151,6 +159,7 @@ exit :-
     halt.
 
 show_opening :-
+    clear_screen,
     writeln("      ____________..___________                                                 "),
     writeln("     | .___________))__________|                                                "),
     writeln("     | | / /       ||                                                           "),
@@ -171,18 +180,19 @@ show_opening :-
     writeln("     | |          / | | \\         \\____|\\____|   |_|  \\___/|_|  \\___\\____|"),
     writeln("     | |          `-' `-'                                                       "),
     writeln("     |_|                                                                        "),
-    writeln("                                   Aguarde...                                   ").
-    % wait
+    writeln("                                   Aguarde...                                   "),
+    sleep_3s.
 
 show_menu :-
-    % clear_screen
+    clear_screen,
     writeln("\n---------------------------------     MENU     ---------------------------------\n\n"),
     writeln("                                1  -  Jogar"),
     writeln("                                2  -  Regras"),
     writeln("                                3  -  Ranking"),
     writeln("                                4  -  Nova Palavra"),
-    writeln("                                5  -  Sair").
-    % get_option
+    writeln("                                5  -  Sair"),
+    get_option(Option),
+    select_menu_option(Option).
     
 show_invalid_option_message :-
     writeln("           Opção inválida... Pressione ENTER para tentar novamente!\n"),
@@ -348,8 +358,9 @@ show_rules :-
     writeln("todas as palavras possíveis. Em qualquer um dos casos, seu desempenho será regis"),
     writeln("trado no ranking.\n\n\n"),
     
-    writeln("                         [ Pressione ENTER para voltar ]\n\n\n").
-    % pause
+    writeln("                         [ Pressione ENTER para voltar ]\n\n\n"),
+    pause,
+    show_menu.
 
 show_victory_message :-
     clear_screen,
@@ -383,7 +394,8 @@ get_word_data :-
 
     write("\n          Informe o tema da palavra (por extenso): "),
     read(Theme),
-    get_word_data2(Word, Theme).
+    get_word_data2(Word, Theme),
+    show_menu.
 
 get_word_data2(Word, Theme) :-
     setup_words,
@@ -543,5 +555,5 @@ get_tip_aux(RandomLetter, Guesses, RandomLetter).
 :- initialization(main).
 
 main:-
-	get_tip(fanny, ['a','a','a','a','a','a'], Letter),
-    writeln(Letter).
+	show_opening,   
+    show_menu.
