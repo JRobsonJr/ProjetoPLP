@@ -550,13 +550,16 @@ get_tip(Word, Guesses, Letter):-
     length(Chars, Size),
     random(0, Size, RandomIndex),
     nth0(RandomIndex, Chars, RandomLetter),
-    get_tip_aux(RandomLetter, Guesses, Letter).
+    get_tip_aux(Word, RandomLetter, Guesses, Letter).
 
-get_tip_aux(RandomLetter, Guesses, Letter):-
+get_tip_aux(Word, RandomLetter, Guesses, Letter):-
     member(RandomLetter, Guesses),
     get_tip(Word, Guesses, Letter).
 
-get_tip_aux(RandomLetter, Guesses, RandomLetter).
+get_tip_aux(Word, ' ', Guesses, Letter):-
+	get_tip(Word, Guesses, Letter).
+
+get_tip_aux(Word, RandomLetter, Guesses, RandomLetter).
 
 get_lower_char(U):-
     get_char(C),
