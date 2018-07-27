@@ -19,6 +19,21 @@ setup_words :-
 setup_players :-
     reconsult('players.pl').
 
+ 
+compare_to(<,A,B) :- 
+    nth0(1,A,X),
+    nth0(1,B,Y), 
+    X =< Y.
+compare_to(>,_,_).
+
+sort_by_score(SortedList) :-
+    setup_players,
+    findall([Player, Score], player(Player, Score), Queries),
+    predsort(compare_to, Queries, List),
+    reverse(List, SortedList).
+
+
+
 write_word(Text, Theme):-
     get_level(Text, Level),
     string_lower(Text, TextLowerCase),
@@ -363,4 +378,5 @@ quit :-
 
 :- initialization(main).
 main:-
-    show_rules.
+    sort_by_score(SortedList),
+    writeln(SortedList).
