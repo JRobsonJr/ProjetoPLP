@@ -126,6 +126,103 @@ show_game_modes :-
     writeln("                                3  -  Voltar").
     % get_option
 
+show_hangman(Lives) :-
+    clear_screen,
+    writeln("                                 ###############"),
+    writeln("                                 #### FORCA ####"),
+    writeln("                                 ###############"),
+    writeln("                                 #      |      #"),
+    
+    show_hangman_body(Lives),
+    
+    writeln("                                 ###############"),
+    writeln("                                  /\\         /\\"),
+    writeln("                                 /  \\       /  \\ \n").
+
+show_hangman_body(7) :-
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #").
+
+show_hangman_body(6) :-
+    writeln("                                 #    ('-')    #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #").
+
+show_hangman_body(5) :-
+    writeln("                                 #    ('-')__  #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #").
+
+show_hangman_body(4) :-
+    writeln("                                 #  __('-')__  #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #").
+
+show_hangman_body(3) :-
+    writeln("                                 #  __('-')__  #"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #").
+
+show_hangman_body(2) :-
+    writeln("                                 #  __('-')__  #"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #     /       #"),
+    writeln("                                 #             #").
+
+show_hangman_body(1) :-
+    writeln("                                 #  __('-')__  #"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #     / \\     #"),
+    writeln("                                 #             #").
+    
+show_hangman_body(0) :-
+    writeln("                                 #      |      #"),
+    writeln("                                 #    (-.-)    #"),
+    writeln("                                 #     /|\\     #"),
+    writeln("                                 #     / \\     #").
+    
+show_victory_hangman :-
+    writeln("                                 ###############"),
+    writeln("                                 #### FORCA ####"),
+    writeln("                                 ###############"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 ###############     \\('◡')/"),
+    writeln("                                  /\\         /\\         |"),
+    writeln("                                 /  \\       /  \\       / \\ \n\n").
+
+show_defeat_hangman :-
+    writeln("                                 ###############"),
+    writeln("                                 #### FORCA ####"),
+    writeln("                                 ###############"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #    (-.-)    #"),
+    writeln("                                 #     /|\\     #"),
+    writeln("                                 #     / \\     #"),
+    writeln("                                 ###############"),
+    writeln("                                  /\\         /\\"),
+    writeln("                                 /  \\       /  \\ \n").
+
+fast_match_mode :-
+    clear_screen,
+    writeln("\n-----------------------------     JOGO RÁPIDO     ------------------------------\n\n"),
+    writeln("                      Como sua palavra deve ser escolhida?\n"),
+    writeln("                              1  -  Por Tema"),
+    writeln("                              2  -  Por Dificuldade"),
+    writeln("                              3  -  Aleatoriamente"),
+    writeln("                              4  -  Voltar").
+    % get_option
+
 fast_match_mode :-
     % clearScreen
     writeln("\n-----------------------------     JOGO RÁPIDO     ------------------------------\n\n"),
@@ -206,5 +303,4 @@ quit :-
 
 :- initialization(main).
 main:-
-   write_word("Mateus", "Garota").
-    
+    show_rules.
