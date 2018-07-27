@@ -158,7 +158,6 @@ show_game_modes :-
     % get_option
 
 show_hangman(Lives) :-
-    clear_screen,
     writeln("                                 ###############"),
     writeln("                                 #### FORCA ####"),
     writeln("                                 ###############"),
@@ -314,14 +313,14 @@ show_rules :-
     % pause
 
 show_victory_message :-
-    % clear_screen
-    writeln("                     Parabéns, você acaba de salvar uma vida!\n\n").
-    % show_victory_hangman
+    clear_screen,
+    writeln("                     Parabéns, você acaba de salvar uma vida!\n\n"),
+    show_victory_hangman.
 
 show_game_over_message :-
-    % clear_screen
-    writeln("                       É realmente uma pena, fim de jogo...\n\n").
-    % show_defeat_hangman
+    clear_screen,
+    writeln("                       É realmente uma pena, fim de jogo...\n\n"),
+    show_defeat_hangman.
     
 show_ranking :-
     % clear_screen
@@ -390,8 +389,8 @@ get_hidden_word_chars([Head|Tail], HiddenWordChars):-
     get_hidden_word_chars(Tail, HiddenWordCharsAux),
     HiddenWordChars = ['_'|HiddenWordCharsAux].
 
-get_score(_, 0, 0):-!.
-get_score(Word, Lives, Score, HintsUsed):-
+get_score(_, 0, _, 0):-!.
+get_score(Word, Lives, HintsUsed, Score):-
     setup_words,
     word(Word, _, Level),
     string_length(Word, Length),
@@ -421,7 +420,6 @@ show_guesses([GuessesHead|GuessesTail], Result):-
 string_add_space(String, StringWithSpace):-
     string_concat(String, ' ', StringWithSpace).
 
-% hints used
 guess_letter(Word, Guesses, Result):-
     writeln("Digite uma letra: "),
     get_char(Letter),
@@ -433,17 +431,62 @@ guess_letter_aux(Word, Guesses, Letter, Result):-
     writeln("Essa letra já foi sugerida. Tente outra!"),
     guess_letter(Word, Guesses, Result), !.
 
-guess_letter_aux(Word, Guesses, Letter, Result):-
-    is_alpha(Letter),
-    Result = Letter.
+guess_letter_aux(Word, Guesses, Letter, Letter):-
+    is_alpha(Letter).
 
-% não funciona :(
-%guess_letter_aux(Word, Guesses, Letter, Result):-
-%    !is_alpha(Letter),
-%    writeln("Uma letra, meu anjo..."),
-%    guess_letter(Word, Guesses, Result).
+guess_letter_aux(Word, Guesses, Letter, Result):-
+    \+ is_alpha(Letter),
+    writeln("Uma letra, meu anjo..."),
+    guess_letter(Word, Guesses, Result).
+
+start_game(Word, Score):-
+    get_hidden_word(Word, HiddenWord),
+    run_game(Word, HiddenWord, [], 7, 0, Score).
+
+run_game(Word, HiddenWord, Guesses, 0, HintsUsed, 0):-
+    show_game_over_message,
+    reveal_word(Word), !.
+
+run_game(Word, HiddenWord, Guesses, Lives, HintsUsed, Score):-
+    all_letters_revealed(HiddenWord),
+    get_score(Word, Lives, HintsUsed, Score),
+    show_victory_message,
+    reveal_word(Word), !.
+
+run_game(Word, HiddenWord, Guesses, Lives, HintsUsed, Score):-
+    show_game_info(Word, HiddenWord, Guesses, Lives, HintsUsed),
+    guess_letter(Word, Guesses, Letter),
+    reveal_letter(Word, HiddenWord, Letter, HiddenWordAux),
+    get_lives(HiddenWord, HiddenWordAux, Lives, LivesAux),
+    run_game(Word, HiddenWordAux, [Letter|Guesses], LivesAux, HintsUsed, Score).
+
+get_lives(HiddenWord, HiddenWordAux, CurrentLives, Lives):-
+    HiddenWord == HiddenWordAux -> 
+        Lives is CurrentLives - 1;
+        Lives is CurrentLives.
+
+all_letters_revealed(Word):-
+    string_chars(Word, Chars),
+    \+ member('_', Chars).
+
+show_game_info(Word, HiddenWord, Guesses, Lives, HintsUsed):-
+    show_hangman(Lives),
+    setup_words,
+    word(Word, Theme, _),
+    write("Tema: "), writeln(Theme),
+    write("Palavra: "), writeln(HiddenWord),
+    write("Letras já usadas: "),
+    show_guesses(Guesses, GuessesString),
+    writeln(GuessesString),
+    write("Dicas usadas: "), writeln(HintsUsed).
+
+reveal_word(Word):-
+    write("\nA palavra era: "), write(Word),
+    write(".\n\n                         [ Pressione ENTER para voltar ]"),
+    get_char(_).
 
 :- initialization(main).
+
 main:-
-    sort_by_score(SortedList),
-    writeln(SortedList).
+    start_game('pizza', R1),
+    write(R1).
