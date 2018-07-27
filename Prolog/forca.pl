@@ -198,7 +198,8 @@ show_menu :-
     
 show_invalid_option_message :-
     writeln("           Opção inválida... Pressione ENTER para tentar novamente!\n"),
-    pause.
+    pause,
+    show_menu.
     
 show_game_modes :-
     % clear_screen
@@ -382,7 +383,8 @@ show_ranking:-
 	show_players(SortedList, 1, Result),
 	writeln(Result),
 	writeln("\n                         [ Pressione ENTER para voltar ]\n\n"),
-	pause.
+	pause,
+    show_menu.
 
 
 get_word_data :-
