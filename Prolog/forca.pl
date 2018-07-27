@@ -208,14 +208,29 @@ get_hidden_word_chars([Head|Tail], HiddenWordChars):-
     get_hidden_word_chars(Tail, HiddenWordCharsAux),
     HiddenWordChars = ['_'|HiddenWordCharsAux].
 
-getScore(_, 0, 0):-!.
+get_score(_, 0, 0):-!.
 get_score(Word, Lives, Score, HintsUsed):-
     setup_words,
     word(Word, _, Level),
     string_length(Word, Length),
     Score is Length * Level * Lives + 50 * Level - 25 * HintsUsed.
 
+reveal_letter(Word, HiddenWord, Letter, Result):-
+    string_chars(Word, WordChars),
+    string_chars(HiddenWord, HiddenWordChars),
+    reveal_letter_chars(WordChars, HiddenWordChars, Letter, ResultChars),
+    string_chars(Result, ResultChars).
+
+reveal_letter_chars([], [], _, []).
+reveal_letter_chars([Letter|WordTail], ['_'|HiddenWordTail], Letter, ResultChars):-
+    reveal_letter_chars(WordTail, HiddenWordTail, Letter, ResultCharsAux),
+    ResultChars = [Letter|ResultCharsAux].
+reveal_letter_chars([_|WordTail], [HiddenWordHead|HiddenWordTail], Letter, ResultChars):-
+    reveal_letter_chars(WordTail, HiddenWordTail, Letter, ResultCharsAux),
+    ResultChars = [HiddenWordHead|ResultCharsAux].
+
 :- initialization(main).
 main:-
-    get_score('taylor swift', 10, Score, 10),
-    write(Score).
+    reveal_letter('taylor swift', 'tayl_r s_ift', 't', R),
+    reveal_letter('taylor swift', R, 'o', R1),
+    write(R1).
