@@ -376,6 +376,73 @@ quit :-
     writeln("                            Paulo José Bastos Leitão\n\n").
     % wait
 
+get_hidden_word(Word, HiddenWord):-
+    string_chars(Word, CharList),
+    get_hidden_word_chars(CharList, HiddenWordChars),
+    string_chars(HiddenWord, HiddenWordChars).
+
+get_hidden_word_chars([], []).
+get_hidden_word_chars([' '|Tail], HiddenWordChars):-
+    get_hidden_word_chars(Tail, HiddenWordCharsAux),
+    HiddenWordChars = [' '|HiddenWordCharsAux].
+get_hidden_word_chars([Head|Tail], HiddenWordChars):-
+    Head \= ' ',
+    get_hidden_word_chars(Tail, HiddenWordCharsAux),
+    HiddenWordChars = ['_'|HiddenWordCharsAux].
+
+get_score(_, 0, 0):-!.
+get_score(Word, Lives, Score, HintsUsed):-
+    setup_words,
+    word(Word, _, Level),
+    string_length(Word, Length),
+    Score is Length * Level * Lives + 50 * Level - 25 * HintsUsed.
+
+reveal_letter(Word, HiddenWord, Letter, Result):-
+    string_chars(Word, WordChars),
+    string_chars(HiddenWord, HiddenWordChars),
+    reveal_letter_chars(WordChars, HiddenWordChars, Letter, ResultChars),
+    string_chars(Result, ResultChars).
+
+reveal_letter_chars([], [], _, []).
+reveal_letter_chars([Letter|WordTail], ['_'|HiddenWordTail], Letter, ResultChars):-
+    reveal_letter_chars(WordTail, HiddenWordTail, Letter, ResultCharsAux),
+    ResultChars = [Letter|ResultCharsAux].
+reveal_letter_chars([_|WordTail], [HiddenWordHead|HiddenWordTail], Letter, ResultChars):-
+    reveal_letter_chars(WordTail, HiddenWordTail, Letter, ResultCharsAux),
+    ResultChars = [HiddenWordHead|ResultCharsAux].
+
+show_guesses([], '').
+show_guesses([GuessesHead], GuessesHead).
+show_guesses([GuessesHead|GuessesTail], Result):-
+    show_guesses(GuessesTail, ResultAux),
+    string_add_space(GuessesHead, GuessesHeadWithSpace),
+    string_concat(GuessesHeadWithSpace, ResultAux, Result).
+
+string_add_space(String, StringWithSpace):-
+    string_concat(String, ' ', StringWithSpace).
+
+% hints used
+guess_letter(Word, Guesses, Result):-
+    writeln("Digite uma letra: "),
+    get_char(Letter),
+    get_char(_),
+    guess_letter_aux(Word, Guesses, Letter, Result).
+
+guess_letter_aux(Word, Guesses, Letter, Result):-
+    member(Letter, Guesses),
+    writeln("Essa letra já foi sugerida. Tente outra!"),
+    guess_letter(Word, Guesses, Result), !.
+
+guess_letter_aux(Word, Guesses, Letter, Result):-
+    is_alpha(Letter),
+    Result = Letter.
+
+% não funciona :(
+%guess_letter_aux(Word, Guesses, Letter, Result):-
+%    !is_alpha(Letter),
+%    writeln("Uma letra, meu anjo..."),
+%    guess_letter(Word, Guesses, Result).
+
 :- initialization(main).
 main:-
     sort_by_score(SortedList),
