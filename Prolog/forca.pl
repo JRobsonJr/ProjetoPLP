@@ -1,18 +1,17 @@
 :- use_module(library(apply)).
 :- use_module(library(csv)).
-:- use_module(library(tty)).
 
 write_word_file :-
     setup_words,
-    tell('words.pl'),nl,
-    listing(word/3),
-    told.
+	tell('words.pl'),nl,
+	listing(word/3),
+	told.
 
 write_player_file :-
     setup_players,
-    tell('players.pl'),nl,
-    listing(player/2),
-    told.
+	tell('players.pl'),nl,
+	listing(player/2),
+	told.
 
 setup_words :-
     reconsult('words.pl').
@@ -22,11 +21,14 @@ setup_players :-
 
 write_word(Text, Theme):-
     get_level(Text, Level),
-    assertz(word(Text, Theme, Level)),
+    string_lower(Text, TextLowerCase),
+    string_lower(Theme, ThemeLowerCase),
+    assertz(word(TextLowerCase, ThemeLowerCase, Level)),
     write_word_file.
 
 write_player(Nickname, Score):-
-    assertz(player(Nickname, Score)),
+    string_lower(Nickname, NicknameLowerCase),
+    assertz(player(NicknameLowerCase, Score)),
     write_player_file.
 
 get_themes(Result):-
@@ -64,7 +66,14 @@ leveled_fast_match:-
     get_random_word(Result, RandomWord),
     writeln(RandomWord).
     %chamar startGame.
-    
+
+random_fast_match:-
+    setup_words,
+    findall([Text, Theme, Level], word(Text, Theme, Level), Result),
+    get_random_word(Result, RandomWord),
+    writeln(RandomWord).
+    % chamar startGame.
+
 get_random_word(Words, RandomWord):-
     length(Words, Size),
     random(0, Size, RandomIndex),
@@ -88,7 +97,6 @@ exit :-
     halt.
 
 show_opening :-
-    clear_screen,
     writeln("      ____________..___________                                                 "),
     writeln("     | .___________))__________|                                                "),
     writeln("     | | / /       ||                                                           "),
@@ -109,33 +117,25 @@ show_opening :-
     writeln("     | |          / | | \\         \\____|\\____|   |_|  \\___/|_|  \\___\\____|"),
     writeln("     | |          `-' `-'                                                       "),
     writeln("     |_|                                                                        "),
-    writeln("                                   Aguarde...                                   "),
-    sleep_3s.
+    writeln("                                   Aguarde...                                   ").
+    % wait
 
 show_menu :-
-    clear_screen,
+    % clear_screen
     writeln("\n---------------------------------     MENU     ---------------------------------\n\n"),
     writeln("                                1  -  Jogar"),
     writeln("                                2  -  Regras"),
     writeln("                                3  -  Ranking"),
     writeln("                                4  -  Nova Palavra"),
-    writeln("                                5  -  Sair"),
-    get_option(Option),
-    select_menu_option(Option).
-
-select_menu_option(1) :- show_game_modes.
-select_menu_option(2) :- show_rules.
-select_menu_option(3) :- show_ranking.
-select_menu_option(4) :- get_word_data.
-select_menu_option(5) :- quit.
-select_menu_option(_) :- show_invalid_option_message.
-
+    writeln("                                5  -  Sair").
+    % get_option
+    
 show_invalid_option_message :-
     writeln("           Opção inválida... Pressione ENTER para tentar novamente!\n"),
     pause.
     
 show_game_modes :-
-    clear_screen,
+    % clear_screen
     writeln("\n-----------------------------     MODO DE JOGO     -----------------------------\n\n"),
     writeln("                                1  -  Jogo Rápido"),
     writeln("                                2  -  Modo Campeonato"),
@@ -240,7 +240,7 @@ fast_match_mode :-
     % get_option
 
 fast_match_mode :-
-    clear_screen,
+    % clearScreen
     writeln("\n-----------------------------     JOGO RÁPIDO     ------------------------------\n\n"),
     writeln("                      Como sua palavra deve ser escolhida?\n"),
     writeln("                              1  -  Por Tema"),
@@ -250,7 +250,7 @@ fast_match_mode :-
     % get_option
 
 select_theme :-
-    clear_screen,
+    % clearScreen
     writeln("\n----------------------------     SELECIONAR TEMA     ---------------------------\n\n").
     % show_themes
     % get_option
@@ -269,7 +269,7 @@ print_themes([Head|Tail], Index) :-
     print_themes(Tail, Index1).
 
 show_levels :-
-    clear_screen,
+    % clear_screen
     writeln("\n------------------------     SELECIONAR DIFICULDADE     ------------------------\n\n"),
     writeln("                              1  -  Fácil"),
     writeln("                              2  -  Médio"),
@@ -277,7 +277,7 @@ show_levels :-
     % get_option
 
 show_rules :- 
-    clear_screen,
+    % clear_screen
     writeln("\n--------------------------------     REGRAS     --------------------------------\n\n\n"),
     
     writeln("    No jogo da forca, o jogador deve acertar a palavra que lhe foi proposta a pa"),
@@ -295,21 +295,21 @@ show_rules :-
     writeln("todas as palavras possíveis. Em qualquer um dos casos, seu desempenho será regis"),
     writeln("trado no ranking.\n\n\n"),
     
-    writeln("                         [ Pressione ENTER para voltar ]\n\n\n"),
-    pause.
+    writeln("                         [ Pressione ENTER para voltar ]\n\n\n").
+    % pause
 
 show_victory_message :-
-    clear_screen,
+    % clear_screen
     writeln("                     Parabéns, você acaba de salvar uma vida!\n\n").
     % show_victory_hangman
 
 show_game_over_message :-
-    clear_screen,
+    % clear_screen
     writeln("                       É realmente uma pena, fim de jogo...\n\n").
     % show_defeat_hangman
     
 show_ranking :-
-    clear_screen,
+    % clear_screen
     writeln("\n--------------------------------     RANKING     -------------------------------\n\n\n"),
     writeln("                             Jogador          Pontuação\n"),
     
@@ -350,7 +350,7 @@ get_word_data_failure :-
     pause.
 
 quit :-
-    clear_screen,
+    % clear_screen
     writeln("\n\n                                 Até a próxima!"),
     writeln("\n\n             Paradigmas de Linguagem de Programação - 2018.1 - UFCG"),
     writeln("\n\n                                DESENVOLVIDO POR:\n"),
@@ -358,9 +358,8 @@ quit :-
     writeln("                       José Robson da Silva Araujo Junior"),
     writeln("                            Matheus Alves dos Santos"),
     writeln("                         Misael Augusto Silva da Costa"), 
-    writeln("                            Paulo José Bastos Leitão\n\n"),
-    sleep_3s,
-    exit.
+    writeln("                            Paulo José Bastos Leitão\n\n").
+    % wait
 
 :- initialization(main).
 main:-
