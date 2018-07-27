@@ -78,7 +78,7 @@ clear_screen :-
     tty_clear.
 
 pause :-
-    get_char(X),
+    get_char(_),
     clear_screen.
 
 sleep_3s :-
@@ -131,10 +131,9 @@ select_menu_option(5) :- quit.
 select_menu_option(_) :- show_invalid_option_message.
 
 show_invalid_option_message :-
-    writeln("           Opção inválida... Pressione ENTER para tentar novamente!\n").
-    % pause
+    writeln("           Opção inválida... Pressione ENTER para tentar novamente!\n"),
+    pause.
     
-
 show_game_modes :-
     clear_screen,
     writeln("\n-----------------------------     MODO DE JOGO     -----------------------------\n\n"),
@@ -158,6 +157,19 @@ select_theme :-
     writeln("\n----------------------------     SELECIONAR TEMA     ---------------------------\n\n").
     % show_themes
     % get_option
+
+show_themes :-
+    get_themes(Themes),
+    print_themes(Themes, 1).
+
+print_themes([], _).
+print_themes([Head|Tail], Index) :-
+    string_concat("                              ", Index, SpacesAndIndex),
+    string_concat(SpacesAndIndex, "  -  ", SpacesIndexAndDash),
+    string_concat(SpacesIndexAndDash, Head, CompleteString),
+    writeln(CompleteString),
+    Index1 is Index + 1,
+    print_themes(Tail, Index1).
 
 show_levels :-
     clear_screen,
@@ -206,7 +218,7 @@ show_ranking :-
     
     % ranking
     
-    writeln("\n                         [ Pressione ENTER para voltar ]\n\n").
+    writeln("\n                         [ Pressione ENTER para voltar ]\n\n"),
     pause.
 
 get_word_data :-
@@ -214,11 +226,31 @@ get_word_data :-
     writeln("\n---------------------------     CADASTRAR PALAVRA     --------------------------\n\n\n"),
     write("          Informe a nova palavra: "),
     read(Word),
+
     writeln("\n                              Temas já cadastrados:"),
-    % show_themes
+    show_themes,
+
     write("\n          Informe o tema da palavra (por extenso): "),
     read(Theme),
-    write_word(Word, Theme).
+    get_word_data2(Word, Theme).
+
+get_word_data2(Word, Theme) :-
+    setup_words,
+    word(Word, Theme, _),
+    get_word_data_failure.
+get_word_data2(Word, Theme) :-
+    get_word_data_success(Word, Theme) .
+
+get_word_data_success(Word, Theme) :-
+    write_word(Word, Theme),
+    writeln("\n\n                         Palavra cadastrada com sucesso!\n"),
+    writeln("                                   Aguarde...\n\n"),
+    sleep_3s.
+
+get_word_data_failure :-
+    writeln("                       Opa, essa palavra já foi cadastrada..."),
+    writeln("                      [ Pressione ENTER para tentar novamente ]\n\n"),
+    pause.
 
 quit :-
     clear_screen,
