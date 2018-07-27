@@ -107,28 +107,28 @@ filter_by_level(Level,Result):-
     findall([Text, Theme, Level], word(Text, Theme, Level), Result).
 
 themed_fast_match:- 
-    % lower_case
-    % chamar metodo com a interface(select_theme),
-    read(Theme),
+    select_theme(Theme),
     filter_by_theme(Theme, Result),
     get_random_word(Result, RandomWord),
-    writeln(RandomWord).
-    start_game.
+    get_word_text(RandomWord, WordText),
+    start_game(WordText, Score).
+
+get_word_text(Word, Text):-
+    nth0(0, Word, Text).
 
 leveled_fast_match:-
-    % chamar select_level
-    read(Level),
+    select_level(Level),
     filter_by_level(Level, Result),
     get_random_word(Result, RandomWord),
-    writeln(RandomWord).
-    start_game.
+    get_word_text(RandomWord, WordText),
+    start_game(WordText, Score).
 
 random_fast_match:-
     setup_words,
     findall([Text, Theme, Level], word(Text, Theme, Level), Result),
     get_random_word(Result, RandomWord),
-    writeln(RandomWord).
-    % chamar startGame.
+    get_word_text(RandomWord, WordText),
+    start_game(WordText, Score).
 
 get_random_word(Words, RandomWord):-
     length(Words, Size),
@@ -206,7 +206,7 @@ show_game_modes :-
     writeln("\n-----------------------------     MODO DE JOGO     -----------------------------\n\n"),
     writeln("                                1  -  Jogo Rápido"),
     writeln("                                2  -  Modo Campeonato"),
-    writeln("                                3  -  Voltar").
+    writeln("                                3  -  Voltar"),
     get_option(Option),
     select_game_mode(Option).
 
@@ -303,20 +303,35 @@ show_defeat_hangman :-
     show_menu.
 
 fast_match_mode :-
-    clearScreen,
+    clear_screen,
     writeln("\n-----------------------------     JOGO RÁPIDO     ------------------------------\n\n"),
     writeln("                      Como sua palavra deve ser escolhida?\n"),
     writeln("                              1  -  Por Tema"),
     writeln("                              2  -  Por Dificuldade"),
     writeln("                              3  -  Aleatoriamente"),
-    writeln("                              4  -  Voltar").
-    % get_option
+    writeln("                              4  -  Voltar"),
+    get_option(Option),
+    fast_match_mode_aux(Option).
 
-select_theme :-
-    clearScreen,
+fast_match_mode_aux(1):- themed_fast_match.
+fast_match_mode_aux(2):- leveled_fast_match.
+fast_match_mode_aux(3):- random_fast_match.
+fast_match_mode_aux(_):- show_invalid_option_message.
+
+select_theme(Theme) :-
+    clear_screen,
     writeln("\n----------------------------     SELECIONAR TEMA     ---------------------------\n\n"),
-    show_themes.
-    % get_option
+    show_themes,
+    get_option(Option),
+    get_themes(Themes),
+    Option1 is Option - 1,
+    nth0(Option1, Themes, Theme).
+
+select_level(Option) :-
+    clear_screen,
+    writeln("\n---------------------------     SELECIONAR NÍVEL     --------------------------\n\n"),
+    show_levels,
+    get_option(Option).
 
 show_themes :-
     get_themes(Themes),
@@ -498,8 +513,7 @@ string_add_space(String, StringWithSpace):-
 
 guess_letter(Word, Guesses, HintsUsed, HintsUsedAux, Result):-
     writeln("Digite uma letra ou # para dica: "),
-    get_lower_char(Letter),
-    get_char(_),
+    read(Letter),
     guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsedAux, Result).
 
 guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsedAux, Result):-
@@ -583,13 +597,8 @@ get_tip_aux(Word, ' ', Guesses, Letter):-
 
 get_tip_aux(Word, RandomLetter, Guesses, RandomLetter).
 
-get_lower_char(U):-
-    get_char(C),
-    char_type(U, to_lower(C)).
-
 :- initialization(main).
 
 main:-
 	show_opening,
 	show_menu.
-	
