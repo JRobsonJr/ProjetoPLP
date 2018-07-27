@@ -113,7 +113,7 @@ themed_fast_match:-
     filter_by_theme(Theme, Result),
     get_random_word(Result, RandomWord),
     writeln(RandomWord).
-    % chamar startGame.
+    start_game.
 
 leveled_fast_match:-
     % chamar select_level
@@ -121,7 +121,7 @@ leveled_fast_match:-
     filter_by_level(Level, Result),
     get_random_word(Result, RandomWord),
     writeln(RandomWord).
-    %chamar startGame.
+    start_game.
 
 random_fast_match:-
     setup_words,
@@ -202,7 +202,7 @@ show_invalid_option_message :-
     show_menu.
     
 show_game_modes :-
-    % clear_screen
+    clear_screen,
     writeln("\n-----------------------------     MODO DE JOGO     -----------------------------\n\n"),
     writeln("                                1  -  Jogo Rápido"),
     writeln("                                2  -  Modo Campeonato"),
@@ -210,6 +210,7 @@ show_game_modes :-
     % get_option
 
 show_hangman(Lives) :-
+	clear_screen,
     writeln("                                 ###############"),
     writeln("                                 #### FORCA ####"),
     writeln("                                 ###############"),
@@ -270,6 +271,7 @@ show_hangman_body(0) :-
     writeln("                                 #     / \\     #").
     
 show_victory_hangman :-
+	clear_screen,
     writeln("                                 ###############"),
     writeln("                                 #### FORCA ####"),
     writeln("                                 ###############"),
@@ -280,33 +282,22 @@ show_victory_hangman :-
     writeln("                                 #             #"),
     writeln("                                 ###############     \\('◡')/"),
     writeln("                                  /\\         /\\         |"),
-    writeln("                                 /  \\       /  \\       / \\ \n\n").
+    writeln("                                 /  \\       /  \\       / \\ \n\n"),
+    show_menu.
 
 show_defeat_hangman :-
+	clear_screen,
     writeln("                                 ###############"),
     writeln("                                 #### FORCA ####"),
     writeln("                                 ###############"),
-    writeln("                                 #      |      #"),
-    writeln("                                 #      |      #"),
-    writeln("                                 #    (-.-)    #"),
-    writeln("                                 #     /|\\     #"),
-    writeln("                                 #     / \\     #"),
+	show_hangman_body(0),
     writeln("                                 ###############"),
     writeln("                                  /\\         /\\"),
-    writeln("                                 /  \\       /  \\ \n").
+    writeln("                                 /  \\       /  \\ \n"),
+    show_menu.
 
 fast_match_mode :-
-    clear_screen,
-    writeln("\n-----------------------------     JOGO RÁPIDO     ------------------------------\n\n"),
-    writeln("                      Como sua palavra deve ser escolhida?\n"),
-    writeln("                              1  -  Por Tema"),
-    writeln("                              2  -  Por Dificuldade"),
-    writeln("                              3  -  Aleatoriamente"),
-    writeln("                              4  -  Voltar").
-    % get_option
-
-fast_match_mode :-
-    % clearScreen
+    clearScreen,
     writeln("\n-----------------------------     JOGO RÁPIDO     ------------------------------\n\n"),
     writeln("                      Como sua palavra deve ser escolhida?\n"),
     writeln("                              1  -  Por Tema"),
@@ -316,9 +307,9 @@ fast_match_mode :-
     % get_option
 
 select_theme :-
-    % clearScreen
-    writeln("\n----------------------------     SELECIONAR TEMA     ---------------------------\n\n").
-    % show_themes
+    clearScreen,
+    writeln("\n----------------------------     SELECIONAR TEMA     ---------------------------\n\n"),
+    show_themes.
     % get_option
 
 show_themes :-
@@ -335,7 +326,7 @@ print_themes([Head|Tail], Index) :-
     print_themes(Tail, Index1).
 
 show_levels :-
-    % clear_screen
+    clear_screen,
     writeln("\n------------------------     SELECIONAR DIFICULDADE     ------------------------\n\n"),
     writeln("                              1  -  Fácil"),
     writeln("                              2  -  Médio"),
@@ -343,7 +334,7 @@ show_levels :-
     % get_option
 
 show_rules :- 
-    % clear_screen
+    clear_screen,
     writeln("\n--------------------------------     REGRAS     --------------------------------\n\n\n"),
     
     writeln("    No jogo da forca, o jogador deve acertar a palavra que lhe foi proposta a pa"),
@@ -419,7 +410,7 @@ get_word_data_failure :-
     pause.
 
 quit :-
-    % clear_screen
+    clear_screen,
     writeln("\n\n                                 Até a próxima!"),
     writeln("\n\n             Paradigmas de Linguagem de Programação - 2018.1 - UFCG"),
     writeln("\n\n                                DESENVOLVIDO POR:\n"),
@@ -427,8 +418,8 @@ quit :-
     writeln("                       José Robson da Silva Araujo Junior"),
     writeln("                            Matheus Alves dos Santos"),
     writeln("                         Misael Augusto Silva da Costa"), 
-    writeln("                            Paulo José Bastos Leitão\n\n").
-    % wait
+    writeln("                            Paulo José Bastos Leitão\n\n"),
+    exit.
 
 get_hidden_word(Word, HiddenWord):-
     string_chars(Word, CharList),
@@ -564,5 +555,6 @@ get_tip_aux(Word, RandomLetter, Guesses, RandomLetter).
 :- initialization(main).
 
 main:-
-	start_game('taylor swift', S),
-    write(S).
+	show_opening,
+	show_menu.
+	
