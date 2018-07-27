@@ -239,7 +239,29 @@ show_guesses([GuessesHead|GuessesTail], Result):-
 string_add_space(String, StringWithSpace):-
     string_concat(String, ' ', StringWithSpace).
 
+% hints used
+guess_letter(Word, Guesses, Result):-
+    writeln("Digite uma letra: "),
+    get_char(Letter),
+    get_char(_),
+    guess_letter_aux(Word, Guesses, Letter, Result).
+
+guess_letter_aux(Word, Guesses, Letter, Result):-
+    member(Letter, Guesses),
+    writeln("Essa letra já foi sugerida. Tente outra!"),
+    guess_letter(Word, Guesses, Result), !.
+
+guess_letter_aux(Word, Guesses, Letter, Result):-
+    is_alpha(Letter),
+    Result = Letter.
+
+% não funciona :(
+%guess_letter_aux(Word, Guesses, Letter, Result):-
+%    !is_alpha(Letter),
+%    writeln("Uma letra, meu anjo..."),
+%    guess_letter(Word, Guesses, Result).
+
 :- initialization(main).
 main:-
-    show_guesses(['a', 'b', 'c'], R1),
+    guess_letter('abcde', ['a', 'b', 'c', 'f'], R1),
     write(R1).
