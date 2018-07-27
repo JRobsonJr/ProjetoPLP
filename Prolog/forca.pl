@@ -158,6 +158,7 @@ sleep_3s :-
     sleep(3).
 
 exit :-
+    sleep_3s,
     halt.
 
 show_opening :-
@@ -512,9 +513,13 @@ string_add_space(String, StringWithSpace):-
     string_concat(String, ' ', StringWithSpace).
 
 guess_letter(Word, Guesses, HintsUsed, HintsUsedAux, Result):-
-    writeln("Digite uma letra ou # para dica: "),
+    writeln("Digite uma letra ou ç para dica: "),
     read(Letter),
     guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsedAux, Result).
+
+guess_letter_aux(Word, Guesses, 'ç', HintsUsed, HintsUsedAux, Tip):-
+    get_tip(Word, Guesses, Tip),
+    HintsUsedAux is HintsUsed + 1, !.
 
 guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsedAux, Result):-
     member(Letter, Guesses),
@@ -523,10 +528,6 @@ guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsedAux, Result):-
 
 guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsed, Letter):-
     is_alpha(Letter).
-
-guess_letter_aux(Word, Guesses, '#', HintsUsed, HintsUsedAux, Tip):-
-    get_tip(Word, Guesses, Tip),
-    HintsUsedAux is HintsUsed + 1.
 
 guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsedAux, Result):-
     \+ is_alpha(Letter),
