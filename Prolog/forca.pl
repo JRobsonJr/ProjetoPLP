@@ -21,11 +21,14 @@ setup_players :-
 
 write_word(Text, Theme):-
     get_level(Text, Level),
-    assertz(word(Text, Theme, Level)),
+    string_lower(Text, TextLowerCase),
+    string_lower(Theme, ThemeLowerCase),
+    assertz(word(TextLowerCase, ThemeLowerCase, Level)),
     write_word_file.
 
 write_player(Nickname, Score):-
-    assertz(player(Nickname, Score)),
+    string_lower(Nickname, NicknameLowerCase),
+    assertz(player(NicknameLowerCase, Score)),
     write_player_file.
 
 get_themes(Result):-
@@ -63,11 +66,35 @@ leveled_fast_match:-
     get_random_word(Result, RandomWord),
     writeln(RandomWord).
     %chamar startGame.
-    
+
+random_fast_match:-
+    setup_words,
+    findall([Text, Theme, Level], word(Text, Theme, Level), Result),
+    get_random_word(Result, RandomWord),
+    writeln(RandomWord).
+    % chamar startGame.
+
 get_random_word(Words, RandomWord):-
     length(Words, Size),
     random(0, Size, RandomIndex),
     nth0(RandomIndex, Words, RandomWord).
+    
+get_option(Option) :-
+    writeln("\n\n                    Informe o número da opção desejada: "),
+    read(Option). 
+
+clear_screen :-
+    tty_clear.
+
+pause :-
+    get_char(_),
+    clear_screen.
+
+sleep_3s :-
+    sleep(3).
+
+exit :-
+    halt.
 
 show_opening :-
     writeln("      ____________..___________                                                 "),
@@ -104,16 +131,112 @@ show_menu :-
     % get_option
     
 show_invalid_option_message :-
-    writeln("           Opção inválida... Pressione ENTER para tentar novamente!\n").
-    % pause
+    writeln("           Opção inválida... Pressione ENTER para tentar novamente!\n"),
+    pause.
     
-
 show_game_modes :-
     % clear_screen
     writeln("\n-----------------------------     MODO DE JOGO     -----------------------------\n\n"),
     writeln("                                1  -  Jogo Rápido"),
     writeln("                                2  -  Modo Campeonato"),
     writeln("                                3  -  Voltar").
+    % get_option
+
+show_hangman(Lives) :-
+    clear_screen,
+    writeln("                                 ###############"),
+    writeln("                                 #### FORCA ####"),
+    writeln("                                 ###############"),
+    writeln("                                 #      |      #"),
+    
+    show_hangman_body(Lives),
+    
+    writeln("                                 ###############"),
+    writeln("                                  /\\         /\\"),
+    writeln("                                 /  \\       /  \\ \n").
+
+show_hangman_body(7) :-
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #").
+
+show_hangman_body(6) :-
+    writeln("                                 #    ('-')    #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #").
+
+show_hangman_body(5) :-
+    writeln("                                 #    ('-')__  #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #").
+
+show_hangman_body(4) :-
+    writeln("                                 #  __('-')__  #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #").
+
+show_hangman_body(3) :-
+    writeln("                                 #  __('-')__  #"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #").
+
+show_hangman_body(2) :-
+    writeln("                                 #  __('-')__  #"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #     /       #"),
+    writeln("                                 #             #").
+
+show_hangman_body(1) :-
+    writeln("                                 #  __('-')__  #"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #     / \\     #"),
+    writeln("                                 #             #").
+    
+show_hangman_body(0) :-
+    writeln("                                 #      |      #"),
+    writeln("                                 #    (-.-)    #"),
+    writeln("                                 #     /|\\     #"),
+    writeln("                                 #     / \\     #").
+    
+show_victory_hangman :-
+    writeln("                                 ###############"),
+    writeln("                                 #### FORCA ####"),
+    writeln("                                 ###############"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 #             #"),
+    writeln("                                 ###############     \\('◡')/"),
+    writeln("                                  /\\         /\\         |"),
+    writeln("                                 /  \\       /  \\       / \\ \n\n").
+
+show_defeat_hangman :-
+    writeln("                                 ###############"),
+    writeln("                                 #### FORCA ####"),
+    writeln("                                 ###############"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #      |      #"),
+    writeln("                                 #    (-.-)    #"),
+    writeln("                                 #     /|\\     #"),
+    writeln("                                 #     / \\     #"),
+    writeln("                                 ###############"),
+    writeln("                                  /\\         /\\"),
+    writeln("                                 /  \\       /  \\ \n").
+
+fast_match_mode :-
+    clear_screen,
+    writeln("\n-----------------------------     JOGO RÁPIDO     ------------------------------\n\n"),
+    writeln("                      Como sua palavra deve ser escolhida?\n"),
+    writeln("                              1  -  Por Tema"),
+    writeln("                              2  -  Por Dificuldade"),
+    writeln("                              3  -  Aleatoriamente"),
+    writeln("                              4  -  Voltar").
     % get_option
 
 fast_match_mode :-
@@ -131,6 +254,19 @@ select_theme :-
     writeln("\n----------------------------     SELECIONAR TEMA     ---------------------------\n\n").
     % show_themes
     % get_option
+
+show_themes :-
+    get_themes(Themes),
+    print_themes(Themes, 1).
+
+print_themes([], _).
+print_themes([Head|Tail], Index) :-
+    string_concat("                              ", Index, SpacesAndIndex),
+    string_concat(SpacesAndIndex, "  -  ", SpacesIndexAndDash),
+    string_concat(SpacesIndexAndDash, Head, CompleteString),
+    writeln(CompleteString),
+    Index1 is Index + 1,
+    print_themes(Tail, Index1).
 
 show_levels :-
     % clear_screen
@@ -179,8 +315,39 @@ show_ranking :-
     
     % ranking
     
-    writeln("\n                         [ Pressione ENTER para voltar ]\n\n").
-    % pause
+    writeln("\n                         [ Pressione ENTER para voltar ]\n\n"),
+    pause.
+
+get_word_data :-
+    clear_screen,
+    writeln("\n---------------------------     CADASTRAR PALAVRA     --------------------------\n\n\n"),
+    write("          Informe a nova palavra: "),
+    read(Word),
+
+    writeln("\n                              Temas já cadastrados:"),
+    show_themes,
+
+    write("\n          Informe o tema da palavra (por extenso): "),
+    read(Theme),
+    get_word_data2(Word, Theme).
+
+get_word_data2(Word, Theme) :-
+    setup_words,
+    word(Word, Theme, _),
+    get_word_data_failure.
+get_word_data2(Word, Theme) :-
+    get_word_data_success(Word, Theme) .
+
+get_word_data_success(Word, Theme) :-
+    write_word(Word, Theme),
+    writeln("\n\n                         Palavra cadastrada com sucesso!\n"),
+    writeln("                                   Aguarde...\n\n"),
+    sleep_3s.
+
+get_word_data_failure :-
+    writeln("                       Opa, essa palavra já foi cadastrada..."),
+    writeln("                      [ Pressione ENTER para tentar novamente ]\n\n"),
+    pause.
 
 quit :-
     % clear_screen
