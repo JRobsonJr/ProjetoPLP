@@ -1,6 +1,12 @@
 :- use_module(library(apply)).
 :- use_module(library(csv)).
 
+setup_words :-
+    reconsult('words.pl').
+
+setup_players :-
+    reconsult('players.pl').
+
 write_word_file :-
     setup_words,
 	tell('words.pl'),nl,
@@ -12,12 +18,6 @@ write_player_file :-
 	tell('players.pl'),nl,
 	listing(player/2),
 	told.
-
-setup_words :-
-    reconsult('words.pl').
-
-setup_players :-
-    reconsult('players.pl').
 
 compare_to(<,A,B) :- 
     nth0(1,A,X),
@@ -382,7 +382,6 @@ show_ranking:-
 	writeln("\n                         [ Pressione ENTER para voltar ]\n\n"),
 	pause.
 
-
 get_word_data :-
     clear_screen,
     writeln("\n---------------------------     CADASTRAR PALAVRA     --------------------------\n\n\n"),
@@ -473,7 +472,7 @@ string_add_space(String, StringWithSpace):-
     string_concat(String, ' ', StringWithSpace).
 
 guess_letter(Word, Guesses, Result):-
-    writeln("Digite uma letra: "),
+    writeln("Digite uma letra ou # para dica: "),
     get_char(Letter),
     get_char(_),
     guess_letter_aux(Word, Guesses, Letter, Result).
@@ -485,6 +484,9 @@ guess_letter_aux(Word, Guesses, Letter, Result):-
 
 guess_letter_aux(Word, Guesses, Letter, Letter):-
     is_alpha(Letter).
+
+guess_letter_aux(Word, Guesses, '#', Tip):-
+    get_tip(Word, Guesses, Tip).
 
 guess_letter_aux(Word, Guesses, Letter, Result):-
     \+ is_alpha(Letter),
@@ -506,6 +508,7 @@ run_game(Word, HiddenWord, Guesses, Lives, HintsUsed, Score):-
     reveal_word(Word), !.
 
 run_game(Word, HiddenWord, Guesses, Lives, HintsUsed, Score):-
+    clear_screen,
     show_game_info(Word, HiddenWord, Guesses, Lives, HintsUsed),
     guess_letter(Word, Guesses, Letter),
     reveal_letter(Word, HiddenWord, Letter, HiddenWordAux),
@@ -551,9 +554,8 @@ get_tip_aux(RandomLetter, Guesses, Letter):-
 
 get_tip_aux(RandomLetter, Guesses, RandomLetter).
 
-
 :- initialization(main).
 
 main:-
-	show_opening,   
-    show_menu.
+	start_game('taylor swift', S),
+    write(S).
