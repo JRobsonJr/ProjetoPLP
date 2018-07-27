@@ -207,7 +207,13 @@ show_game_modes :-
     writeln("                                1  -  Jogo Rápido"),
     writeln("                                2  -  Modo Campeonato"),
     writeln("                                3  -  Voltar").
-    % get_option
+    get_option(Option),
+    select_game_mode(Option).
+
+select_game_mode(1) :- fast_match_mode.
+select_game_mode(2) :- championship_mode.
+select_game_mode(3) :- show_menu.
+select_game_mode(_) :- show_invalid_option_message.
 
 show_hangman(Lives) :-
 	clear_screen,
@@ -332,6 +338,30 @@ show_levels :-
     writeln("                              2  -  Médio"),
     writeln("                              3  -  Difícil\n\n").
     % get_option
+
+championship_mode :-
+    get_player_data(Nickname).
+    
+go_back_championship(Nickname, Is_valid) :-
+    length(Nickname, Size),
+    Is_valid is (Size = 1, Nickname = "#").
+
+get_player_data(User_name):-
+    clear_screen,
+    writeln("\n---------------------------     MODO CAMPEONATO     ----------------------------\n\n"),
+    writeln("                         (Insira # para voltar...)\n\n\n"),
+    writeln("                              Insira o seu nick: "),
+    
+    read_line_to_string(user_input, Nickname),
+    pause,
+    
+    % go_back_championship(Nickname, Is_valid),
+    
+    % (Is_valid -> writeln("\n\n                         Jogador cadastrado com sucesso!"), nl),
+    
+    writeln("                                   Aguarde...\n\n"),
+    sleep_3s,
+    User_name is Nickname.
 
 show_rules :- 
     clear_screen,
