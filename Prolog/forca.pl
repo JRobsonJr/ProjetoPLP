@@ -466,27 +466,28 @@ show_guesses([GuessesHead|GuessesTail], Result):-
 string_add_space(String, StringWithSpace):-
     string_concat(String, ' ', StringWithSpace).
 
-guess_letter(Word, Guesses, Result):-
+guess_letter(Word, Guesses, HintsUsed, HintsUsedAux, Result):-
     writeln("Digite uma letra ou # para dica: "),
     get_lower_char(Letter),
     get_char(_),
-    guess_letter_aux(Word, Guesses, Letter, Result).
+    guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsedAux, Result).
 
-guess_letter_aux(Word, Guesses, Letter, Result):-
+guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsedAux, Result):-
     member(Letter, Guesses),
     writeln("Essa letra já foi sugerida. Tente outra!"),
-    guess_letter(Word, Guesses, Result), !.
+    guess_letter(Word, Guesses, HintsUsed, HintsUsedAux, Result), !.
 
-guess_letter_aux(Word, Guesses, Letter, Letter):-
+guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsed, Letter):-
     is_alpha(Letter).
 
-guess_letter_aux(Word, Guesses, '#', Tip):-
-    get_tip(Word, Guesses, Tip).
+guess_letter_aux(Word, Guesses, '#', HintsUsed, HintsUsedAux, Tip):-
+    get_tip(Word, Guesses, Tip),
+    HintsUsedAux is HintsUsed + 1.
 
-guess_letter_aux(Word, Guesses, Letter, Result):-
+guess_letter_aux(Word, Guesses, Letter, HintsUsed, HintsUsedAux, Result):-
     \+ is_alpha(Letter),
     writeln("Uma letra, meu anjo..."),
-    guess_letter(Word, Guesses, Result).
+    guess_letter(Word, Guesses, HintsUsed, HintsUsedAux, Result).
 
 start_game(Word, Score):-
     get_hidden_word(Word, HiddenWord),
@@ -505,10 +506,10 @@ run_game(Word, HiddenWord, Guesses, Lives, HintsUsed, Score):-
 run_game(Word, HiddenWord, Guesses, Lives, HintsUsed, Score):-
     clear_screen,
     show_game_info(Word, HiddenWord, Guesses, Lives, HintsUsed),
-    guess_letter(Word, Guesses, Letter),
+    guess_letter(Word, Guesses, HintsUsed, HintsUsedAux, Letter),
     reveal_letter(Word, HiddenWord, Letter, HiddenWordAux),
     get_lives(HiddenWord, HiddenWordAux, Lives, LivesAux),
-    run_game(Word, HiddenWordAux, [Letter|Guesses], LivesAux, HintsUsed, Score).
+    run_game(Word, HiddenWordAux, [Letter|Guesses], LivesAux, HintsUsedAux, Score).
 
 get_lives(HiddenWord, HiddenWordAux, CurrentLives, Lives):-
     HiddenWord == HiddenWordAux -> 
