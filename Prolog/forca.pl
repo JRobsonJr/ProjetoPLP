@@ -76,8 +76,10 @@ show_players([Head|Tail], Index, Result):-
 write_word(Text, Theme):-
     get_level(Text, Level),
     string_lower(Text, TextLowerCase),
+    atom_string(TextAtom, TextLowerCase),
     string_lower(Theme, ThemeLowerCase),
-    assertz(word(TextLowerCase, ThemeLowerCase, Level)),
+    atom_string(ThemeAtom, ThemeLowerCase),
+    assertz(word(TextAtom, ThemeAtom, Level)),
     write_word_file.
 
 write_player(Nickname, Score):-
@@ -196,7 +198,8 @@ show_menu :-
     
 show_invalid_option_message :-
     writeln("           Opção inválida... Pressione ENTER para tentar novamente!\n"),
-    pause.
+    pause,
+    show_menu.
     
 show_game_modes :-
     % clear_screen
@@ -380,7 +383,8 @@ show_ranking:-
 	show_players(SortedList, 1, Result),
 	writeln(Result),
 	writeln("\n                         [ Pressione ENTER para voltar ]\n\n"),
-	pause.
+	pause,
+    show_menu.
 
 get_word_data :-
     clear_screen,
